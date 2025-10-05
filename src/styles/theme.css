@@ -1,0 +1,373 @@
+@import url("https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap");
+
+/* Light theme (default) */
+:root {
+  --color-background: #ffffff; /* clean white */
+  --color-surface: #f8fafc; /* very light gray for contrast */
+  --color-surface-alt: #f0f4f8;
+
+  --color-primary: #61fe08; /* Neon Green (logo main) */
+  --color-primary-hover: #4cd106; /* darker hover green */
+  --color-secondary: #16bc4e; /* soft secondary green */
+
+  --color-text: #0a0a0a; /* dark for readability */
+  --color-text-muted: #555555;
+
+  --color-accent: #00ff88; /* extra neon accent */
+  --color-border: rgba(97, 254, 8, 0.15);
+  --color-shadow: rgba(97, 254, 8, 0.08);
+
+  --gradient-primary: linear-gradient(135deg, #61fe08, #16bc4e);
+  --gradient-accent: linear-gradient(135deg, #61fe08, #00ff88);
+
+  --shadow-sharp: 0 2px 4px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.08);
+  --shadow-diffused: 0 4px 24px rgba(97, 254, 8, 0.15);
+
+  --color-success: #00cc66;
+  --color-warning: #ffaa00;
+  --color-error: #ff3333;
+  --color-info: #33ccff;
+
+  /* Spacing Scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+
+  /* Font Sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+
+  /* Hero Background Colors */
+  --hero-bg: #121212;
+  --hero-overlay: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.8),
+    rgba(0, 0, 0, 0.7)
+  );
+  --hero-glow: radial-gradient(
+    circle at center,
+    rgba(97, 254, 8, 0.2),
+    transparent 70%
+  );
+}
+
+/* Responsive Font Sizes */
+@media (max-width: 640px) {
+  :root {
+    --text-4xl: 1.875rem;
+    --text-3xl: 1.5rem;
+    --text-2xl: 1.25rem;
+    --text-xl: 1.125rem;
+    --text-lg: 1rem;
+    --text-base: 0.938rem;
+
+    /* Adjust hero overlay for mobile */
+    --hero-overlay: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.85),
+      rgba(0, 0, 0, 0.75)
+    );
+    --hero-glow: radial-gradient(
+      circle at top center,
+      rgba(97, 254, 8, 0.25),
+      transparent 80%
+    );
+  }
+
+  .hero-background {
+    background: var(--hero-bg);
+    isolation: isolate;
+  }
+
+  .hero-background::before {
+    background: var(--hero-overlay);
+    opacity: 0.9;
+  }
+
+  .hero-background::after {
+    background: var(--hero-glow);
+    opacity: 0.7;
+    mix-blend-mode: screen;
+  }
+
+  .hero-background img {
+    opacity: 0.6;
+    object-position: center;
+    filter: brightness(0.85) contrast(1.2);
+    mix-blend-mode: luminosity;
+  }
+
+  .hero-content {
+    padding: var(--space-4);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .hero-content h1,
+  .hero-content p {
+    color: #ffffff;
+  }
+
+  .hero-content .text-text-muted {
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --color-background: #000000; /* deep black */
+  --color-surface: #0a0a0a;
+  --color-surface-alt: #1a1a1a;
+
+  --color-primary: #61fe08; /* same neon green for brand consistency */
+  --color-primary-hover: #4cd106;
+  --color-secondary: #16bc4e;
+
+  --color-text: #ffffff;
+  --color-text-muted: #a3a3a3;
+
+  --color-accent: #00ff88;
+  --color-border: rgba(97, 254, 8, 0.25);
+  --color-shadow: rgba(97, 254, 8, 0.2);
+
+  --gradient-primary: linear-gradient(135deg, #61fe08, #16bc4e);
+  --gradient-accent: linear-gradient(135deg, #61fe08, #00ff88);
+
+  --shadow-sharp: 0 2px 4px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.3);
+  --shadow-diffused: 0 4px 24px rgba(97, 254, 8, 0.3);
+
+  /* Hero Background Colors */
+  --hero-bg: #121212;
+  --hero-overlay: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.3)
+  );
+  --hero-glow: radial-gradient(
+    circle at center,
+    rgba(97, 254, 8, 0.2),
+    transparent 70%
+  );
+}
+
+/* Base styles */
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  background-image: radial-gradient(
+      circle at 100% 0%,
+      var(--color-primary) 0%,
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 0% 100%,
+      var(--color-secondary) 0%,
+      transparent 25%
+    );
+  background-attachment: fixed;
+  background-position: top right, bottom left;
+  background-repeat: no-repeat;
+}
+
+/* Typography */
+html {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Titillium Web", sans-serif;
+}
+
+/* Theme transitions */
+*,
+*::before,
+*::after {
+  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out,
+    color 0.2s ease-in-out, box-shadow 0.3s ease-in-out,
+    transform 0.3s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+/* Loading states */
+.skeleton {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  background-color: var(--color-surface);
+  opacity: 0.5;
+  border-radius: 0.25rem;
+}
+
+.skeleton-text {
+  height: 1rem;
+  border-radius: 0.25rem;
+}
+
+.skeleton-title {
+  height: 2rem;
+  border-radius: 0.25rem;
+}
+
+.skeleton-image {
+  width: 100%;
+  border-radius: 0.25rem;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Additional Responsive Utilities */
+@media (max-width: 640px) {
+  .skeleton-title {
+    height: 1.5rem;
+  }
+
+  .skeleton-text {
+    height: 0.875rem;
+  }
+
+  body {
+    background-image: none; /* Remove complex backgrounds on mobile */
+  }
+}
+
+/* Additional styles for hero background */
+.hero-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.hero-background {
+  position: relative;
+  background-color: var(--hero-bg);
+  height: 100%;
+  width: 100%;
+  transform: none !important;
+}
+
+.hero-background::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--hero-overlay);
+  z-index: 1;
+}
+
+.hero-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--hero-glow);
+  z-index: 2;
+}
+
+.hero-background img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.6;
+  filter: brightness(0.85) contrast(1.2);
+  mix-blend-mode: luminosity;
+  transform: none !important; /* Prevent unwanted transforms */
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.hero-content h1,
+.hero-content p {
+  color: #ffffff;
+}
+
+.hero-content .text-text-muted {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 640px) {
+  :root {
+    --hero-overlay: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.9),
+      rgba(0, 0, 0, 0.8)
+    );
+  }
+
+  .hero-wrapper {
+    min-height: 100%;
+  }
+
+  .hero-background img {
+    opacity: 0.5;
+    filter: brightness(0.8) contrast(1.2);
+  }
+
+  .hero-content {
+    padding: var(--space-4);
+  }
+}
+
+/* Additional mobile optimizations */
+@media (max-width: 480px) {
+  .hero-background img {
+    object-position: center center; /* Reset any offset positioning */
+    transform: none !important;
+  }
+}

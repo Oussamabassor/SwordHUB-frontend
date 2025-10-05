@@ -1,0 +1,212 @@
+/* Base styles */
+:root {
+  --color-primary: #00ff9d;
+  --color-secondary: #00e5ff;
+  --color-background: #121212;
+  --color-surface: #1e1e1e;
+  --color-accent: #2d2d2d;
+  --color-neutral: #8e8e8e;
+  --color-light: #e0e0e0;
+
+  /* Shadows and Effects */
+  --neon-green-glow: 0 0 10px rgba(0, 255, 157, 0.5),
+    0 0 20px rgba(0, 255, 157, 0.3);
+  --neon-blue-glow: 0 0 10px rgba(0, 229, 255, 0.5),
+    0 0 20px rgba(0, 229, 255, 0.3);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Apply dark theme by default */
+body {
+  margin: 0;
+  overflow-x: hidden;
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-light);
+}
+
+/* Responsive Container */
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1200px;
+  }
+}
+
+/* Responsive Typography */
+@media (max-width: 640px) {
+  h1 {
+    font-size: 1.875rem !important; /* 30px */
+    line-height: 2.25rem !important; /* 36px */
+  }
+
+  h2 {
+    font-size: 1.5rem !important; /* 24px */
+    line-height: 2rem !important; /* 32px */
+  }
+
+  p {
+    font-size: 0.938rem !important; /* 15px */
+    line-height: 1.5rem !important; /* 24px */
+  }
+
+  .btn {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+  }
+}
+
+/* Improved Mobile Spacing */
+@media (max-width: 768px) {
+  .section {
+    padding: 2rem 0;
+  }
+
+  .card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .gap-mobile-2 {
+    gap: 0.5rem;
+  }
+
+  .gap-mobile-4 {
+    gap: 1rem;
+  }
+}
+
+/* Mobile Navigation */
+@media (max-width: 640px) {
+  .sticky-bottom {
+    padding: 0.75rem;
+  }
+}
+
+/* Interactive Elements */
+.btn {
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:hover {
+  box-shadow: var(--neon-green-glow);
+}
+
+.btn-secondary:hover {
+  box-shadow: var(--neon-blue-glow);
+}
+
+/* Card Styles */
+.card {
+  background-color: var(--color-surface);
+  border-radius: 8px;
+  transition: var(--transition-smooth);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+/* Product Card specific styles */
+.product-card {
+  min-height: 600px; /* Increased height */
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card .aspect-ratio-4-5 {
+  min-height: 400px; /* Taller product image */
+}
+
+.product-card .p-6 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Responsive Grid */
+.grid-responsive {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Stack on mobile */
+@media (max-width: 640px) {
+  .stack-mobile {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stack-mobile > * + * {
+    margin-top: 1rem;
+  }
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .sticky-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--color-surface);
+    padding: 1rem;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+  }
+}
+
+/* Custom Scrollbar Styles */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-surface-alt);
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 8px;
+  opacity: 0.5;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-hover);
+}

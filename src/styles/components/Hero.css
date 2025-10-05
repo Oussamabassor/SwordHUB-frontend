@@ -1,0 +1,332 @@
+.hero-carousel {
+  position: relative;
+  top: 80px;
+  width: 100%;
+  height: 50vh;
+  min-height: 500px;
+  background-color: var(--color-dark-bg);
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.carousel-background {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, 
+    rgba(255, 103, 0, 0.1),
+    var(--color-dark-bg) 60%);
+  opacity: 0.6;
+}
+
+.slides-container {
+  position: relative;
+  height: 100%;
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide {
+  min-width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 64px;
+}
+
+.content-section {
+  width: 50%;
+  padding-right: 48px;
+  z-index: 10;
+  animation: slideUp 0.7s ease-out forwards;
+}
+
+.tag {
+  display: inline-block;
+  padding: 8px 16px;
+  margin-bottom: 24px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, 
+    rgba(255, 103, 0, 0.2),
+    rgba(255, 103, 0, 0.1));
+  border: 1px solid rgba(255, 103, 0, 0.3);
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 500;
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
+}
+
+.tag:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, 
+    rgba(255, 103, 0, 0.3),
+    rgba(255, 103, 0, 0.2));
+  box-shadow: 0 4px 12px rgba(255, 103, 0, 0.2);
+}
+
+h1 {
+  font-size: 44px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: white;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+p {
+  font-size: 18px;
+  margin-bottom: 32px;
+  color: var(--color-light);
+  line-height: 1.6;
+  max-width: 560px;
+  opacity: 0.9;
+}
+
+.price-tag {
+  margin-bottom: 32px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.price {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-shadow: 0 0 20px rgba(255, 103, 0, 0.3);
+}
+
+.offer {
+  color: var(--color-neutral);
+  font-size: 16px;
+}
+
+.button-group {
+  display: flex;
+  gap: 16px;
+}
+
+.primary-button, .secondary-button {
+  padding: 16px 32px;
+  border-radius: 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.primary-button {
+  background: linear-gradient(135deg, var(--color-primary), #ff8533);
+  color: white;
+  border: none;
+}
+
+.primary-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.primary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 103, 0, 0.3);
+}
+
+.primary-button:hover::before {
+  left: 100%;
+}
+
+.secondary-button {
+  background: transparent;
+  border: 1px solid var(--color-neutral);
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+.secondary-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: var(--color-primary);
+  z-index: -1;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.secondary-button:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.secondary-button:hover::before {
+  width: 100%;
+}
+
+.image-section {
+  width: 50%;
+  height: 100%;
+  position: relative;
+}
+
+.image-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    var(--color-dark-bg),
+    transparent 30%,
+    transparent
+  );
+  z-index: 10;
+}
+
+img {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 120%;
+  height: 90%;
+  object-fit: cover;
+  border-radius: 16px;
+  transform: translateY(-50%);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: brightness(0.9);
+}
+
+.image-section:hover img {
+  transform: translateY(-50%) scale(1.05);
+  filter: brightness(1);
+}
+
+.nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  padding: 12px;
+  border-radius: 50%;
+  background: rgba(45, 45, 45, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+.nav-button:hover {
+  background: var(--color-primary);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.nav-button.prev { left: 24px; }
+.nav-button.next { right: 24px; }
+
+.nav-button .icon {
+  width: 24px;
+  height: 24px;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: translateY(-50%) scale(1);
+}
+
+.progress-indicators {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  gap: 12px;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(192, 192, 192, 0.3);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.indicator.active {
+  width: 32px;
+  background: var(--color-primary);
+  box-shadow: 0 0 12px rgba(255, 103, 0, 0.4);
+}
+
+.indicator:hover:not(.active) {
+  background: var(--color-primary);
+  opacity: 0.5;
+  transform: scale(1.2);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1024px) {
+  .slide { padding: 32px; }
+  h1 { font-size: 36px; }
+  p { font-size: 16px; }
+}
+
+@media (max-width: 768px) {
+  .hero-carousel { height: 80vh; }
+  
+  .slide {
+    flex-direction: column;
+    padding: 24px;
+  }
+  
+  .content-section,
+  .image-section {
+    width: 100%;
+    padding: 0;
+  }
+  
+  .image-section {
+    height: 40%;
+    margin-top: 32px;
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform: none;
+  }
+  
+  .image-section:hover img {
+    transform: scale(1.05);
+  }
+}

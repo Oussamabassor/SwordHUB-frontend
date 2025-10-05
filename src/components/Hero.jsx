@@ -1,0 +1,148 @@
+import React from "react";
+import {
+  ShoppingBag,
+  ChevronRight,
+  ArrowRight,
+  Leaf,
+  Truck,
+  Shield,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import { ProductViewer } from "./ProductViewer";
+import "../styles/components/Hero.css";
+
+export const Hero = () => {
+  const stats = [
+    {
+      label: "Eco-Friendly Materials",
+      value: "100%",
+      icon: <Leaf className="text-primary" size={20} />,
+    },
+    {
+      label: "Express Delivery",
+      value: "2-3 Days",
+      icon: <Truck className="text-primary" size={20} />,
+    },
+    {
+      label: "Quality Guarantee",
+      value: "Lifetime",
+      icon: <Shield className="text-primary" size={20} />,
+    },
+  ];
+
+  const productImages = [
+    "/images/placeholders/swordshirt.jpg",
+    "/images/placeholders/swordshirt2.jpg",
+    "/images/placeholders/swordshirt.jpg",
+    "/images/placeholders/swordshirt2.jpg",
+  ];
+
+  const heroBackgrounds = [
+    "/images/placeholders/swordshirt.jpg",
+    "/images/placeholders/swordshirt2.jpg",
+  ];
+
+  return (
+    <section className="relative overflow-hidden bg-background min-h-[600px] flex items-center py-6">
+      {/* Ambient Background */}
+      <div className="absolute inset-0 hero-wrapper">
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-background/90 to-background/70" />
+        <div className="absolute inset-0 z-0">
+          <img
+            src={heroBackgrounds[0]}
+            alt="Background"
+            className="object-cover w-full h-full opacity-60"
+          />
+        </div>
+        <div className="absolute inset-0 z-20 bg-gradient-to-tr from-primary/20 to-secondary/20" />
+      </div>
+
+      {/* Content Grid */}
+      <div className="container relative z-30 px-4 mx-auto lg:px-8">
+        <div className="grid items-center grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
+          {/* Left Column - Content */}
+          <div className="flex flex-col justify-center py-4 sm:py-6">
+            {/* Tag line */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center px-4 py-1.5 mb-6 border rounded-full bg-primary/10 text-primary backdrop-blur-sm border-primary/20"
+            >
+              <span className="text-sm font-medium">New Collection 2025</span>
+              <ChevronRight size={16} className="ml-2" />
+            </motion.div>
+
+            {/* Main content */}
+            <div className="max-w-xl space-y-4">
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-5xl font-bold leading-tight lg:text-6xl"
+              >
+                Premium Gym <span className="text-primary">T-Shirts</span> for
+                Peak <span className="text-primary">Performance</span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="text-lg text-text-muted"
+              >
+                Discover our collection of high-performance gym t-shirts
+                designed for maximum comfort and breathability.
+              </motion.p>
+
+              {/* CTA Buttons */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="flex flex-wrap gap-4 pt-4"
+              >
+                <button className="flex items-center px-6 py-3 text-base font-semibold transition-all rounded-lg group bg-primary text-background hover:shadow-neon-green">
+                  Browse T-Shirts
+                  <ShoppingBag className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                </button>
+                <button className="flex items-center px-6 py-3 text-base font-semibold transition-all border rounded-lg group border-primary/50 text-primary hover:bg-primary/10">
+                  Size Guide
+                  <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                </button>
+              </motion.div>
+
+              {/* Stats */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="grid grid-cols-3 gap-4 pt-6"
+              >
+                {stats.map((stat, index) => (
+                  <div
+                    key={index}
+                    className="p-3 text-center border rounded-xl bg-surface/30 backdrop-blur-sm border-primary/10"
+                  >
+                    <div className="flex justify-center mb-1">{stat.icon}</div>
+                    <div className="mb-0.5 text-lg font-bold text-primary">
+                      {stat.value}
+                    </div>
+                    <div className="text-xs text-text-muted">{stat.label}</div>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Right Column - Interactive Product View */}
+          <div className="flex items-center justify-center h-full py-4 sm:py-6">
+            <ProductViewer images={productImages} />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Hero;
