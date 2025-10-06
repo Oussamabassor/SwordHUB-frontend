@@ -62,7 +62,7 @@ export function Header({ onCartClick, cartItemCount = 0 }) {
       <div className="container px-4 mx-auto lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Left side - Logo and Menu button */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 transition-colors lg:hidden hover:bg-surface-alt rounded-xl"
@@ -75,11 +75,23 @@ export function Header({ onCartClick, cartItemCount = 0 }) {
               )}
             </button>
 
-            <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-text">
+            <a
+              href="/"
+              className="flex items-center gap-2.5 flex-shrink-0 group"
+            >
+              <img
+                src="/images/logo/sword-logo.png"
+                alt="SwordHub Logo"
+                className="object-contain w-8 h-8 transition-transform duration-200 lg:left-4 lg:w-9 lg:h-9"
+                onError={(e) => {
+                  console.log("Logo failed to load");
+                  e.target.style.display = "none";
+                }}
+              />
+              <h1 className="text-xl font-bold sm:text-2xl text-text whitespace-nowrap lg:ml-6">
                 SWORD<span className="text-primary">HUB</span>
               </h1>
-            </div>
+            </a>
           </div>
 
           {/* Center - Navigation */}
@@ -138,7 +150,7 @@ export function Header({ onCartClick, cartItemCount = 0 }) {
             </div>
 
             {/* Theme Toggle */}
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
 
             {/* User */}
             <button className="p-2 transition-colors hover:bg-surface-alt rounded-xl">

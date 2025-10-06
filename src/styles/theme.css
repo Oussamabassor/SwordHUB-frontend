@@ -2,26 +2,39 @@
 
 /* Light theme (default) */
 :root {
-  --color-background: #ffffff; /* clean white */
-  --color-surface: #f8fafc; /* very light gray for contrast */
-  --color-surface-alt: #f0f4f8;
+  --color-background: #000000; /* deep black */
+  --color-surface: #0a0a0a;
+  --color-surface-alt: #1a1a1a;
 
-  --color-primary: #61fe08; /* Neon Green (logo main) */
-  --color-primary-hover: #4cd106; /* darker hover green */
-  --color-secondary: #16bc4e; /* soft secondary green */
+  --color-primary: #61fe08; /* same neon green for brand consistency */
+  --color-primary-hover: #4cd106;
+  --color-secondary: #16bc4e;
 
-  --color-text: #0a0a0a; /* dark for readability */
-  --color-text-muted: #555555;
+  --color-text: #ffffff;
+  --color-text-muted: #a3a3a3;
 
-  --color-accent: #00ff88; /* extra neon accent */
-  --color-border: rgba(97, 254, 8, 0.15);
-  --color-shadow: rgba(97, 254, 8, 0.08);
+  --color-accent: #00ff88;
+  --color-border: rgba(97, 254, 8, 0.25);
+  --color-shadow: rgba(97, 254, 8, 0.2);
 
   --gradient-primary: linear-gradient(135deg, #61fe08, #16bc4e);
   --gradient-accent: linear-gradient(135deg, #61fe08, #00ff88);
 
-  --shadow-sharp: 0 2px 4px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.08);
-  --shadow-diffused: 0 4px 24px rgba(97, 254, 8, 0.15);
+  --shadow-sharp: 0 2px 4px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.3);
+  --shadow-diffused: 0 4px 24px rgba(97, 254, 8, 0.3);
+
+  /* Hero Background Colors */
+  --hero-bg: #121212;
+  --hero-overlay: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.3)
+  );
+  --hero-glow: radial-gradient(
+    circle at center,
+    rgba(97, 254, 8, 0.2),
+    transparent 70%
+  );
 
   --color-success: #00cc66;
   --color-warning: #ffaa00;
@@ -46,19 +59,6 @@
   --text-2xl: 1.5rem;
   --text-3xl: 1.875rem;
   --text-4xl: 2.25rem;
-
-  /* Hero Background Colors */
-  --hero-bg: #121212;
-  --hero-overlay: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.8),
-    rgba(0, 0, 0, 0.7)
-  );
-  --hero-glow: radial-gradient(
-    circle at center,
-    rgba(97, 254, 8, 0.2),
-    transparent 70%
-  );
 }
 
 /* Responsive Font Sizes */
@@ -125,41 +125,8 @@
 }
 
 /* Dark theme */
-[data-theme="dark"] {
-  --color-background: #000000; /* deep black */
-  --color-surface: #0a0a0a;
-  --color-surface-alt: #1a1a1a;
-
-  --color-primary: #61fe08; /* same neon green for brand consistency */
-  --color-primary-hover: #4cd106;
-  --color-secondary: #16bc4e;
-
-  --color-text: #ffffff;
-  --color-text-muted: #a3a3a3;
-
-  --color-accent: #00ff88;
-  --color-border: rgba(97, 254, 8, 0.25);
-  --color-shadow: rgba(97, 254, 8, 0.2);
-
-  --gradient-primary: linear-gradient(135deg, #61fe08, #16bc4e);
-  --gradient-accent: linear-gradient(135deg, #61fe08, #00ff88);
-
-  --shadow-sharp: 0 2px 4px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.3);
-  --shadow-diffused: 0 4px 24px rgba(97, 254, 8, 0.3);
-
-  /* Hero Background Colors */
-  --hero-bg: #121212;
-  --hero-overlay: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.5),
-    rgba(0, 0, 0, 0.3)
-  );
-  --hero-glow: radial-gradient(
-    circle at center,
-    rgba(97, 254, 8, 0.2),
-    transparent 70%
-  );
-}
+/* [data-theme="dark"] {
+} */
 
 /* Base styles */
 body {

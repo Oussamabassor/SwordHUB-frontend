@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ShoppingBag,
   ChevronRight,
@@ -12,6 +13,43 @@ import { ProductViewer } from "./ProductViewer";
 import "../styles/components/Hero.css";
 
 export const Hero = () => {
+  const navigate = useNavigate();
+
+  const scrollToProducts = () => {
+    const productsSection = document.getElementById("products-section");
+    if (productsSection) {
+      const targetPosition =
+        productsSection.getBoundingClientRect().top + window.pageYOffset;
+      const startPosition = window.pageYOffset;
+      const distance = targetPosition - startPosition;
+      const duration = 1500; // 1.5 seconds for smooth, slow scroll
+      let start = null;
+
+      // Easing function for smooth animation
+      const easeInOutCubic = (t) => {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      };
+
+      const animation = (currentTime) => {
+        if (start === null) start = currentTime;
+        const timeElapsed = currentTime - start;
+        const progress = Math.min(timeElapsed / duration, 1);
+        const ease = easeInOutCubic(progress);
+
+        window.scrollTo(0, startPosition + distance * ease);
+
+        if (timeElapsed < duration) {
+          requestAnimationFrame(animation);
+        }
+      };
+
+      requestAnimationFrame(animation);
+    }
+  };
+
+  const navigateToSizeGuide = () => {
+    navigate("/size-guide");
+  };
   const stats = [
     {
       label: "Eco-Friendly Materials",
@@ -102,11 +140,17 @@ export const Hero = () => {
                 transition={{ duration: 0.6, delay: 0.4 }}
                 className="flex flex-wrap gap-4 pt-4"
               >
-                <button className="flex items-center px-6 py-3 text-base font-semibold transition-all rounded-lg group bg-primary text-background hover:shadow-neon-green">
+                <button
+                  onClick={scrollToProducts}
+                  className="flex items-center px-6 py-3 text-base font-semibold transition-all rounded-lg group bg-primary text-background hover:shadow-neon-green"
+                >
                   Browse T-Shirts
                   <ShoppingBag className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                 </button>
-                <button className="flex items-center px-6 py-3 text-base font-semibold transition-all border rounded-lg group border-primary/50 text-primary hover:bg-primary/10">
+                <button
+                  onClick={navigateToSizeGuide}
+                  className="flex items-center px-6 py-3 text-base font-semibold transition-all border rounded-lg group border-primary/50 text-primary hover:bg-primary/10"
+                >
                   Size Guide
                   <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                 </button>
