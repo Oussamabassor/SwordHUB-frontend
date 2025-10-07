@@ -101,9 +101,16 @@
   }
 
   .hero-background img {
-    opacity: 0.6;
+    opacity: 1;
     object-position: center;
     filter: brightness(0.85) contrast(1.2);
+    mix-blend-mode: luminosity;
+  }
+
+  .view-bg img {
+    opacity: 0.8;
+    filter: brightness(1.2) contrast(1.1);
+    top: 0;
     mix-blend-mode: luminosity;
   }
 

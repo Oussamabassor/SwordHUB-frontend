@@ -82,13 +82,13 @@ export function Header({ onCartClick, cartItemCount = 0 }) {
               <img
                 src="/images/logo/sword-logo.png"
                 alt="SwordHub Logo"
-                className="object-contain w-8 h-8 transition-transform duration-200 lg:left-4 lg:w-9 lg:h-9"
+                className="object-contain w-8 h-8 transition-transform duration-200 lg:left-4 md:left-24 lg:w-9 lg:h-9"
                 onError={(e) => {
                   console.log("Logo failed to load");
                   e.target.style.display = "none";
                 }}
               />
-              <h1 className="text-xl font-bold sm:text-2xl text-text whitespace-nowrap lg:ml-6">
+              <h1 className="text-xl font-bold sm:text-2xl text-text whitespace-nowrap lg:ml-6 md:ml-8">
                 SWORD<span className="text-primary">HUB</span>
               </h1>
             </a>

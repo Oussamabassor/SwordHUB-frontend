@@ -71,11 +71,14 @@ export const Hero = () => {
   const productImages = [
     "/images/placeholders/swordshirt.jpg",
     "/images/placeholders/swordshirt2.jpg",
-    "/images/placeholders/swordshirt.jpg",
-    "/images/placeholders/swordshirt2.jpg",
+    "/images/products/T-shirt3.png",
+    "/images/products/T-shirt4.png",
   ];
 
   const heroBackgrounds = [
+    "/images/logo/hero-bg3.jpeg",
+    "/images/logo/hero-bg2.jpeg",
+    "/images/logo/hero-bg.jpeg",
     "/images/placeholders/swordshirt.jpg",
     "/images/placeholders/swordshirt2.jpg",
   ];
@@ -85,7 +88,7 @@ export const Hero = () => {
       {/* Ambient Background */}
       <div className="absolute inset-0 hero-wrapper">
         <div className="absolute inset-0 z-10 bg-gradient-to-b from-background/90 to-background/70" />
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 hero-background">
           <img
             src={heroBackgrounds[0]}
             alt="Background"
