@@ -3,3 +3,77 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Modern Custom Scrollbar Design */
+/* Hide scrollbar on mobile, show on desktop */
+/* For Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+/* Show scrollbar only on larger screens (desktop) */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-background);
+    border-left: 1px solid rgba(97, 254, 8, 0.1);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      180deg,
+      var(--color-primary) 0%,
+      var(--color-secondary) 100%
+    );
+    border-radius: 6px;
+    border: 2px solid var(--color-background);
+    transition: all 0.3s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+      180deg,
+      var(--color-secondary) 0%,
+      var(--color-primary) 100%
+    );
+    border-width: 1px;
+    box-shadow: 0 0 10px rgba(97, 254, 8, 0.4);
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background: var(--color-primary);
+    box-shadow: 0 0 15px rgba(97, 254, 8, 0.6);
+  }
+
+  /* Enhanced scrollbar for dark mode */
+  html[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--color-surface);
+    border-left: 1px solid rgba(97, 254, 8, 0.15);
+  }
+
+  html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    border-color: var(--color-surface);
+  }
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: none; /* Hide on mobile */
+}
+
+@media (min-width: 768px) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) var(--color-background);
+  }
+}
+
+/* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}

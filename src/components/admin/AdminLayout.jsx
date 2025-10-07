@@ -36,7 +36,7 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -54,15 +54,15 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
               <img
                 src="/images/logo/sword-logo.png"
                 alt="SwordHub Logo"
-                className="w-8 h-8 object-contain"
+                className="object-contain w-8 h-8 lg:top-7 lg:left-3 md:top-7 md:left-3"
               />
-              <h2 className="text-lg font-bold text-gray-800 dark:text-white">
+              <h2 className="text-lg font-bold text-gray-800 dark:text-white lg:ml-8 md:ml-8">
                 SWORD<span className="text-primary">HUB</span>
               </h2>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 transition-colors rounded-lg lg:hidden hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <X size={20} />
             </button>
@@ -71,7 +71,7 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
           {/* User Info */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold">
+              <div className="flex items-center justify-center w-10 h-10 font-semibold text-white rounded-full bg-primary">
                 {user?.name?.charAt(0) || "A"}
               </div>
               <div>
@@ -111,7 +111,7 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
           <div className="p-4 border-t border-gray-200 dark:border-gray-700">
             <button
               onClick={handleLogout}
-              className="flex items-center space-x-3 w-full px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+              className="flex items-center w-full px-4 py-3 space-x-3 text-red-600 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
             >
               <LogOut size={20} />
               <span className="font-medium">Logout</span>
@@ -125,11 +125,11 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
 
 export const AdminHeader = ({ setSidebarOpen }) => {
   return (
-    <header className="fixed top-0 left-0 right-0 z-30 h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 lg:pl-64">
+    <header className="fixed top-0 left-0 right-0 z-30 h-16 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 lg:pl-64">
       <div className="flex items-center justify-between h-full px-4">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+          className="p-2 rounded-lg lg:hidden hover:bg-gray-100 dark:hover:bg-gray-700"
         >
           <Menu size={24} />
         </button>
