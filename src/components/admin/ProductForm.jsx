@@ -22,8 +22,11 @@ export const ProductForm = ({ product, onClose, onSuccess }) => {
 
   const fetchCategories = async () => {
     try {
-      const data = await categoriesApi.getAll();
-      setCategories(data);
+      const response = await categoriesApi.getAll();
+      // Extract categories array from response
+      const categoriesData =
+        response?.data?.categories || response?.categories || [];
+      setCategories(categoriesData);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }

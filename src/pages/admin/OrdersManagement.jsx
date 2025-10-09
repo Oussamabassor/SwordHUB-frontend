@@ -17,8 +17,10 @@ export const OrdersManagement = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const data = await ordersApi.getAll({ status: statusFilter });
-      setOrders(data);
+      const response = await ordersApi.getAll({ status: statusFilter });
+      // Extract orders array from response
+      const ordersData = response?.data?.orders || response?.orders || [];
+      setOrders(ordersData);
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {

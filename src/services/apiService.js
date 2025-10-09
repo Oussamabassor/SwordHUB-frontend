@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// Get API URL from environment variables
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+// Get API URL from environment variables (without /api suffix as backend handles it)
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 // Create axios instance with default config
 const apiClient = axios.create({
@@ -15,7 +15,8 @@ const apiClient = axios.create({
 // Add request interceptor to include auth token
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("adminToken");
+    const token =
+      localStorage.getItem("authToken") || localStorage.getItem("adminToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -32,9 +33,14 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Unauthorized - clear token and redirect to login
+      localStorage.removeItem("authToken");
       localStorage.removeItem("adminToken");
       localStorage.removeItem("adminUser");
-      window.location.href = "/admin/login";
+      localStorage.removeItem("user");
+      // Only redirect if not already on login page
+      if (!window.location.pathname.includes("/login")) {
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   }
@@ -182,14 +188,17 @@ export const categoriesApi = {
 
 // ==================== ORDERS API ====================
 export const ordersApi = {
-  // Get all orders (Admin only)
+  // Get all orders for current user or all orders for admin
   getAll: async (filters = {}) => {
     try {
       const params = new URLSearchParams();
       if (filters.status) params.append("status", filters.status);
       if (filters.startDate) params.append("startDate", filters.startDate);
       if (filters.endDate) params.append("endDate", filters.endDate);
+      if (filters.page) params.append("page", filters.page);
+      if (filters.limit) params.append("limit", filters.limit);
 
+      // Backend handles admin check via middleware - just call /orders
       const response = await apiClient.get(`/orders?${params.toString()}`);
       return response.data;
     } catch (error) {
@@ -258,13 +267,19 @@ export const ordersApi = {
 
 // ==================== AUTH API ====================
 export const authApi = {
-  // Admin login
+  // Login (User or Admin)
   login: async (credentials) => {
     try {
       const response = await apiClient.post("/auth/login", credentials);
-      if (response.data.token) {
-        localStorage.setItem("adminToken", response.data.token);
-        localStorage.setItem("adminUser", JSON.stringify(response.data.user));
+      if (response.data.success && response.data.token) {
+        const { token, user } = response.data;
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        // For admin compatibility
+        if (user.role === "admin") {
+          localStorage.setItem("adminToken", token);
+          localStorage.setItem("adminUser", JSON.stringify(user));
+        }
       }
       return response.data;
     } catch (error) {
@@ -273,20 +288,40 @@ export const authApi = {
     }
   },
 
-  // Admin logout
+  // Register new user
+  register: async (userData) => {
+    try {
+      const response = await apiClient.post("/auth/register", userData);
+      if (response.data.success && response.data.token) {
+        const { token, user } = response.data;
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+      return response.data;
+    } catch (error) {
+      console.error("Error registering:", error);
+      throw error;
+    }
+  },
+
+  // Logout
   logout: async () => {
     try {
       await apiClient.post("/auth/logout");
+      localStorage.removeItem("authToken");
       localStorage.removeItem("adminToken");
+      localStorage.removeItem("user");
       localStorage.removeItem("adminUser");
     } catch (error) {
       console.error("Error logging out:", error);
+      localStorage.removeItem("authToken");
       localStorage.removeItem("adminToken");
+      localStorage.removeItem("user");
       localStorage.removeItem("adminUser");
     }
   },
 
-  // Get current admin user
+  // Get current user
   getCurrentUser: async () => {
     try {
       const response = await apiClient.get("/auth/me");
@@ -297,15 +332,44 @@ export const authApi = {
     }
   },
 
+  // Get user profile
+  getProfile: async () => {
+    try {
+      const response = await apiClient.get("/auth/profile");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      throw error;
+    }
+  },
+
+  // Update user profile
+  updateProfile: async (profileData) => {
+    try {
+      const response = await apiClient.put("/auth/profile", profileData);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      throw error;
+    }
+  },
+
   // Check if user is authenticated
   isAuthenticated: () => {
-    return !!localStorage.getItem("adminToken");
+    return !!localStorage.getItem("authToken");
   },
 
   // Get stored user
   getStoredUser: () => {
-    const user = localStorage.getItem("adminUser");
+    const user =
+      localStorage.getItem("user") || localStorage.getItem("adminUser");
     return user ? JSON.parse(user) : null;
+  },
+
+  // Check if user is admin
+  isAdmin: () => {
+    const user = authApi.getStoredUser();
+    return user && user.role === "admin";
   },
 };
 

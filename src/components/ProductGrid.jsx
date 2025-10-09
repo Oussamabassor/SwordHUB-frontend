@@ -18,8 +18,10 @@ export function ProductGrid() {
     try {
       setLoading(true);
       setError(null);
-      const data = await productsApi.getAll();
-      setProducts(data);
+      const response = await productsApi.getAll();
+      // Extract products array from response
+      const productsData = response?.data?.products || response?.products || [];
+      setProducts(productsData);
     } catch (err) {
       console.error("Error fetching products:", err);
       const errorMessage = "Failed to load products. Please try again later.";

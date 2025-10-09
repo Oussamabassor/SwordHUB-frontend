@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SwordHub API Integration Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+      h1 {
+        color: #333;
+      }
+      h2 {
+        color: #666;
+        border-bottom: 2px solid #4caf50;
+        padding-bottom: 10px;
+      }
+      button {
+        background: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 5px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      button:hover {
+        background: #45a049;
+      }
+      button:disabled {
+        background: #cccccc;
+        cursor: not-allowed;
+      }
+      .result {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 10px;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      .success {
+        color: #4caf50;
+        font-weight: bold;
+      }
+      .error {
+        color: #f44336;
+        font-weight: bold;
+      }
+      .status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 4px;
+        margin-left: 10px;
+        font-size: 12px;
+      }
+      .status.online {
+        background: #4caf50;
+        color: white;
+      }
+      .status.offline {
+        background: #f44336;
+        color: white;
+      }
+      pre {
+        background: #282c34;
+        color: #abb2bf;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+      .test-group {
+        margin-bottom: 30px;
+      }
+      .credentials {
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🗡️ SwordHub API Integration Test</h1>
+      <p>
+        Backend URL: <strong id="apiUrl">http://localhost:5000</strong>
+        <span id="status" class="status offline">Checking...</span>
+      </p>
+
+      <div class="credentials">
+        <strong>Admin Credentials:</strong><br />
+        Email: admin@swordhub.com<br />
+        Password: Admin123!
+      </div>
+    </div>
+
+    <div class="container test-group">
+      <h2>1. Authentication Tests</h2>
+      <button onclick="testLogin()">Test Admin Login</button>
+      <button onclick="testGetProfile()">Get Profile (Requires Auth)</button>
+      <button onclick="testLogout()">Logout</button>
+      <div id="authResult" class="result"></div>
+    </div>
+
+    <div class="container test-group">
+      <h2>2. Products Tests (Public)</h2>
+      <button onclick="testGetProducts()">Get All Products</button>
+      <button onclick="testGetSingleProduct()">Get Single Product</button>
+      <button onclick="testSearchProducts()">Search Products</button>
+      <div id="productsResult" class="result"></div>
+    </div>
+
+    <div class="container test-group">
+      <h2>3. Categories Tests (Public)</h2>
+      <button onclick="testGetCategories()">Get All Categories</button>
+      <button onclick="testGetSingleCategory()">Get Single Category</button>
+      <div id="categoriesResult" class="result"></div>
+    </div>
+
+    <div class="container test-group">
+      <h2>4. Admin Dashboard Tests (Requires Admin Auth)</h2>
+      <button onclick="testDashboardStats()">Get Dashboard Stats</button>
+      <button onclick="testAllOrders()">Get All Orders</button>
+      <div id="dashboardResult" class="result"></div>
+    </div>
+
+    <div class="container test-group">
+      <h2>5. Admin Product Management (Requires Admin Auth)</h2>
+      <button onclick="testCreateProduct()">Create Product</button>
+      <button onclick="testUpdateProduct()">Update Product</button>
+      <button onclick="testDeleteProduct()">Delete Product</button>
+      <div id="adminResult" class="result"></div>
+    </div>
+
+    <div class="container">
+      <h2>📋 Test Summary</h2>
+      <div id="summary" class="result">
+        <p>Run tests above to see results...</p>
+      </div>
+    </div>
+
+    <script>
+      const API_URL = "http://localhost:5000";
+      let authToken = null;
+      let testProductId = null;
+      let testCategoryId = null;
+      let testResults = [];
+
+      // Check backend status
+      async function checkStatus() {
+        try {
+          const response = await fetch(`${API_URL}/health`);
+          const data = await response.json();
+          document.getElementById("status").textContent = "Online";
+          document.getElementById("status").className = "status online";
+        } catch (error) {
+          document.getElementById("status").textContent = "Offline";
+          document.getElementById("status").className = "status offline";
+        }
+      }
+
+      function logResult(section, test, success, data, error = null) {
+        const result = {
+          section,
+          test,
+          success,
+          data,
+          error,
+          time: new Date().toLocaleTimeString(),
+        };
+        testResults.push(result);
+        updateSummary();
+
+        const resultDiv = document.getElementById(section + "Result");
+        const statusClass = success ? "success" : "error";
+        const statusText = success ? "✅ SUCCESS" : "❌ FAILED";
+
+        resultDiv.innerHTML = `
+                <div class="${statusClass}">${statusText}: ${test}</div>
+                <small>Time: ${result.time}</small>
+                <pre>${JSON.stringify(data || error, null, 2)}</pre>
+            `;
+      }
+
+      function updateSummary() {
+        const summary = document.getElementById("summary");
+        const total = testResults.length;
+        const passed = testResults.filter((r) => r.success).length;
+        const failed = total - passed;
+
+        summary.innerHTML = `
+                <p><strong>Total Tests:</strong> ${total}</p>
+                <p class="success"><strong>Passed:</strong> ${passed}</p>
+                <p class="error"><strong>Failed:</strong> ${failed}</p>
+                <hr>
+                <div style="max-height: 200px; overflow-y: auto;">
+                    ${testResults
+                      .map(
+                        (r) => `
+                        <div style="margin: 5px 0;">
+                            <span class="${r.success ? "success" : "error"}">${
+                          r.success ? "✅" : "❌"
+                        }</span>
+                            <strong>${r.test}</strong> - ${r.time}
+                        </div>
+                    `
+                      )
+                      .join("")}
+                </div>
+            `;
+      }
+
+      // Authentication Tests
+      async function testLogin() {
+        try {
+          const response = await fetch(`${API_URL}/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: "admin@swordhub.com",
+              password: "Admin123!",
+            }),
+          });
+          const data = await response.json();
+
+          if (data.success && data.data.token) {
+            authToken = data.data.token;
+            logResult("auth", "Admin Login", true, data);
+          } else {
+            logResult("auth", "Admin Login", false, null, data);
+          }
+        } catch (error) {
+          logResult("auth", "Admin Login", false, null, error.message);
+        }
+      }
+
+      async function testGetProfile() {
+        if (!authToken) {
+          alert("Please login first!");
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_URL}/auth/profile`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          const data = await response.json();
+          logResult("auth", "Get Profile", data.success, data);
+        } catch (error) {
+          logResult("auth", "Get Profile", false, null, error.message);
+        }
+      }
+
+      async function testLogout() {
+        try {
+          const response = await fetch(`${API_URL}/auth/logout`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          const data = await response.json();
+          authToken = null;
+          logResult("auth", "Logout", true, data);
+        } catch (error) {
+          logResult("auth", "Logout", false, null, error.message);
+        }
+      }
+
+      // Products Tests
+      async function testGetProducts() {
+        try {
+          const response = await fetch(`${API_URL}/products`);
+          const data = await response.json();
+
+          if (data.success && data.data) {
+            const products = data.data.products || data.data;
+            if (products.length > 0) {
+              testProductId = products[0]._id;
+            }
+            logResult("products", "Get All Products", true, data);
+          } else {
+            logResult("products", "Get All Products", false, null, data);
+          }
+        } catch (error) {
+          logResult("products", "Get All Products", false, null, error.message);
+        }
+      }
+
+      async function testGetSingleProduct() {
+        if (!testProductId) {
+          alert('Please run "Get All Products" first!');
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_URL}/products/${testProductId}`);
+          const data = await response.json();
+          logResult("products", "Get Single Product", data.success, data);
+        } catch (error) {
+          logResult(
+            "products",
+            "Get Single Product",
+            false,
+            null,
+            error.message
+          );
+        }
+      }
+
+      async function testSearchProducts() {
+        try {
+          const response = await fetch(
+            `${API_URL}/products?search=sword&page=1&limit=5`
+          );
+          const data = await response.json();
+          logResult("products", "Search Products", data.success, data);
+        } catch (error) {
+          logResult("products", "Search Products", false, null, error.message);
+        }
+      }
+
+      // Categories Tests
+      async function testGetCategories() {
+        try {
+          const response = await fetch(`${API_URL}/categories`);
+          const data = await response.json();
+
+          if (data.success && data.data.length > 0) {
+            testCategoryId = data.data[0]._id;
+          }
+          logResult("categories", "Get All Categories", data.success, data);
+        } catch (error) {
+          logResult(
+            "categories",
+            "Get All Categories",
+            false,
+            null,
+            error.message
+          );
+        }
+      }
+
+      async function testGetSingleCategory() {
+        if (!testCategoryId) {
+          alert('Please run "Get All Categories" first!');
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `${API_URL}/categories/${testCategoryId}`
+          );
+          const data = await response.json();
+          logResult("categories", "Get Single Category", data.success, data);
+        } catch (error) {
+          logResult(
+            "categories",
+            "Get Single Category",
+            false,
+            null,
+            error.message
+          );
+        }
+      }
+
+      // Dashboard Tests
+      async function testDashboardStats() {
+        if (!authToken) {
+          alert("Please login as admin first!");
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_URL}/admin/dashboard/stats`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          const data = await response.json();
+          logResult("dashboard", "Get Dashboard Stats", data.success, data);
+        } catch (error) {
+          logResult(
+            "dashboard",
+            "Get Dashboard Stats",
+            false,
+            null,
+            error.message
+          );
+        }
+      }
+
+      async function testAllOrders() {
+        if (!authToken) {
+          alert("Please login as admin first!");
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_URL}/admin/orders`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          const data = await response.json();
+          logResult("dashboard", "Get All Orders", data.success, data);
+        } catch (error) {
+          logResult("dashboard", "Get All Orders", false, null, error.message);
+        }
+      }
+
+      // Admin Product Management
+      async function testCreateProduct() {
+        if (!authToken) {
+          alert("Please login as admin first!");
+          return;
+        }
+        if (!testCategoryId) {
+          alert('Please run "Get All Categories" first!');
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_URL}/products`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({
+              name: "Test Product from Integration",
+              description:
+                "This is a test product created via integration test",
+              price: 99.99,
+              category: testCategoryId,
+              stock: 10,
+              images: ["test.jpg"],
+            }),
+          });
+          const data = await response.json();
+
+          if (data.success && data.data._id) {
+            testProductId = data.data._id;
+          }
+          logResult("admin", "Create Product", data.success, data);
+        } catch (error) {
+          logResult("admin", "Create Product", false, null, error.message);
+        }
+      }
+
+      async function testUpdateProduct() {
+        if (!authToken) {
+          alert("Please login as admin first!");
+          return;
+        }
+        if (!testProductId) {
+          alert("Please create a product first!");
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_URL}/products/${testProductId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({
+              name: "Updated Test Product",
+              price: 149.99,
+            }),
+          });
+          const data = await response.json();
+          logResult("admin", "Update Product", data.success, data);
+        } catch (error) {
+          logResult("admin", "Update Product", false, null, error.message);
+        }
+      }
+
+      async function testDeleteProduct() {
+        if (!authToken) {
+          alert("Please login as admin first!");
+          return;
+        }
+        if (!testProductId) {
+          alert("Please create a product first!");
+          return;
+        }
+
+        if (!confirm("This will delete the test product. Continue?")) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_URL}/products/${testProductId}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          const data = await response.json();
+          logResult("admin", "Delete Product", data.success, data);
+        } catch (error) {
+          logResult("admin", "Delete Product", false, null, error.message);
+        }
+      }
+
+      // Initialize
+      window.onload = function () {
+        checkStatus();
+      };
+    </script>
+  </body>
+</html>

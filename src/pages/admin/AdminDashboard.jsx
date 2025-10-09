@@ -27,8 +27,10 @@ export const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const data = await dashboardApi.getStats();
-      setStats(data);
+      const response = await dashboardApi.getStats();
+      // Extract data from response
+      const statsData = response?.data || response;
+      setStats(statsData);
     } catch (error) {
       console.error("Error fetching stats:", error);
     } finally {

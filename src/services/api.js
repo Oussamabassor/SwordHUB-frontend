@@ -1,4 +1,4 @@
-const API_URL = "http://localhost/ecommerce-app/backend/api";
+const API_URL = "http://localhost:5000/api";
 
 export const productsApi = {
   getAllProducts: async () => {

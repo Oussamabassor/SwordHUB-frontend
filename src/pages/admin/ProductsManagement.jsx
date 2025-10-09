@@ -20,8 +20,10 @@ export const ProductsManagement = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const data = await productsApi.getAll({ search: searchTerm });
-      setProducts(data);
+      const response = await productsApi.getAll({ search: searchTerm });
+      // Extract products array from response
+      const productsData = response?.data?.products || response?.products || [];
+      setProducts(productsData);
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
