@@ -8,6 +8,18 @@ export function ProductCard({ product }) {
   const navigate = useNavigate();
   const [isWishlisted, setIsWishlisted] = useState(false);
 
+  // Safety check for product
+  if (!product) {
+    console.warn("ProductCard received undefined product");
+    return null;
+  }
+
+  // Get image - handle both 'images' array and 'image' string
+  const productImage =
+    (product.images && product.images[0]) ||
+    product.image ||
+    "/images/placeholders/swordshirt.jpg";
+
   // Calculate discount percentage if there's a sale price
   const discount = product.originalPrice
     ? Math.round(
@@ -34,20 +46,24 @@ export function ProductCard({ product }) {
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -8 }}
+      whileHover={{ y: -8, scale: 1.01 }}
+      whileTap={{ scale: 0.98 }}
       onClick={handleCardClick}
-      className="relative overflow-hidden transition-all duration-300 border cursor-pointer group bg-surface/50 backdrop-blur-sm rounded-xl hover:shadow-2xl hover:shadow-primary/10 border-primary/5 hover:border-primary/20"
+      className="relative flex flex-col overflow-hidden transition-all duration-300 border cursor-pointer group bg-surface/50 backdrop-blur-sm rounded-xl hover:shadow-xl hover:shadow-primary/20 border-primary/10 hover:border-primary/30 hover:bg-surface/70 view-container"
     >
+      {/* Hover Glow Effect */}
+      <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 blur-xl bg-gradient-to-br from-primary/10 via-transparent to-primary/5"></div>
+
       {/* Badges */}
-      <div className="absolute z-10 flex items-center justify-between top-3 left-3 right-3">
-        <div className="flex gap-2">
+      <div className="absolute z-10 flex items-center justify-between top-2 left-2 right-2 sm:top-3 sm:left-3 sm:right-3">
+        <div className="flex gap-1.5 sm:gap-2">
           {product.featured && (
-            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-primary text-background shadow-neon-green">
+            <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-[10px] sm:text-xs font-semibold rounded-full bg-primary text-background shadow-neon-green">
               Featured
             </span>
           )}
           {discount && (
-            <span className="px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded-full shadow-lg shadow-red-500/20">
+            <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 text-[10px] sm:text-xs font-semibold text-white bg-red-500 rounded-full shadow-lg shadow-red-500/20">
               -{discount}%
             </span>
           )}
@@ -68,23 +84,29 @@ export function ProductCard({ product }) {
       </div>
 
       {/* Product Image */}
-      <div className="relative overflow-hidden aspect-square bg-surface/30 view-bg">
+      <div className="relative overflow-hidden aspect-[4/5] bg-surface/30 view-bg">
         <ImageWithLoader
-          src={product.image || "/images/placeholders/swordshirt.jpg"}
-          alt={product.name}
-          className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+          src={productImage}
+          alt={product.name || "Product"}
+          className="object-cover w-full h-full transition-all duration-700 group-hover:scale-110"
         />
 
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent group-hover:opacity-100"></div>
+
         {/* Hover Overlay */}
-        <div className="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-t from-background via-background/50 to-transparent group-hover:opacity-100">
+        <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
           <div className="absolute flex gap-2 -translate-x-1/2 bottom-4 left-1/2">
-            <button
+            {/* Quick View button - Hidden on mobile */}
+            <motion.button
               onClick={handleQuickView}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-all rounded-lg bg-primary text-background hover:shadow-neon-green"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="items-center hidden gap-2 px-5 py-2.5 text-sm font-bold transition-all rounded-xl sm:flex bg-primary text-background hover:shadow-neon-green"
             >
-              <Eye size={16} />
+              <Eye size={18} />
               Quick View
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -97,54 +119,61 @@ export function ProductCard({ product }) {
       </div>
 
       {/* Product Info */}
-      <div className="p-4 space-y-2">
-        {/* Category */}
-        <p className="text-xs font-medium uppercase text-primary">
+      <div className="relative p-3 space-y-1.5 sm:p-4 sm:space-y-2">
+        {/* Category Badge */}
+        <span className="inline-block px-2 py-0.5 text-[10px] sm:text-xs font-semibold uppercase rounded-md bg-primary/10 text-primary tracking-wide border border-primary/20">
           {product.category}
-        </p>
+        </span>
 
-        {/* Product Name */}
-        <h3 className="font-semibold leading-tight transition-colors line-clamp-2 text-light group-hover:text-primary">
+        {/* Product Name - Compact and Professional */}
+        <h3 className="text-base sm:text-lg font-bold leading-snug transition-colors line-clamp-2 text-light group-hover:text-primary min-h-[2.5rem]">
           {product.name}
         </h3>
 
-        {/* Rating */}
-        <div className="flex items-center gap-1">
+        {/* Rating Stars - Compact */}
+        <div className="flex items-center gap-1 py-0.5">
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
               size={12}
-              className={
-                i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-              }
+              className={`sm:w-3.5 sm:h-3.5 transition-all ${
+                i < 4
+                  ? "fill-yellow-400 text-yellow-400"
+                  : "text-gray-300 dark:text-gray-600"
+              }`}
             />
           ))}
-          <span className="ml-1 text-xs text-light/60">(4.0)</span>
+          <span className="ml-1 text-xs font-medium text-light/70">4.0</span>
         </div>
 
-        {/* Price */}
-        <div className="flex items-baseline gap-2 pt-2">
-          <span className="text-lg font-bold text-primary">
-            ${product.price}
-          </span>
-          {product.originalPrice && (
-            <span className="text-sm line-through text-light/40">
-              ${product.originalPrice}
+        {/* Price - Professional and Clear */}
+        <div className="flex items-center gap-2 pt-1">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-xl font-bold sm:text-2xl text-primary">
+              {product.price}
             </span>
-          )}
+            <span className="text-sm font-semibold text-primary">DH</span>
+            {product.originalPrice && (
+              <span className="ml-1 text-xs line-through text-light/40">
+                {product.originalPrice} DH
+              </span>
+            )}
+          </div>
         </div>
 
-        {/* Add to Cart Button (Mobile) */}
-        <button
+        {/* Add to Cart Button - More Professional */}
+        <motion.button
           onClick={(e) => {
             e.stopPropagation();
             navigate(`/products/${product.id}`);
           }}
-          className="flex items-center justify-center w-full gap-2 px-4 py-2 mt-3 text-sm font-semibold transition-all rounded-lg bg-primary text-background hover:shadow-neon-green sm:opacity-0 sm:group-hover:opacity-100"
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          className="flex items-center justify-center w-full gap-2 px-4 py-2 mt-2 text-xs font-semibold transition-all duration-300 transform rounded-lg sm:text-sm bg-primary text-background hover:bg-primary/90 hover:shadow-lg sm:opacity-0 sm:group-hover:opacity-100 sm:translate-y-1 sm:group-hover:translate-y-0"
         >
           <ShoppingCart size={16} />
-          Add to Cart
-        </button>
+          <span>View Details</span>
+        </motion.button>
       </div>
     </motion.div>
   );

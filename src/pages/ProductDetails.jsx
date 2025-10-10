@@ -142,10 +142,10 @@ export function ProductDetails() {
 
             <div>
               <p className="text-3xl font-bold text-primary">
-                ${product.price}
+                {product.price} DH
               </p>
               <p className="text-neutral mt-1">
-                Free shipping on orders over $100
+                Free shipping on orders over 500 DH
               </p>
             </div>
 
@@ -247,7 +247,9 @@ export function ProductDetails() {
                   <h3 className="text-light font-medium mb-2">
                     {related.name}
                   </h3>
-                  <p className="text-primary font-semibold">${related.price}</p>
+                  <p className="text-primary font-semibold">
+                    {related.price} DH
+                  </p>
                 </div>
               </div>
             ))}

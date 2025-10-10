@@ -135,11 +135,11 @@ export function CartDrawer({ isOpen, onClose }) {
                         </button>
                         <div className="text-right">
                           <p className="text-xl font-bold text-primary">
-                            ${(item.price * (item.quantity || 1)).toFixed(2)}
+                            {(item.price * (item.quantity || 1)).toFixed(2)} DH
                           </p>
                           {item.quantity > 1 && (
                             <p className="text-xs text-text-muted">
-                              ${item.price} × {item.quantity}
+                              {item.price} DH × {item.quantity}
                             </p>
                           )}
                         </div>
@@ -173,7 +173,7 @@ export function CartDrawer({ isOpen, onClose }) {
               </div>
               <div className="flex items-end justify-between">
                 <p className="text-3xl font-bold text-primary">
-                  ${subtotal.toFixed(2)}
+                  {subtotal.toFixed(2)} DH
                 </p>
                 <div className="text-right">
                   <p className="text-xs text-text-muted">Free Shipping</p>
@@ -193,13 +193,13 @@ export function CartDrawer({ isOpen, onClose }) {
                     (item, index) =>
                       `${index + 1}. ${item.name}%0A   Size: ${
                         item.selectedSize || item.size
-                      }%0A   Qty: ${item.quantity || 1}%0A   Price: $${(
+                      }%0A   Qty: ${item.quantity || 1}%0A   Price: ${(
                         item.price * (item.quantity || 1)
-                      ).toFixed(2)}`
+                      ).toFixed(2)} DH`
                   )
-                  .join("%0A%0A")}%0A%0A💰 Total: $${subtotal.toFixed(
+                  .join("%0A%0A")}%0A%0A💰 Total: ${subtotal.toFixed(
                   2
-                )}%0A%0AThank you!`;
+                )} DH%0A%0AThank you!`;
                 window.open(`https://wa.me/0665652168?text=${message}`);
               }}
             >

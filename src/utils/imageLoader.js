@@ -5,8 +5,16 @@ export function useImageLoader(src) {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    // Reset states
     setLoaded(false);
     setError(false);
+
+    // Safety check for empty or invalid src
+    if (!src || typeof src !== "string") {
+      console.warn("Invalid image src:", src);
+      setError(true);
+      return;
+    }
 
     const img = new Image();
     img.src = src;
@@ -16,6 +24,7 @@ export function useImageLoader(src) {
     };
 
     img.onerror = () => {
+      console.warn("Image failed to load:", src);
       setError(true);
     };
 

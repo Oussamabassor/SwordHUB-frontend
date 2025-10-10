@@ -39,13 +39,15 @@ export const DataTable = ({
             {columns.map((column) => (
               <th
                 key={column.key}
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                className={`px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ${
+                  column.key === "image" ? "w-20" : ""
+                }`}
               >
                 {column.label}
               </th>
             ))}
             {(onEdit || onDelete || onView) && (
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-32">
                 Actions
               </th>
             )}
@@ -58,7 +60,12 @@ export const DataTable = ({
               className="hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               {columns.map((column) => (
-                <td key={column.key} className="px-6 py-4 whitespace-nowrap">
+                <td
+                  key={column.key}
+                  className={`px-6 py-4 ${
+                    column.key === "image" ? "" : "whitespace-nowrap"
+                  }`}
+                >
                   {column.render ? (
                     column.render(row)
                   ) : (

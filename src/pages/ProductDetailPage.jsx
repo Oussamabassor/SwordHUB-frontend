@@ -64,21 +64,29 @@ export function ProductDetailPage() {
 
     setAddingToCart(true);
 
-    // Add to cart
+    // Add to cart with animation
     addToCart({
       ...product,
       selectedSize,
       quantity,
     });
 
-    // Show success message
-    showToast(`${product.name} added to cart!`, "success");
+    // Show success message with better feedback
+    showToast(
+      `✓ ${product.name} (Size: ${selectedSize}) added to cart!`,
+      "success",
+      3000
+    );
 
-    // Wait a moment then open cart
+    // Smooth animation: brief delay then open cart
     setTimeout(() => {
       openCart();
+    }, 300);
+
+    // Reset adding state
+    setTimeout(() => {
       setAddingToCart(false);
-    }, 500);
+    }, 800);
   };
 
   const handleQuantityChange = (change) => {
@@ -132,7 +140,7 @@ export function ProductDetailPage() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main className="container px-4 py-8 mx-auto mt-20 lg:py-12">
+      <main className="container px-4 py-8 mx-auto mt-20 overflow-hidden sm:px-6 lg:px-8 lg:py-12 max-w-7xl product-detail-container">
         {/* Back Button */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
@@ -144,7 +152,7 @@ export function ProductDetailPage() {
           Back to Products
         </motion.button>
 
-        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12">
           {/* Images Section */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -153,11 +161,20 @@ export function ProductDetailPage() {
             className="space-y-4"
           >
             {/* Main Image */}
-            <div className="relative overflow-hidden border aspect-square rounded-2xl border-primary/10 bg-surface/50 view-bg">
+            <motion.div
+              className="relative overflow-hidden border aspect-square rounded-2xl border-primary/10 bg-surface/50 view-bg"
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+            >
               {discount && (
-                <div className="absolute z-10 px-4 py-2 font-medium text-white bg-red-500 rounded-full shadow-lg top-4 right-4 shadow-red-500/20">
+                <motion.div
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", delay: 0.3 }}
+                  className="absolute z-10 px-4 py-2 font-medium text-white bg-red-500 rounded-full shadow-lg top-4 right-4 shadow-red-500/20"
+                >
                   Save {discount}%
-                </div>
+                </motion.div>
               )}
               <ImageWithLoader
                 src={
@@ -165,17 +182,52 @@ export function ProductDetailPage() {
                   "/images/placeholders/swordshirt.jpg"
                 }
                 alt={product.name}
-                className="object-cover w-full h-full"
+                className="object-cover w-full h-full transition-transform duration-500 hover:scale-110"
               />
-            </div>
+
+              {/* Image navigation arrows for mobile */}
+              {productImages.length > 1 && (
+                <>
+                  <button
+                    onClick={() =>
+                      setSelectedImage(
+                        (prev) =>
+                          (prev - 1 + productImages.length) %
+                          productImages.length
+                      )
+                    }
+                    className="absolute z-10 p-2 transition-all -translate-y-1/2 rounded-full bg-black/50 backdrop-blur-sm left-2 top-1/2 hover:bg-black/70 sm:hidden"
+                  >
+                    <ChevronLeft className="w-6 h-6 text-white" />
+                  </button>
+                  <button
+                    onClick={() =>
+                      setSelectedImage(
+                        (prev) => (prev + 1) % productImages.length
+                      )
+                    }
+                    className="absolute z-10 p-2 transition-all -translate-y-1/2 rounded-full bg-black/50 backdrop-blur-sm right-2 top-1/2 hover:bg-black/70 sm:hidden"
+                  >
+                    <ChevronLeft className="w-6 h-6 text-white rotate-180" />
+                  </button>
+                </>
+              )}
+            </motion.div>
 
             {/* Thumbnail Images */}
             {productImages.length > 1 && (
-              <div className="grid grid-cols-4 gap-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="hidden grid-cols-4 gap-3 sm:grid md:gap-4"
+              >
                 {productImages.map((img, index) => (
-                  <button
+                  <motion.button
                     key={index}
                     onClick={() => setSelectedImage(index)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
                       selectedImage === index
                         ? "border-primary shadow-neon-green"
@@ -187,21 +239,27 @@ export function ProductDetailPage() {
                       alt={`${product.name} view ${index + 1}`}
                       className="object-cover w-full h-full"
                     />
-                  </button>
+                    {selectedImage === index && (
+                      <motion.div
+                        layoutId="selected-image-indicator"
+                        className="absolute inset-0 border-2 rounded-lg border-primary"
+                      />
+                    )}
+                  </motion.button>
                 ))}
-              </div>
+              </motion.div>
             )}
           </motion.div>
 
           {/* Product Info Section */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
+            initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="space-y-6"
+            className="space-y-4 sm:space-y-6"
           >
             {/* Category & Rating */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="px-3 py-1 text-sm font-medium rounded-full bg-primary/10 text-primary">
                 {product.category}
               </span>
@@ -222,7 +280,7 @@ export function ProductDetailPage() {
             </div>
 
             {/* Product Name */}
-            <h1 className="text-3xl font-bold lg:text-4xl text-light">
+            <h1 className="text-3xl font-bold break-words sm:text-4xl lg:text-5xl text-light">
               {product.name}
             </h1>
 
@@ -235,11 +293,11 @@ export function ProductDetailPage() {
             {/* Price */}
             <div className="flex items-baseline gap-3">
               <span className="text-4xl font-bold text-primary">
-                ${product.price}
+                {product.price} DH
               </span>
               {product.originalPrice && (
                 <span className="text-xl line-through text-light/40">
-                  ${product.originalPrice}
+                  {product.originalPrice} DH
                 </span>
               )}
             </div>
@@ -257,19 +315,24 @@ export function ProductDetailPage() {
                   Size Guide
                 </button>
               </div>
-              <div className="flex gap-3">
-                {sizes.map((size) => (
-                  <button
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                {sizes.map((size, index) => (
+                  <motion.button
                     key={size}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.05 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedSize(size)}
-                    className={`w-14 h-14 rounded-xl flex items-center justify-center font-semibold transition-all ${
+                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center font-semibold transition-all ${
                       selectedSize === size
                         ? "bg-primary text-background shadow-neon-green scale-105"
                         : "bg-surface/50 border border-primary/20 text-light hover:border-primary hover:bg-surface"
                     }`}
                   >
                     {size}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </div>
@@ -304,21 +367,44 @@ export function ProductDetailPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-3 sm:gap-4">
               <motion.button
                 whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
                 onClick={handleAddToCart}
                 disabled={addingToCart || !selectedSize}
-                className="flex items-center justify-center flex-1 gap-2 px-8 py-4 text-lg font-semibold transition-all rounded-xl bg-primary text-background hover:shadow-neon-green disabled:opacity-50 disabled:cursor-not-allowed"
+                className={`flex items-center justify-center flex-1 min-w-[200px] gap-2 px-4 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transition-all rounded-xl ${
+                  addingToCart
+                    ? "bg-green-500 animate-pulse"
+                    : "bg-primary hover:shadow-neon-green"
+                } text-background disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden`}
               >
                 {addingToCart ? (
                   <>
-                    <div className="w-5 h-5 border-2 rounded-full border-background border-t-transparent animate-spin"></div>
-                    Adding...
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        duration: 0.6,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
+                      className="w-5 h-5 border-2 rounded-full border-background border-t-transparent"
+                    ></motion.div>
+                    <motion.span
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                    >
+                      Adding to Cart...
+                    </motion.span>
                   </>
                 ) : (
                   <>
-                    <ShoppingCart size={22} />
+                    <motion.div
+                      whileHover={{ x: [0, -3, 3, 0] }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <ShoppingCart size={22} />
+                    </motion.div>
                     Add to Cart
                   </>
                 )}
@@ -327,7 +413,7 @@ export function ProductDetailPage() {
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsWishlisted(!isWishlisted)}
-                className={`p-4 transition-all rounded-xl border ${
+                className={`p-3 sm:p-4 transition-all rounded-xl border ${
                   isWishlisted
                     ? "bg-red-500 border-red-500 text-white"
                     : "bg-surface/50 border-primary/20 text-light hover:border-primary"
@@ -341,28 +427,28 @@ export function ProductDetailPage() {
 
               <motion.button
                 whileTap={{ scale: 0.95 }}
-                className="p-4 transition-all border rounded-xl bg-surface/50 border-primary/20 text-light hover:border-primary"
+                className="p-3 transition-all border sm:p-4 rounded-xl bg-surface/50 border-primary/20 text-light hover:border-primary"
               >
                 <Share2 size={22} />
               </motion.button>
             </div>
 
             {/* Features */}
-            <div className="p-6 space-y-4 border rounded-xl border-primary/10 bg-surface/30">
+            <div className="p-4 space-y-3 border sm:p-6 sm:space-y-4 rounded-xl border-primary/10 bg-surface/30">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-primary/10">
                   <Truck className="text-primary" size={20} />
                 </div>
-                <div>
+                <div className="flex-1 min-w-0">
                   <p className="font-medium text-light">Free Shipping</p>
-                  <p className="text-sm text-light/60">On orders over $50</p>
+                  <p className="text-sm text-light/60">On orders over 500 DH</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-primary/10">
                   <Shield className="text-primary" size={20} />
                 </div>
-                <div>
+                <div className="flex-1 min-w-0">
                   <p className="font-medium text-light">Secure Payment</p>
                   <p className="text-sm text-light/60">
                     100% secure transactions
@@ -373,7 +459,7 @@ export function ProductDetailPage() {
                 <div className="p-2 rounded-lg bg-primary/10">
                   <RefreshCw className="text-primary" size={20} />
                 </div>
-                <div>
+                <div className="flex-1 min-w-0">
                   <p className="font-medium text-light">Easy Returns</p>
                   <p className="text-sm text-light/60">30-day return policy</p>
                 </div>
@@ -381,11 +467,11 @@ export function ProductDetailPage() {
             </div>
 
             {/* Product Details */}
-            <div className="p-6 space-y-3 border rounded-xl border-primary/10 bg-surface/30">
+            <div className="p-4 space-y-3 border sm:p-6 rounded-xl border-primary/10 bg-surface/30">
               <h3 className="text-lg font-semibold text-light">
                 Product Details
               </h3>
-              <div className="space-y-2 text-sm text-light/80">
+              <div className="space-y-2 text-sm break-words text-light/80">
                 <p>
                   <strong>Material:</strong>{" "}
                   {product.material || "Premium Cotton"}
@@ -396,7 +482,7 @@ export function ProductDetailPage() {
                 <p>
                   <strong>Care:</strong> Machine washable, tumble dry low
                 </p>
-                <p>
+                <p className="break-all">
                   <strong>SKU:</strong> {product.id || "N/A"}
                 </p>
               </div>

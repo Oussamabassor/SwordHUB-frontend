@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ShoppingBag,
@@ -7,13 +7,114 @@ import {
   Leaf,
   Truck,
   Shield,
+  Loader,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { ProductViewer } from "./ProductViewer";
+import { productsApi } from "../services/apiService";
 import "../styles/components/Hero.css";
 
 export const Hero = () => {
   const navigate = useNavigate();
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchFeaturedProducts();
+  }, []);
+
+  const fetchFeaturedProducts = async () => {
+    try {
+      const response = await productsApi.getAll();
+      console.log("Hero Products API Response:", response);
+
+      // Backend returns: { success: true, data: { products: [...], total, page, limit } }
+      const productsData = response?.data?.products || response?.products || [];
+      console.log("Extracted products data:", productsData);
+
+      // Log first product to see structure
+      if (productsData.length > 0) {
+        console.log("First product structure:", productsData[0]);
+      }
+
+      // Get first 4 products with images (check both 'images' array and 'image' string)
+      const products = Array.isArray(productsData)
+        ? productsData
+            .filter((p) => {
+              const hasImages = (p.images && p.images.length > 0) || p.image;
+              if (!hasImages) {
+                console.log("Product without image:", p.name, p);
+              }
+              return hasImages;
+            })
+            .slice(0, 4)
+            .map((p) => ({
+              id: p._id || p.id,
+              name: p.name,
+              // Try images array first, then single image field
+              image: (p.images && p.images[0]) || p.image,
+            }))
+        : [];
+
+      console.log("Featured products to display:", products);
+
+      if (products.length === 0) {
+        console.warn("No products with images found, using fallback");
+        // Fallback to placeholder images
+        setFeaturedProducts([
+          {
+            id: "1",
+            name: "Featured Product 1",
+            image: "/images/placeholders/swordshirt.jpg",
+          },
+          {
+            id: "2",
+            name: "Featured Product 2",
+            image: "/images/placeholders/swordshirt2.jpg",
+          },
+          {
+            id: "3",
+            name: "Featured Product 3",
+            image: "/images/products/T-shirt3.png",
+          },
+          {
+            id: "4",
+            name: "Featured Product 4",
+            image: "/images/products/T-shirt4.png",
+          },
+        ]);
+      } else {
+        setFeaturedProducts(products);
+      }
+    } catch (error) {
+      console.error("Error fetching featured products:", error);
+      // Fallback to placeholder images
+      setFeaturedProducts([
+        {
+          id: "1",
+          name: "Featured Product 1",
+          image: "/images/placeholders/swordshirt.jpg",
+        },
+        {
+          id: "2",
+          name: "Featured Product 2",
+          image: "/images/placeholders/swordshirt2.jpg",
+        },
+        {
+          id: "3",
+          name: "Featured Product 3",
+          image: "/images/products/T-shirt3.png",
+        },
+        {
+          id: "4",
+          name: "Featured Product 4",
+          image: "/images/products/T-shirt4.png",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const scrollToProducts = () => {
     const productsSection = document.getElementById("products-section");
@@ -68,20 +169,17 @@ export const Hero = () => {
     },
   ];
 
-  const productImages = [
-    "/images/placeholders/swordshirt.jpg",
-    "/images/placeholders/swordshirt2.jpg",
-    "/images/products/T-shirt3.png",
-    "/images/products/T-shirt4.png",
-  ];
+  const handleProductClick = (productId) => {
+    navigate(`/products/${productId}`);
+  };
 
-  const heroBackgrounds = [
-    "/images/logo/hero-bg3.jpeg",
-    "/images/logo/hero-bg2.jpeg",
-    "/images/logo/hero-bg.jpeg",
-    "/images/placeholders/swordshirt.jpg",
-    "/images/placeholders/swordshirt2.jpg",
-  ];
+  if (loading) {
+    return (
+      <section className="relative overflow-hidden bg-background min-h-[600px] flex items-center justify-center py-6">
+        <Loader className="animate-spin h-12 w-12 text-primary" />
+      </section>
+    );
+  }
 
   return (
     <section className="relative overflow-hidden bg-background min-h-[600px] flex items-center py-6">
@@ -90,7 +188,7 @@ export const Hero = () => {
         <div className="absolute inset-0 z-10 bg-gradient-to-b from-background/90 to-background/70" />
         <div className="absolute inset-0 z-0 hero-background">
           <img
-            src={heroBackgrounds[0]}
+            src="/images/logo/hero-bg3.jpeg"
             alt="Background"
             className="object-cover w-full h-full opacity-60"
           />
@@ -184,7 +282,10 @@ export const Hero = () => {
 
           {/* Right Column - Interactive Product View */}
           <div className="flex items-center justify-center h-full py-4 sm:py-6">
-            <ProductViewer images={productImages} />
+            <ProductViewer
+              products={featuredProducts}
+              onProductClick={handleProductClick}
+            />
           </div>
         </div>
       </div>

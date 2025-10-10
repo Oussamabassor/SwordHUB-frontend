@@ -1,32 +1,61 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+  MousePointerClick,
+} from "lucide-react";
 
-export const ProductViewer = ({ images }) => {
+export const ProductViewer = ({ products = [], onProductClick }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
 
+  // Backward compatibility: if products is an array of strings (old images prop)
+  const items =
+    products.length > 0 && typeof products[0] === "string"
+      ? products.map((img, idx) => ({
+          id: idx,
+          name: `Product ${idx + 1}`,
+          image: img,
+        }))
+      : products;
+
   // Auto-rotate products
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || items.length === 0) return;
 
     const interval = setInterval(() => {
       setDirection(1);
-      setCurrentIndex((prev) => (prev + 1) % images.length);
+      setCurrentIndex((prev) => (prev + 1) % items.length);
     }, 4000); // Change every 4 seconds
 
     return () => clearInterval(interval);
-  }, [images.length, isPaused]);
+  }, [items.length, isPaused]);
+
+  if (items.length === 0) {
+    return (
+      <div className="flex items-center justify-center w-full max-w-md mx-auto aspect-square">
+        <p className="text-text-muted">No products available</p>
+      </div>
+    );
+  }
 
   const nextImage = () => {
     setDirection(1);
-    setCurrentIndex((prev) => (prev + 1) % images.length);
+    setCurrentIndex((prev) => (prev + 1) % items.length);
   };
 
   const prevImage = () => {
     setDirection(-1);
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+    setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
+  };
+
+  const handleProductClick = () => {
+    if (onProductClick && items[currentIndex]) {
+      onProductClick(items[currentIndex].id);
+    }
   };
 
   const variants = {
@@ -54,53 +83,91 @@ export const ProductViewer = ({ images }) => {
 
   return (
     <div
-      className="relative w-full max-w-md mx-auto"
+      className="relative w-full max-w-2xl mx-auto"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Animated background glow that matches current product */}
+      {/* Modern subtle background glow */}
       <motion.div
         key={`glow-${currentIndex}`}
-        initial={{ opacity: 0, scale: 0.8 }}
+        initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.8 }}
-        transition={{ duration: 0.8 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        transition={{ duration: 1 }}
         className="absolute inset-0 -z-10"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/10 to-transparent blur-3xl animate-pulse" />
-        <div className="absolute inset-0 bg-gradient-to-tl from-secondary/20 via-transparent to-primary/20 blur-2xl" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-primary/10 blur-3xl" />
       </motion.div>
 
       {/* Main product display */}
-      <div className="relative aspect-square">
-        {/* Decorative elements */}
+      <div className="relative aspect-[4/5] sm:aspect-[16/10]">
+        {/* Modern minimalist decorative corners */}
         <motion.div
-          animate={{
-            rotate: [0, 360],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="absolute w-24 h-24 border-2 rounded-full -top-4 -right-4 border-primary/20 blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="absolute top-0 left-0 w-12 h-12 sm:w-16 sm:h-16 border-t-2 border-l-2 border-primary/30 rounded-tl-2xl"
         />
         <motion.div
-          animate={{
-            rotate: [360, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="absolute w-32 h-32 border-2 rounded-full -bottom-4 -left-4 border-primary/20 blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="absolute top-0 right-0 w-12 h-12 sm:w-16 sm:h-16 border-t-2 border-r-2 border-primary/30 rounded-tr-2xl"
+        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="absolute bottom-0 left-0 w-12 h-12 sm:w-16 sm:h-16 border-b-2 border-l-2 border-primary/30 rounded-bl-2xl"
+        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="absolute bottom-0 right-0 w-12 h-12 sm:w-16 sm:h-16 border-b-2 border-r-2 border-primary/30 rounded-br-2xl"
         />
 
         {/* Product image container */}
-        <div className="relative w-full h-full overflow-hidden border shadow-2xl rounded-2xl bg-gradient-to-br from-surface/80 to-surface/40 backdrop-blur-xl border-primary/20">
+        <div
+          className="relative w-full h-full overflow-hidden border shadow-2xl cursor-pointer rounded-2xl bg-gradient-to-br from-surface/90 to-surface/60 backdrop-blur-xl border-primary/20 group"
+          onClick={handleProductClick}
+        >
+          {/* Modern sleek click indicator overlay */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileHover={{ opacity: 1 }}
+            className="absolute inset-0 z-30 flex items-center justify-center transition-opacity bg-gradient-to-b from-background/80 via-background/90 to-background/80 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 10 }}
+              whileHover={{ scale: 1, opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
+              className="flex flex-col items-center gap-4"
+            >
+              <motion.div
+                animate={{
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="p-4 sm:p-6 rounded-full bg-primary/20 backdrop-blur-sm"
+              >
+                <MousePointerClick
+                  size={48}
+                  className="sm:w-14 sm:h-14 text-primary drop-shadow-2xl"
+                  strokeWidth={2}
+                />
+              </motion.div>
+              <div className="text-center">
+                <p className="text-xl sm:text-2xl font-bold text-light drop-shadow-lg">
+                  View Product
+                </p>
+                <p className="mt-2 text-xs sm:text-sm font-medium text-primary">
+                  Click to explore details
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+
           <AnimatePresence initial={false} custom={direction} mode="wait">
             <motion.div
               key={currentIndex}
@@ -119,11 +186,11 @@ export const ProductViewer = ({ images }) => {
               style={{ perspective: "1000px" }}
             >
               <img
-                src={images[currentIndex]}
-                alt={`Product view ${currentIndex + 1}`}
-                className="object-cover w-full h-full "
+                src={items[currentIndex].image}
+                alt={items[currentIndex].name}
+                className="object-contain w-full h-full p-4 sm:p-8"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/30 via-transparent to-transparent" />
 
               {/* Shimmer effect on image change */}
               <motion.div
@@ -136,49 +203,92 @@ export const ProductViewer = ({ images }) => {
             </motion.div>
           </AnimatePresence>
 
-          {/* "New" badge */}
+          {/* "New" badge - Modern minimalist */}
           <motion.div
-            initial={{ scale: 0, rotate: -180 }}
+            initial={{ scale: 0, rotate: -10 }}
             animate={{ scale: 1, rotate: 0 }}
-            transition={{ delay: 0.3, type: "spring" }}
-            className="absolute z-10 top-4 left-4"
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="absolute z-10 top-4 sm:top-6 left-4 sm:left-6"
           >
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-background text-xs font-bold rounded-full shadow-lg">
-              <Sparkles size={14} />
-              <span>NEW</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-primary text-background text-[10px] sm:text-xs font-bold rounded-lg shadow-xl border-2 border-primary/20 backdrop-blur-sm">
+              <Sparkles
+                size={12}
+                className="sm:w-3.5 sm:h-3.5"
+                strokeWidth={3}
+              />
+              <span className="tracking-wide">NEW ARRIVAL</span>
             </div>
           </motion.div>
 
-          {/* Product count indicator */}
-          <div className="absolute top-4 right-4 z-10 px-3 py-1.5 bg-black/40 backdrop-blur-md text-white text-xs font-semibold rounded-full border border-white/20">
-            {currentIndex + 1} / {images.length}
+          {/* Product count indicator - Sleek modern */}
+          <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-10 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-background/80 backdrop-blur-md text-light text-xs sm:text-sm font-semibold rounded-lg border border-primary/30 shadow-lg">
+            <span className="text-primary font-bold">{currentIndex + 1}</span>
+            <span className="mx-1 sm:mx-1.5 text-light/40">/</span>
+            <span className="text-light/70">{items.length}</span>
           </div>
+
+          {/* Product name overlay - Modern card style */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="absolute z-10 bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6"
+          >
+            <div className="p-3 sm:p-4 bg-surface/95 backdrop-blur-xl rounded-xl border border-primary/20 shadow-2xl">
+              <div className="flex items-start justify-between gap-2 sm:gap-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-base sm:text-lg font-bold text-light truncate">
+                    {items[currentIndex].name}
+                  </p>
+                  <div className="flex items-center gap-1.5 sm:gap-2 mt-1">
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-pulse" />
+                    <span className="text-[10px] sm:text-xs font-medium text-primary">
+                      Featured Collection
+                    </span>
+                  </div>
+                </div>
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className="p-1.5 sm:p-2 rounded-lg bg-primary/10 border border-primary/30"
+                >
+                  <Sparkles size={14} className="sm:w-4 sm:h-4 text-primary" />
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
         </div>
 
-        {/* Navigation buttons */}
+        {/* Navigation buttons - Modern sleek design */}
         <motion.button
-          onClick={prevImage}
-          whileHover={{ scale: 1.1, x: -5 }}
-          whileTap={{ scale: 0.9 }}
-          className="absolute z-20 p-3 text-white transition-all -translate-y-1/2 border rounded-full shadow-lg left-2 top-1/2 bg-black/30 backdrop-blur-md hover:bg-primary/80 border-white/20"
+          onClick={(e) => {
+            e.stopPropagation();
+            prevImage();
+          }}
+          whileHover={{ scale: 1.1, x: -4 }}
+          whileTap={{ scale: 0.95 }}
+          className="absolute z-20 p-2 sm:p-3 text-light transition-all -translate-y-1/2 border rounded-lg sm:rounded-xl shadow-xl left-1 sm:-left-4 top-1/2 bg-surface/90 backdrop-blur-lg hover:bg-primary hover:text-background border-primary/30 hover:border-primary/50 hover:shadow-primary/20"
         >
-          <ChevronLeft size={24} />
+          <ChevronLeft size={20} className="sm:w-6 sm:h-6" strokeWidth={2.5} />
         </motion.button>
         <motion.button
-          onClick={nextImage}
-          whileHover={{ scale: 1.1, x: 5 }}
-          whileTap={{ scale: 0.9 }}
-          className="absolute z-20 p-3 text-white transition-all -translate-y-1/2 border rounded-full shadow-lg right-2 top-1/2 bg-black/30 backdrop-blur-md hover:bg-primary/80 border-white/20"
+          onClick={(e) => {
+            e.stopPropagation();
+            nextImage();
+          }}
+          whileHover={{ scale: 1.1, x: 4 }}
+          whileTap={{ scale: 0.95 }}
+          className="absolute z-20 p-2 sm:p-3 text-light transition-all -translate-y-1/2 border rounded-lg sm:rounded-xl shadow-xl right-1 sm:-right-4 top-1/2 bg-surface/90 backdrop-blur-lg hover:bg-primary hover:text-background border-primary/30 hover:border-primary/50 hover:shadow-primary/20"
         >
-          <ChevronRight size={24} />
+          <ChevronRight size={20} className="sm:w-6 sm:h-6" strokeWidth={2.5} />
         </motion.button>
 
-        {/* Dots indicator */}
-        <div className="absolute z-20 flex gap-2 -translate-x-1/2 bottom-4 left-1/2">
-          {images.map((_, index) => (
+        {/* Dots indicator - Modern minimalist */}
+        <div className="absolute z-20 flex gap-1.5 sm:gap-2 -translate-x-1/2 bottom-16 sm:bottom-20 left-1/2">
+          {items.map((_, index) => (
             <motion.button
               key={index}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 setDirection(index > currentIndex ? 1 : -1);
                 setCurrentIndex(index);
               }}
@@ -187,36 +297,40 @@ export const ProductViewer = ({ images }) => {
               className="relative"
             >
               <div
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                className={`rounded-full transition-all duration-300 ${
                   index === currentIndex
-                    ? "bg-primary w-8 shadow-lg shadow-primary/50"
-                    : "bg-white/50 hover:bg-white/80"
+                    ? "bg-primary w-6 sm:w-8 h-1.5 sm:h-2 shadow-lg shadow-primary/50"
+                    : "bg-light/30 hover:bg-light/50 w-1.5 sm:w-2 h-1.5 sm:h-2"
                 }`}
               />
             </motion.button>
           ))}
         </div>
 
-        {/* Auto-play indicator */}
+        {/* Auto-play indicator - Subtle */}
         {!isPaused && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="absolute z-20 -translate-x-1/2 bottom-14 left-1/2"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="absolute z-20 px-3 py-1 -translate-x-1/2 rounded-full top-6 left-1/2 bg-background/80 backdrop-blur-md border border-primary/30"
           >
-            <div className="px-3 py-1 text-xs text-white border rounded-full bg-black/40 backdrop-blur-md border-white/20">
-              Auto-playing
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="text-xs font-medium text-light/70">
+                Auto-playing
+              </span>
             </div>
           </motion.div>
         )}
       </div>
 
-      {/* Bottom accent line */}
+      {/* Bottom accent - Minimalist */}
       <motion.div
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: 1 }}
-        transition={{ delay: 0.5, duration: 0.8 }}
-        className="h-1 mt-4 rounded-full bg-gradient-to-r from-transparent via-primary to-transparent"
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={{ scaleX: 1, opacity: 1 }}
+        transition={{ delay: 0.4, duration: 0.8 }}
+        className="h-0.5 mt-6 rounded-full bg-gradient-to-r from-transparent via-primary/50 to-transparent"
       />
     </div>
   );

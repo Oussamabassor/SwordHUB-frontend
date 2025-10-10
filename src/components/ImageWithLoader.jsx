@@ -2,12 +2,32 @@ import React from "react";
 import { useImageLoader, getFallbackImage } from "../utils/imageLoader";
 
 export function ImageWithLoader({ src, alt, className, type = "product" }) {
+  // Safety check: if no src provided, use fallback immediately
+  if (!src) {
+    return (
+      <div className={`relative ${className}`}>
+        <img
+          src={getFallbackImage(type)}
+          alt={alt || "Product image"}
+          className={className}
+        />
+        <div className="absolute inset-0 flex items-center justify-center bg-surface/50 backdrop-blur-sm">
+          <p className="text-text-muted text-sm">No image</p>
+        </div>
+      </div>
+    );
+  }
+
   const { loaded, error } = useImageLoader(src);
 
   if (error) {
     return (
       <div className={`relative ${className}`}>
-        <img src={getFallbackImage(type)} alt={alt} className={className} />
+        <img
+          src={getFallbackImage(type)}
+          alt={alt || "Product image"}
+          className={className}
+        />
         <div className="absolute inset-0 flex items-center justify-center bg-surface/50 backdrop-blur-sm">
           <p className="text-text-muted text-sm">Image not available</p>
         </div>
@@ -17,7 +37,7 @@ export function ImageWithLoader({ src, alt, className, type = "product" }) {
 
   if (!loaded) {
     return (
-      <div className={`${className} animate-pulse bg-surface-alt`}>
+      <div className={`relative ${className} animate-pulse bg-surface-alt`}>
         <div className="absolute inset-0 flex items-center justify-center">
           <svg
             className="w-8 h-8 text-text-muted/30 animate-spin"
@@ -30,6 +50,7 @@ export function ImageWithLoader({ src, alt, className, type = "product" }) {
               r="10"
               stroke="currentColor"
               strokeWidth="4"
+              fill="none"
             />
             <path
               className="opacity-75"
@@ -42,5 +63,5 @@ export function ImageWithLoader({ src, alt, className, type = "product" }) {
     );
   }
 
-  return <img src={src} alt={alt} className={className} />;
+  return <img src={src} alt={alt || "Product image"} className={className} />;
 }

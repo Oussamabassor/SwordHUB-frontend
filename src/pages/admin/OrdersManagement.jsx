@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AdminSidebar, AdminHeader } from "../../components/admin/AdminLayout";
 import { DataTable } from "../../components/admin/DataTable";
+import { OrderDetailsModal } from "../../components/admin/OrderDetailsModal";
 import { ordersApi } from "../../services/apiService";
 import { Eye, Filter } from "lucide-react";
 
@@ -9,6 +10,9 @@ export const OrdersManagement = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("");
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [selectedOrderData, setSelectedOrderData] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -18,8 +22,11 @@ export const OrdersManagement = () => {
     try {
       setLoading(true);
       const response = await ordersApi.getAll({ status: statusFilter });
-      // Extract orders array from response
+      console.log("Orders Management API Response:", response);
+
+      // Extract orders array from response: { success: true, data: { orders: [...], total } }
       const ordersData = response?.data?.orders || response?.orders || [];
+      console.log("Extracted orders:", ordersData);
       setOrders(ordersData);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -39,8 +46,49 @@ export const OrdersManagement = () => {
   };
 
   const handleView = (order) => {
-    // Implement order detail view
-    alert(`View order details for order #${order.id}`);
+    console.log("Opening order details for:", order);
+    setSelectedOrderId(order.id || order._id);
+    setSelectedOrderData({
+      id: order.id || order._id,
+      orderNumber: `#${(order.id || order._id).slice(-8).toUpperCase()}`,
+      customerName: order.customerName || "Unknown",
+      customerPhone: order.customerPhone || "N/A",
+      customerAddress: order.customerAddress || "N/A",
+      status: order.status || "pending",
+      totalAmount: order.total || order.totalAmount || 0,
+      createdAt: order.createdAt || new Date().toISOString(),
+      items: order.items || [],
+      timeline: [
+        { status: "placed", date: order.createdAt, completed: true },
+        {
+          status: "processing",
+          date:
+            order.status === "processing" ||
+            order.status === "shipped" ||
+            order.status === "delivered"
+              ? order.createdAt
+              : null,
+          completed:
+            order.status === "processing" ||
+            order.status === "shipped" ||
+            order.status === "delivered",
+        },
+        {
+          status: "shipped",
+          date:
+            order.status === "shipped" || order.status === "delivered"
+              ? order.createdAt
+              : null,
+          completed: order.status === "shipped" || order.status === "delivered",
+        },
+        {
+          status: "delivered",
+          date: order.status === "delivered" ? order.createdAt : null,
+          completed: order.status === "delivered",
+        },
+      ],
+    });
+    setIsModalOpen(true);
   };
 
   const handleDelete = async (order) => {
@@ -121,7 +169,7 @@ export const OrdersManagement = () => {
     {
       key: "total",
       label: "Total",
-      render: (order) => <span className="font-medium">${order.total}</span>,
+      render: (order) => <span className="font-medium">{order.total} DH</span>,
     },
     {
       key: "status",
@@ -190,6 +238,18 @@ export const OrdersManagement = () => {
           />
         </div>
       </main>
+
+      {/* Order Details Modal */}
+      <OrderDetailsModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedOrderId(null);
+          setSelectedOrderData(null);
+        }}
+        orderId={selectedOrderId}
+        orderData={selectedOrderData}
+      />
     </div>
   );
 };

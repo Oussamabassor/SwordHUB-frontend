@@ -149,7 +149,7 @@ export function CartSidebar() {
 
                           <div className="text-right">
                             <p className="font-bold text-primary">
-                              ${(item.price * item.quantity).toFixed(2)}
+                              {(item.price * item.quantity).toFixed(2)} DH
                             </p>
                           </div>
                         </div>
@@ -181,7 +181,7 @@ export function CartSidebar() {
                     Subtotal
                   </span>
                   <span className="text-2xl font-bold text-primary">
-                    ${getTotalPrice().toFixed(2)}
+                    {getTotalPrice().toFixed(2)} DH
                   </span>
                 </div>
 

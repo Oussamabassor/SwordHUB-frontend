@@ -161,7 +161,7 @@ export function CheckoutPage() {
             <div className="p-4 mb-6 border rounded-lg bg-surface/30 border-primary/10">
               <p className="text-sm text-light/60">Order Total</p>
               <p className="text-3xl font-bold text-primary">
-                ${getTotalPrice().toFixed(2)}
+                {getTotalPrice().toFixed(2)} DH
               </p>
             </div>
             <p className="text-sm text-light/60">Redirecting to homepage...</p>
@@ -356,7 +356,7 @@ export function CheckoutPage() {
                         Size: {item.selectedSize} × {item.quantity}
                       </p>
                       <p className="text-sm font-semibold text-primary">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {(item.price * item.quantity).toFixed(2)} DH
                       </p>
                     </div>
                   </div>
@@ -367,7 +367,7 @@ export function CheckoutPage() {
               <div className="pt-4 space-y-2 border-t border-primary/10">
                 <div className="flex justify-between text-sm text-light/70">
                   <span>Subtotal</span>
-                  <span>${getTotalPrice().toFixed(2)}</span>
+                  <span>{getTotalPrice().toFixed(2)} DH</span>
                 </div>
                 <div className="flex justify-between text-sm text-light/70">
                   <span>Shipping</span>
@@ -376,7 +376,7 @@ export function CheckoutPage() {
                 <div className="flex justify-between pt-2 text-lg font-bold border-t border-primary/10 text-light">
                   <span>Total</span>
                   <span className="text-primary">
-                    ${getTotalPrice().toFixed(2)}
+                    {getTotalPrice().toFixed(2)} DH
                   </span>
                 </div>
               </div>

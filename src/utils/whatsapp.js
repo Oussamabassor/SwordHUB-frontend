@@ -12,7 +12,7 @@ const formatOrderMessage = (product, selectedSize) => {
   return `Hello! I would like to order:
 🎽 Product: ${product.name}
 📏 Size: ${selectedSize}
-💰 Price: $${product.price}
+💰 Price: ${product.price} DH
 🏷️ Category: ${product.category}
 ${product.material ? `🧵 Material: ${product.material}` : ""}
 ${product.fit ? `👕 Fit: ${product.fit}` : ""}

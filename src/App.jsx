@@ -22,6 +22,7 @@ import { CheckoutPage } from "./pages/CheckoutPage";
 // Admin Pages
 import { AdminLogin } from "./pages/admin/AdminLogin";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
+import { AdminAnalytics } from "./pages/admin/AdminAnalytics";
 import { ProductsManagement } from "./pages/admin/ProductsManagement";
 import { OrdersManagement } from "./pages/admin/OrdersManagement";
 import { CategoriesManagement } from "./pages/admin/CategoriesManagement";
@@ -51,6 +52,22 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/analytics"
+                  element={
+                    <ProtectedRoute>
+                      <AdminAnalytics />
                     </ProtectedRoute>
                   }
                 />

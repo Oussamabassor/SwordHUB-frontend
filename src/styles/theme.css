@@ -25,11 +25,7 @@
 
   /* Hero Background Colors */
   --hero-bg: #121212;
-  --hero-overlay: linear-gradient(
-    to bottom,
-    #05162050,
-    #0516204a
-  );
+  --hero-overlay: linear-gradient(to bottom, #05162050, #0516204a);
   --hero-glow: radial-gradient(
     circle at center,
     rgba(97, 254, 8, 0.2),
@@ -134,11 +130,18 @@
 /* Dark theme */
 /* [data-theme="dark"] {
 } */
-
+/* .product-detail-container {
+  border: 1px solid red;
+  width: 150px;
+  padding: 0;
+  margin: 0;
+} */
 /* Base styles */
 body {
   background-color: var(--color-background);
   color: var(--color-text);
+  overflow-x: hidden;
+  /* border: 1px solid red; */
   background-image: radial-gradient(
       circle at 100% 0%,
       var(--color-primary) 0%,
@@ -154,6 +157,10 @@ body {
   background-repeat: no-repeat;
 }
 
+.view-container:hover img {
+  transform: scale(1.05);
+  top: 0;
+}
 /* Typography */
 html {
   font-family: "Inter", system-ui, -apple-system, sans-serif;

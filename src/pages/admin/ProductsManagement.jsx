@@ -57,20 +57,39 @@ export const ProductsManagement = () => {
     {
       key: "image",
       label: "Image",
+      render: (product) => {
+        const productImage =
+          (product.images && product.images[0]) ||
+          product.image ||
+          "/images/placeholders/swordshirt.jpg";
+        return (
+          <div className="flex items-center">
+            <img
+              src={productImage}
+              alt={product.name}
+              className="flex-shrink-0 object-cover w-12 h-12 border-2 rounded-lg shadow-sm border-primary/20"
+              onError={(e) => {
+                e.target.src = "/images/placeholders/swordshirt.jpg";
+              }}
+            />
+          </div>
+        );
+      },
+    },
+    {
+      key: "name",
+      label: "Name",
       render: (product) => (
-        <img
-          src={product.image || "/images/placeholders/product-placeholder.svg"}
-          alt={product.name}
-          className="w-12 h-12 object-cover rounded"
-        />
+        <div className="max-w-xs text-sm font-medium text-gray-900 truncate dark:text-white">
+          {product.name}
+        </div>
       ),
     },
-    { key: "name", label: "Name" },
     { key: "category", label: "Category" },
     {
       key: "price",
       label: "Price",
-      render: (product) => <span>${product.price}</span>,
+      render: (product) => <span>{product.price} DH</span>,
     },
     { key: "stock", label: "Stock" },
     {
@@ -95,16 +114,16 @@ export const ProductsManagement = () => {
       <AdminSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       <AdminHeader setSidebarOpen={setSidebarOpen} />
 
-      <main className="lg:pl-64 pt-16">
-        <div className="p-6 max-w-7xl mx-auto">
+      <main className="pt-16 lg:pl-64">
+        <div className="p-6 mx-auto max-w-7xl">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-0">
+          <div className="flex flex-col mb-6 sm:flex-row sm:items-center sm:justify-between">
+            <h1 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white sm:mb-0">
               Products Management
             </h1>
             <button
               onClick={() => setShowForm(true)}
-              className="flex items-center justify-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+              className="flex items-center justify-center px-4 py-2 text-white transition-colors rounded-lg bg-primary hover:bg-primary-dark"
             >
               <Plus size={20} className="mr-2" />
               Add Product
@@ -115,7 +134,7 @@ export const ProductsManagement = () => {
           <div className="mb-6">
             <div className="relative">
               <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                className="absolute text-gray-400 transform -translate-y-1/2 left-3 top-1/2"
                 size={20}
               />
               <input
@@ -124,7 +143,7 @@ export const ProductsManagement = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && fetchProducts()}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white"
+                className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg dark:border-gray-600 focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white"
               />
             </div>
           </div>
