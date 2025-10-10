@@ -10,9 +10,9 @@ import {
 import { useOrders } from "../contexts/OrderContext";
 
 export function CartDrawer({ isOpen, onClose }) {
-  const { orders, removeFromOrder } = useOrders();
+  const { cart, removeFromCart, updateQuantity, getTotalPrice } = useOrders();
 
-  const subtotal = orders.reduce((total, item) => total + item.price, 0);
+  const subtotal = getTotalPrice();
 
   return (
     <>
@@ -37,20 +37,18 @@ export function CartDrawer({ isOpen, onClose }) {
             <div className="flex items-center gap-3">
               <div className="relative p-2 rounded-xl bg-primary/10">
                 <ShoppingBag className="w-6 h-6 text-primary" />
-                {orders.length > 0 && (
+                {cart.length > 0 && (
                   <div className="absolute flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full -top-1 -right-1 bg-primary text-background animate-pulse">
-                    {orders.length}
+                    {cart.length}
                   </div>
                 )}
               </div>
               <div>
                 <h2 className="text-xl font-bold text-text">Shopping Cart</h2>
                 <p className="text-sm text-text-muted">
-                  {orders.length === 0
+                  {cart.length === 0
                     ? "Empty cart"
-                    : `${orders.length} ${
-                        orders.length === 1 ? "item" : "items"
-                      }`}
+                    : `${cart.length} ${cart.length === 1 ? "item" : "items"}`}
                 </p>
               </div>
             </div>
@@ -65,7 +63,7 @@ export function CartDrawer({ isOpen, onClose }) {
 
         {/* Cart Items */}
         <div className="flex-1 px-6 py-6 overflow-y-auto">
-          {orders.length === 0 ? (
+          {cart.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full gap-6 py-12 text-center">
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-primary/20 blur-2xl animate-pulse"></div>
@@ -91,9 +89,9 @@ export function CartDrawer({ isOpen, onClose }) {
             </div>
           ) : (
             <div className="space-y-4">
-              {orders.map((item, index) => (
+              {cart.map((item, index) => (
                 <div
-                  key={item.id}
+                  key={item.cartId || item.id}
                   className="relative overflow-hidden transition-all duration-300 group rounded-2xl bg-surface/50 backdrop-blur-sm hover:shadow-lg hover:shadow-primary/10 hover:scale-[1.02] hover:-translate-y-1"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
@@ -119,14 +117,14 @@ export function CartDrawer({ isOpen, onClose }) {
                         </h3>
                         <div className="flex items-center gap-2 mb-2">
                           <span className="px-2 py-1 text-xs font-medium rounded-lg bg-primary/10 text-primary">
-                            Size: {item.size}
+                            Size: {item.selectedSize || item.size}
                           </span>
                         </div>
                       </div>
 
                       <div className="flex items-end justify-between">
                         <button
-                          onClick={() => removeFromOrder(item.id)}
+                          onClick={() => removeFromCart(item.cartId)}
                           className="group/remove flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-all rounded-lg text-text-muted hover:text-red-500 hover:bg-red-500/10 hover:scale-105"
                         >
                           <Trash2
@@ -137,8 +135,13 @@ export function CartDrawer({ isOpen, onClose }) {
                         </button>
                         <div className="text-right">
                           <p className="text-xl font-bold text-primary">
-                            ${item.price}
+                            ${(item.price * (item.quantity || 1)).toFixed(2)}
                           </p>
+                          {item.quantity > 1 && (
+                            <p className="text-xs text-text-muted">
+                              ${item.price} × {item.quantity}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -153,7 +156,7 @@ export function CartDrawer({ isOpen, onClose }) {
         </div>
 
         {/* Summary */}
-        {orders.length > 0 && (
+        {cart.length > 0 && (
           <div className="px-6 pt-4 pb-6 mt-auto border-t bg-surface/50 backdrop-blur-md border-primary/20">
             {/* Subtotal Section */}
             <div className="p-4 mb-4 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/5">
@@ -165,7 +168,7 @@ export function CartDrawer({ isOpen, onClose }) {
                   </p>
                 </div>
                 <p className="text-sm text-text-muted">
-                  {orders.length} {orders.length === 1 ? "item" : "items"}
+                  {cart.length} {cart.length === 1 ? "item" : "items"}
                 </p>
               </div>
               <div className="flex items-end justify-between">
@@ -185,12 +188,14 @@ export function CartDrawer({ isOpen, onClose }) {
             <button
               className="relative flex items-center justify-center w-full gap-3 py-4 overflow-hidden font-bold transition-all rounded-xl bg-gradient-to-r from-primary to-secondary text-background hover:shadow-xl hover:shadow-primary/40 hover:scale-[1.02] active:scale-95 group"
               onClick={() => {
-                const message = `🛍️ New Order:%0A%0A${orders
+                const message = `🛍️ New Order:%0A%0A${cart
                   .map(
                     (item, index) =>
                       `${index + 1}. ${item.name}%0A   Size: ${
-                        item.size
-                      }%0A   Price: $${item.price}`
+                        item.selectedSize || item.size
+                      }%0A   Qty: ${item.quantity || 1}%0A   Price: $${(
+                        item.price * (item.quantity || 1)
+                      ).toFixed(2)}`
                   )
                   .join("%0A%0A")}%0A%0A💰 Total: $${subtotal.toFixed(
                   2

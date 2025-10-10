@@ -324,7 +324,7 @@ export function Footer() {
                 </p>
                 <div className="flex items-center gap-2">
                   <a
-                    href="https://www.linkedin.com/in/your-profile"
+                    href="https://www.linkedin.com/in/oussama-bassor/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="relative flex items-center gap-1.5 px-3 py-2 md:px-4 md:py-2 overflow-hidden text-xs md:text-sm text-white transition-all duration-300 group bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:shadow-lg hover:shadow-blue-500/50 hover:scale-105"
@@ -341,7 +341,7 @@ export function Footer() {
                   </a>
 
                   <a
-                    href="https://your-portfolio.com"
+                    href="https://ouss-folio-kohl.vercel.app/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="relative flex items-center gap-1.5 px-3 py-2 md:px-4 md:py-2 overflow-hidden text-xs md:text-sm transition-all duration-300 group bg-gradient-to-r from-primary to-secondary text-background rounded-lg hover:shadow-lg hover:shadow-primary/50 hover:scale-105"

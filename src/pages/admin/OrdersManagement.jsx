@@ -90,8 +90,26 @@ export const OrdersManagement = () => {
             {order.customerName}
           </div>
           <div className="text-sm text-gray-500 dark:text-gray-400">
-            {order.customerEmail}
+            {order.customerEmail || order.customerPhone}
           </div>
+        </div>
+      ),
+    },
+    {
+      key: "customerPhone",
+      label: "Phone",
+      render: (order) => (
+        <div className="text-sm text-gray-900 dark:text-white">
+          {order.customerPhone || "N/A"}
+        </div>
+      ),
+    },
+    {
+      key: "customerAddress",
+      label: "Address",
+      render: (order) => (
+        <div className="text-sm text-gray-900 dark:text-white max-w-xs truncate">
+          {order.customerAddress || "N/A"}
         </div>
       ),
     },

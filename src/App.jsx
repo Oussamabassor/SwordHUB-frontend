@@ -9,13 +9,15 @@ import { ThemeProvider } from "./hooks/useTheme";
 import { OrderProvider } from "./contexts/OrderContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ToastProvider } from "./components/ToastProvider";
+import { CartSidebar } from "./components/CartSidebar";
 import { ProtectedRoute } from "./components/admin/ProtectedRoute";
 
 // Customer Pages
 import { HomePage } from "./pages/HomePage";
-import { ProductDetails } from "./pages/ProductDetails";
+import { ProductDetailPage } from "./pages/ProductDetailPage";
 import { Collection } from "./pages/Collection";
 import { SizeGuide } from "./pages/SizeGuide";
+import { CheckoutPage } from "./pages/CheckoutPage";
 
 // Admin Pages
 import { AdminLogin } from "./pages/admin/AdminLogin";
@@ -33,12 +35,14 @@ function App() {
         <AuthProvider>
           <OrderProvider>
             <ToastProvider>
+              <CartSidebar />
               <Routes>
                 {/* Customer Routes */}
                 <Route path="/" element={<HomePage />} />
-                <Route path="/products/:id" element={<ProductDetails />} />
+                <Route path="/products/:id" element={<ProductDetailPage />} />
                 <Route path="/collection/:category" element={<Collection />} />
                 <Route path="/size-guide" element={<SizeGuide />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
 
                 {/* Admin Routes */}
                 <Route path="/admin/login" element={<AdminLogin />} />

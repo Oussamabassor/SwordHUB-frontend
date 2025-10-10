@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Search, ShoppingBag, User, Menu, X, ChevronDown } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { motion, AnimatePresence } from "framer-motion";
+import { useOrders } from "../contexts/OrderContext";
 
 const categories = [
   {
@@ -36,7 +37,8 @@ const categories = [
   },
 ];
 
-export function Header({ onCartClick, cartItemCount = 0 }) {
+export function Header() {
+  const { getTotalItems, toggleCart } = useOrders();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState(null);
@@ -159,13 +161,13 @@ export function Header({ onCartClick, cartItemCount = 0 }) {
 
             {/* Cart */}
             <button
-              onClick={onCartClick}
+              onClick={toggleCart}
               className="relative p-2 transition-colors hover:bg-surface-alt rounded-xl"
             >
               <ShoppingBag className="w-6 h-6 text-text" />
-              {cartItemCount > 0 && (
+              {getTotalItems() > 0 && (
                 <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-medium rounded-full -top-1 -right-1 bg-primary text-background">
-                  {cartItemCount}
+                  {getTotalItems()}
                 </span>
               )}
             </button>

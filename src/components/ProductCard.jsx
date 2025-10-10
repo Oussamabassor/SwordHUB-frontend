@@ -52,8 +52,8 @@ export function ProductCard({ product }) {
       </div>
 
       {/* Image container */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-surface/50">
-        <ImageWithLoader
+      <div className="relative aspect-[4/5] overflow-hidden bg-surface/50 view-bg">
+        <img
           src={product.image || `/images/placeholders/swordshirt.jpg`}
           alt={product.name}
           className="object-cover w-full h-full transition-all duration-500 "
