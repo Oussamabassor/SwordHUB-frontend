@@ -2,9 +2,9 @@
 
 /* Light theme (default) */
 :root {
-  --color-background: #000000; /* deep black */
-  --color-surface: #0a0a0a;
-  --color-surface-alt: #1a1a1a;
+  --color-background: #051620;
+  --color-surface: #12232d;
+  --color-surface-alt: #3b5265;
 
   --color-primary: #61fe08; /* same neon green for brand consistency */
   --color-primary-hover: #4cd106;
@@ -20,15 +20,15 @@
   --gradient-primary: linear-gradient(135deg, #61fe08, #16bc4e);
   --gradient-accent: linear-gradient(135deg, #61fe08, #00ff88);
 
-  --shadow-sharp: 0 2px 4px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.3);
+  --shadow-sharp: 0 2px 4px #0516204a, 0 8px 16px #0516204a;
   --shadow-diffused: 0 4px 24px rgba(97, 254, 8, 0.3);
 
   /* Hero Background Colors */
   --hero-bg: #121212;
   --hero-overlay: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.5),
-    rgba(0, 0, 0, 0.3)
+    #05162050,
+    #0516204a
   );
   --hero-glow: radial-gradient(
     circle at center,
