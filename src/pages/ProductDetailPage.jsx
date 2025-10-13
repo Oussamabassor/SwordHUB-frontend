@@ -93,8 +93,20 @@ export function ProductDetailPage() {
   };
 
   const handleAddToCart = async () => {
+    // Check if product is out of stock
+    if (product.stock === 0) {
+      showToast("This product is out of stock", "error");
+      return;
+    }
+
     if (!selectedSize) {
       showToast("Please select a size", "error");
+      return;
+    }
+
+    // Check if quantity exceeds available stock
+    if (quantity > product.stock) {
+      showToast(`Only ${product.stock} items available`, "error");
       return;
     }
 
@@ -242,6 +254,29 @@ export function ProductDetailPage() {
           >
             {/* Main Image - No Hover Animation */}
             <div className="relative overflow-hidden border aspect-square rounded-2xl border-primary/10 bg-surface/50 view-bg">
+              {/* OUT OF STOCK Badge Overlay */}
+              {product.stock === 0 && (
+                <div className="absolute inset-0 z-30 flex items-center justify-center overflow-hidden pointer-events-none">
+                  <div
+                    className="px-6 py-3 sm:px-8 sm:py-4 text-center font-black text-base sm:text-lg md:text-xl tracking-[0.2em] uppercase whitespace-nowrap"
+                    style={{
+                      transform: "rotate(-45deg)",
+                      background: "transparent",
+                      border: "4px solid #ef4444",
+                      borderRadius: "8px",
+                      color: "#ef4444",
+                      textShadow:
+                        "0 0 10px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.6)",
+                      boxShadow: "0 0 30px rgba(239, 68, 68, 0.4)",
+                      backdropFilter: "blur(4px)",
+                      minWidth: "200px",
+                    }}
+                  >
+                    OUT OF STOCK
+                  </div>
+                </div>
+              )}
+
               {discount && (
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
@@ -259,7 +294,9 @@ export function ProductDetailPage() {
                     "/images/placeholders/swordshirt.jpg"
                   }
                   alt={product.name}
-                  className="object-cover w-full h-full"
+                  className={`object-cover w-full h-full ${
+                    product.stock === 0 ? "blur-[3px] brightness-[0.65]" : ""
+                  }`}
                 />
               </div>
 
@@ -338,9 +375,21 @@ export function ProductDetailPage() {
           >
             {/* Category & Rating */}
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="px-3 py-1 text-sm font-medium rounded-full bg-primary/10 text-primary">
-                {product.category}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1 text-sm font-medium rounded-full bg-primary/10 text-primary">
+                  {product.category}
+                </span>
+                {/* Stock Status Badge */}
+                {product.stock === 0 ? (
+                  <span className="px-3 py-1 text-sm font-bold text-white bg-red-500 rounded-full animate-pulse">
+                    OUT OF STOCK
+                  </span>
+                ) : product.stock < 10 ? (
+                  <span className="px-3 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full animate-pulse">
+                    Only {product.stock} left!
+                  </span>
+                ) : null}
+              </div>
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <Star
@@ -450,14 +499,21 @@ export function ProductDetailPage() {
                 whileTap={{ scale: 0.95 }}
                 whileHover={{ scale: 1.02 }}
                 onClick={handleAddToCart}
-                disabled={addingToCart || !selectedSize}
+                disabled={addingToCart || !selectedSize || product.stock === 0}
                 className={`flex items-center justify-center flex-1 min-w-[200px] gap-2 px-4 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transition-all rounded-xl ${
-                  addingToCart
+                  product.stock === 0
+                    ? "bg-gray-500 cursor-not-allowed"
+                    : addingToCart
                     ? "bg-green-500 animate-pulse"
                     : "bg-primary hover:shadow-neon-green"
                 } text-background disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden`}
               >
-                {addingToCart ? (
+                {product.stock === 0 ? (
+                  <>
+                    <ShoppingCart size={22} />
+                    Out of Stock
+                  </>
+                ) : addingToCart ? (
                   <>
                     <motion.div
                       animate={{ rotate: 360 }}

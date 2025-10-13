@@ -28,6 +28,7 @@ export function ProductCard({ product }) {
     : null;
 
   const handleCardClick = () => {
+    // Allow navigation even if out of stock (user can view details, just can't order)
     navigate(`/products/${product.id}`, { state: { from: "products" } });
   };
 
@@ -38,8 +39,13 @@ export function ProductCard({ product }) {
 
   const handleQuickView = (e) => {
     e.stopPropagation();
+    // Allow navigation even if out of stock
     navigate(`/products/${product.id}`, { state: { from: "products" } });
   };
+
+  // Check if product is out of stock
+  const isOutOfStock = product.stock === 0;
+  const isLowStock = product.stock > 0 && product.stock < 10;
 
   return (
     <motion.div
@@ -85,10 +91,35 @@ export function ProductCard({ product }) {
 
       {/* Product Image */}
       <div className="relative overflow-hidden aspect-[3/4] lg:aspect-[4/5] bg-surface/30 view-bg">
+        {/* Premium Compact Centered Diagonal "OUT OF STOCK" Badge */}
+        {isOutOfStock && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center overflow-hidden pointer-events-none">
+            <div
+              className="px-4 py-2 sm:px-6 sm:py-2.5 text-center font-black text-xs sm:text-sm md:text-base tracking-[0.2em] uppercase whitespace-nowrap"
+              style={{
+                transform: "rotate(-45deg)",
+                background: "transparent",
+                border: "3px solid #ef4444",
+                borderRadius: "8px",
+                color: "#ef4444",
+                textShadow:
+                  "0 0 8px rgba(255, 255, 255, 0.9), 0 0 16px rgba(255, 255, 255, 0.6)",
+                boxShadow: "0 0 20px rgba(239, 68, 68, 0.3)",
+                backdropFilter: "blur(4px)",
+                minWidth: "120px",
+              }}
+            >
+              OUT OF STOCK
+            </div>
+          </div>
+        )}
+
         <ImageWithLoader
           src={productImage}
           alt={product.name || "Product"}
-          className="object-cover w-full h-full transition-all duration-700 group-hover:scale-110"
+          className={`object-cover w-full h-full transition-all duration-700 group-hover:scale-110 ${
+            isOutOfStock ? "blur-[3px] brightness-[0.65]" : ""
+          }`}
         />
 
         {/* Gradient Overlay */}
@@ -100,9 +131,9 @@ export function ProductCard({ product }) {
           </div>
         </div> */}
 
-        {/* Stock Badge */}
-        {product.stock !== undefined && product.stock < 5 && (
-          <div className="absolute px-2 py-1 text-xs font-medium text-white bg-red-500 rounded-lg bottom-3 right-3">
+        {/* Stock Badge - Show when stock < 10 */}
+        {isLowStock && (
+          <div className="absolute px-2 py-1 text-xs font-semibold text-white bg-orange-500 rounded-lg shadow-lg bottom-3 right-3 animate-pulse">
             Only {product.stock} left
           </div>
         )}
@@ -165,10 +196,14 @@ export function ProductCard({ product }) {
           }}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          className="flex items-center justify-center w-full gap-2 px-3 py-1.5 sm:py-2 mt-1.5 text-[11px] sm:text-xs font-semibold transition-all duration-300 transform rounded-lg bg-primary text-background hover:bg-primary/90 hover:shadow-lg lg:hidden"
+          className={`flex items-center justify-center w-full gap-2 px-3 py-1.5 sm:py-2 mt-1.5 text-[11px] sm:text-xs font-semibold transition-all duration-300 transform rounded-lg lg:hidden ${
+            isOutOfStock
+              ? "bg-gray-600/80 text-white hover:bg-gray-600 border border-gray-500"
+              : "bg-primary text-background hover:bg-primary/90 hover:shadow-lg"
+          }`}
         >
           <ShoppingCart size={14} className="sm:w-4 sm:h-4" />
-          <span>View Details</span>
+          <span>{isOutOfStock ? "View Details" : "View Details"}</span>
         </motion.button>
       </div>
     </motion.div>

@@ -24,6 +24,7 @@ export function CheckoutPage() {
 
   const [loading, setLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [orderTotal, setOrderTotal] = useState(0); // Store the order total before clearing cart
   const [formData, setFormData] = useState({
     customerName: "",
     customerPhone: "",
@@ -112,7 +113,11 @@ export function CheckoutPage() {
       // Create order
       await ordersApi.create(orderData);
 
+      // Save the total price before clearing cart
+      const totalPrice = getTotalPrice();
+
       // Success
+      setOrderTotal(totalPrice); // Store total before clearing
       setOrderPlaced(true);
       showToast("Order placed successfully!", "success");
       clearCart();
@@ -161,7 +166,7 @@ export function CheckoutPage() {
             <div className="p-4 mb-6 border rounded-lg bg-surface/30 border-primary/10">
               <p className="text-sm text-light/60">Order Total</p>
               <p className="text-3xl font-bold text-primary">
-                {getTotalPrice().toFixed(2)} DH
+                {orderTotal.toFixed(2)} DH
               </p>
             </div>
             <p className="text-sm text-light/60">Redirecting to homepage...</p>
