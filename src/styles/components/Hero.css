@@ -12,9 +12,11 @@
 .carousel-background {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at top right, 
+  background: radial-gradient(
+    circle at top right,
     rgba(255, 103, 0, 0.1),
-    var(--color-dark-bg) 60%);
+    var(--color-dark-bg) 60%
+  );
   opacity: 0.6;
 }
 
@@ -45,9 +47,11 @@
   padding: 8px 16px;
   margin-bottom: 24px;
   border-radius: 24px;
-  background: linear-gradient(135deg, 
+  background: linear-gradient(
+    135deg,
     rgba(255, 103, 0, 0.2),
-    rgba(255, 103, 0, 0.1));
+    rgba(255, 103, 0, 0.1)
+  );
   border: 1px solid rgba(255, 103, 0, 0.3);
   color: var(--color-primary);
   font-size: 14px;
@@ -58,9 +62,11 @@
 
 .tag:hover {
   transform: translateY(-2px);
-  background: linear-gradient(135deg, 
+  background: linear-gradient(
+    135deg,
     rgba(255, 103, 0, 0.3),
-    rgba(255, 103, 0, 0.2));
+    rgba(255, 103, 0, 0.2)
+  );
   box-shadow: 0 4px 12px rgba(255, 103, 0, 0.2);
 }
 
@@ -107,7 +113,8 @@ p {
   gap: 16px;
 }
 
-.primary-button, .secondary-button {
+.primary-button,
+.secondary-button {
   padding: 16px 32px;
   border-radius: 8px;
   font-weight: 500;
@@ -126,7 +133,7 @@ p {
 }
 
 .primary-button::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -159,7 +166,7 @@ p {
 }
 
 .secondary-button::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -197,7 +204,7 @@ p {
   z-index: 10;
 }
 
-img {
+.image-section img {
   position: absolute;
   top: 50%;
   right: 0;
@@ -235,8 +242,12 @@ img {
   transform: translateY(-50%) scale(1.1);
 }
 
-.nav-button.prev { left: 24px; }
-.nav-button.next { right: 24px; }
+.nav-button.prev {
+  left: 24px;
+}
+.nav-button.next {
+  right: 24px;
+}
 
 .nav-button .icon {
   width: 24px;
@@ -295,37 +306,45 @@ img {
 }
 
 @media (max-width: 1024px) {
-  .slide { padding: 32px; }
-  h1 { font-size: 36px; }
-  p { font-size: 16px; }
+  .slide {
+    padding: 32px;
+  }
+  h1 {
+    font-size: 36px;
+  }
+  p {
+    font-size: 16px;
+  }
 }
 
 @media (max-width: 768px) {
-  .hero-carousel { height: 80vh; }
-  
+  .hero-carousel {
+    height: 80vh;
+  }
+
   .slide {
     flex-direction: column;
     padding: 24px;
   }
-  
+
   .content-section,
   .image-section {
     width: 100%;
     padding: 0;
   }
-  
+
   .image-section {
     height: 40%;
     margin-top: 32px;
   }
-  
+
   img {
     width: 100%;
     height: 100%;
     position: relative;
     transform: none;
   }
-  
+
   .image-section:hover img {
     transform: scale(1.05);
   }

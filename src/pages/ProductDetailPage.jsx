@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   Minus,
   Plus,
+  Eye,
 } from "lucide-react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
@@ -34,6 +35,7 @@ export function ProductDetailPage() {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const [addingToCart, setAddingToCart] = useState(false);
+  const [suggestedProducts, setSuggestedProducts] = useState([]);
 
   const sizes = ["S", "M", "L", "XL", "XXL"];
 
@@ -47,12 +49,42 @@ export function ProductDetailPage() {
       const response = await productsApi.getById(id);
       const productData = response?.data || response;
       setProduct(productData);
+
+      // Fetch suggested products after getting the main product
+      fetchSuggestedProducts(productData);
     } catch (error) {
       console.error("Error fetching product:", error);
       showToast("Failed to load product", "error");
       navigate("/");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchSuggestedProducts = async (currentProduct) => {
+    try {
+      // Fetch all products and filter by category on client side
+      const response = await productsApi.getAll();
+
+      const allProducts =
+        response?.data?.products || response?.products || response || [];
+      console.log("All products fetched:", allProducts.length);
+
+      // Filter products by same category and exclude current product
+      const similar = allProducts
+        .filter((p) => {
+          // Filter by category and exclude current product
+          const matchesCategory = p.category === currentProduct.category;
+          const notCurrentProduct = String(p.id) !== String(currentProduct.id);
+          return matchesCategory && notCurrentProduct;
+        })
+        .slice(0, 4); // Get first 4 matching products
+
+      console.log("Suggested products found:", similar.length, similar);
+      setSuggestedProducts(similar);
+    } catch (error) {
+      console.error("Error fetching suggested products:", error);
+      setSuggestedProducts([]); // Set to empty array on error
     }
   };
 
@@ -153,19 +185,18 @@ export function ProductDetailPage() {
         </motion.button>
 
         <div className="grid gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12">
-          {/* Images Section */}
+          {/* Images Section - Fixed/Sticky on scroll */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="space-y-4"
+            className="space-y-4 lg:sticky lg:top-20 lg:self-start lg:max-h-screen"
+            style={{
+              position: window.innerWidth >= 1024 ? "sticky" : "relative",
+            }}
           >
-            {/* Main Image */}
-            <motion.div
-              className="relative overflow-hidden border aspect-square rounded-2xl border-primary/10 bg-surface/50 view-bg"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-            >
+            {/* Main Image - No Hover Animation */}
+            <div className="relative overflow-hidden border aspect-square rounded-2xl border-primary/10 bg-surface/50 view-bg">
               {discount && (
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
@@ -176,14 +207,16 @@ export function ProductDetailPage() {
                   Save {discount}%
                 </motion.div>
               )}
-              <ImageWithLoader
-                src={
-                  productImages[selectedImage] ||
-                  "/images/placeholders/swordshirt.jpg"
-                }
-                alt={product.name}
-                className="object-cover w-full h-full transition-transform duration-500 hover:scale-110"
-              />
+              <div className="relative w-full h-full">
+                <ImageWithLoader
+                  src={
+                    productImages[selectedImage] ||
+                    "/images/placeholders/swordshirt.jpg"
+                  }
+                  alt={product.name}
+                  className="object-cover w-full h-full"
+                />
+              </div>
 
               {/* Image navigation arrows for mobile */}
               {productImages.length > 1 && (
@@ -212,7 +245,7 @@ export function ProductDetailPage() {
                   </button>
                 </>
               )}
-            </motion.div>
+            </div>
 
             {/* Thumbnail Images */}
             {productImages.length > 1 && (
@@ -489,6 +522,218 @@ export function ProductDetailPage() {
             </div>
           </motion.div>
         </div>
+
+        {/* Suggested Products Section - Modern & Amazing Design */}
+        {suggestedProducts && suggestedProducts.length > 0 && (
+          <motion.section
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.7 }}
+            className="relative z-10 mt-20 lg:mt-32"
+          >
+            {/* Decorative background elements */}
+            <div className="absolute top-0 left-0 w-64 h-64 opacity-20 blur-3xl bg-primary/30 -z-10"></div>
+            <div className="absolute bottom-0 right-0 w-96 h-96 opacity-20 blur-3xl bg-secondary/30 -z-10"></div>
+
+            {/* Section Header - Enhanced Design */}
+            <div className="mb-12 text-center">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4 }}
+                className="inline-flex items-center gap-2 px-4 py-2 mb-4 border rounded-full bg-primary/10 border-primary/20"
+              >
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                <span className="text-sm font-semibold tracking-wider uppercase text-primary">
+                  Recommended For You
+                </span>
+              </motion.div>
+
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="mb-4 text-4xl font-bold md:text-5xl lg:text-6xl text-light"
+              >
+                You Might Also{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary/80 to-secondary">
+                  Love
+                </span>
+              </motion.h2>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="max-w-2xl mx-auto text-base text-light/70 md:text-lg"
+              >
+                Handpicked products from the same collection, designed to match
+                your style
+              </motion.p>
+
+              {/* Decorative line */}
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: 0.7, duration: 0.8 }}
+                className="w-24 h-1 mx-auto mt-6 rounded-full bg-gradient-to-r from-transparent via-primary to-transparent"
+              ></motion.div>
+            </div>
+
+            {/* Products Grid - Larger Responsive Cards */}
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:gap-5 lg:grid-cols-6 lg:gap-6">
+              {suggestedProducts.map((suggestedProduct, index) => (
+                <motion.div
+                  key={suggestedProduct.id}
+                  initial={{ opacity: 0, y: 40, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{
+                    delay: 0.8 + index * 0.1,
+                    duration: 0.5,
+                    type: "spring",
+                    stiffness: 100,
+                  }}
+                  whileHover={{
+                    y: -8,
+                    scale: 1.05,
+                    transition: { duration: 0.3 },
+                  }}
+                  onClick={() => {
+                    navigate(`/products/${suggestedProduct.id}`);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="relative overflow-hidden transition-all duration-500 border cursor-pointer rounded-xl group lg:rounded-2xl bg-surface/40 backdrop-blur-md border-primary/10 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/30"
+                >
+                  {/* Animated gradient border effect */}
+                  <div className="absolute inset-0 transition-opacity duration-500 opacity-0 group-hover:opacity-100">
+                    <div className="absolute inset-0 rounded-lg lg:rounded-xl bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 blur-xl"></div>
+                  </div>
+
+                  {/* Glow Effect - Enhanced */}
+                  <div className="absolute inset-0 transition-all duration-500 opacity-0 group-hover:opacity-100 blur-xl bg-gradient-to-br from-primary/30 via-secondary/20 to-primary/30 -z-10" />
+
+                  {/* Image Container - Larger */}
+                  <div className="relative overflow-hidden aspect-[3/4] bg-gradient-to-br from-surface/50 to-surface/30">
+                    {/* Shimmer effect on hover */}
+                    <div className="absolute inset-0 transition-transform duration-1000 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.5, ease: "easeOut" }}
+                      className="w-full h-full"
+                    >
+                      <ImageWithLoader
+                        src={
+                          (suggestedProduct.images &&
+                            suggestedProduct.images[0]) ||
+                          suggestedProduct.image ||
+                          "/images/placeholders/swordshirt.jpg"
+                        }
+                        alt={suggestedProduct.name}
+                        className="object-cover w-full h-full"
+                      />
+                    </motion.div>
+
+                    {/* Enhanced gradient overlay */}
+                    <div className="absolute inset-0 transition-opacity duration-500 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-background/90 via-background/40 to-transparent"></div>
+
+                    {/* Discount badge if applicable */}
+                    {suggestedProduct.originalPrice && (
+                      <motion.div
+                        initial={{ x: 20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 1 + index * 0.1 }}
+                        className="absolute px-2 py-1 lg:px-3 lg:py-1.5 text-xs lg:text-sm font-bold text-white bg-red-500 rounded-lg top-2 right-2 lg:top-3 lg:right-3 backdrop-blur-md shadow-lg"
+                      >
+                        SALE
+                      </motion.div>
+                    )}
+                  </div>
+
+                  {/* Product Info - Larger Layout */}
+                  <div className="relative p-3 space-y-2 lg:p-4 lg:space-y-3 bg-gradient-to-b from-surface/50 to-surface/30">
+                    {/* Product Name */}
+                    <h3 className="text-xs sm:text-sm lg:text-base font-bold leading-tight transition-colors line-clamp-2 text-light group-hover:text-primary min-h-[2.5rem] lg:min-h-[3rem]">
+                      {suggestedProduct.name}
+                    </h3>
+
+                    {/* Rating */}
+                    <div className="flex items-center gap-1 lg:gap-1.5">
+                      <div className="flex items-center gap-0.5 lg:gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            size={12}
+                            className={`lg:w-4 lg:h-4 transition-all ${
+                              i < 4
+                                ? "fill-yellow-400 text-yellow-400"
+                                : "text-gray-300 dark:text-gray-600"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs font-semibold lg:text-sm text-light/70">
+                        4.0
+                      </span>
+                    </div>
+
+                    {/* Price */}
+                    <div className="flex flex-col gap-1 pt-1 lg:pt-2">
+                      <div className="flex items-baseline gap-1.5 lg:gap-2">
+                        <motion.span
+                          whileHover={{ scale: 1.05 }}
+                          className="text-lg font-bold sm:text-xl lg:text-2xl text-primary"
+                        >
+                          {suggestedProduct.price}
+                        </motion.span>
+                        <span className="text-xs font-semibold lg:text-sm text-primary">
+                          DH
+                        </span>
+                      </div>
+
+                      {/* Original price and savings */}
+                      {suggestedProduct.originalPrice && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs line-through lg:text-sm text-light/40">
+                            {suggestedProduct.originalPrice} DH
+                          </span>
+                          <span className="text-xs font-medium text-green-500 lg:text-sm">
+                            -
+                            {Math.round(
+                              ((suggestedProduct.originalPrice -
+                                suggestedProduct.price) /
+                                suggestedProduct.originalPrice) *
+                                100
+                            )}
+                            %
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Bottom CTA - Browse more */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5 }}
+              className="mt-16 text-center"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/products")}
+                className="inline-flex items-center gap-3 px-8 py-4 text-base font-bold transition-all border rounded-xl bg-gradient-to-r from-primary to-secondary text-background hover:shadow-xl hover:shadow-primary/40 border-primary/20"
+              >
+                <span>Explore All Products</span>
+                <ChevronLeft size={20} className="rotate-180" />
+              </motion.button>
+            </motion.div>
+          </motion.section>
+        )}
       </main>
 
       <Footer />

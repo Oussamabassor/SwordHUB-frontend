@@ -21,8 +21,13 @@ export const ProductsManagement = () => {
     try {
       setLoading(true);
       const response = await productsApi.getAll({ search: searchTerm });
+      console.log("Products API Response:", response);
+
       // Extract products array from response
       const productsData = response?.data?.products || response?.products || [];
+      console.log("Extracted products data:", productsData);
+      console.log("First product:", productsData[0]);
+
       setProducts(productsData);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -58,21 +63,40 @@ export const ProductsManagement = () => {
       key: "image",
       label: "Image",
       render: (product) => {
-        const productImage =
-          (product.images && product.images[0]) ||
-          product.image ||
-          "/images/placeholders/swordshirt.jpg";
+        // Get image URL - handle both arrays and single images
+        let productImage = "/images/placeholders/swordshirt.jpg";
+
+        if (
+          product.images &&
+          Array.isArray(product.images) &&
+          product.images.length > 0
+        ) {
+          productImage = product.images[0];
+        } else if (product.image) {
+          productImage = product.image;
+        }
+
+        // Clean up the image URL if it has ./ in the path
+        if (productImage && productImage.includes("/./")) {
+          productImage = productImage.replace("/./", "/");
+        }
+
         return (
-          <div className="flex items-center">
-            <img
-              src={productImage}
-              alt={product.name}
-              className="flex-shrink-0 object-cover w-12 h-12 border-2 rounded-lg shadow-sm border-primary/20"
-              onError={(e) => {
-                e.target.src = "/images/placeholders/swordshirt.jpg";
-              }}
-            />
-          </div>
+          <img
+            src={productImage}
+            alt={product.name || "Product"}
+            className="flex-shrink-0 object-cover w-10 h-10 border-2 rounded-lg shadow-sm md:w-12 md:h-12 lg:w-14 lg:h-14 border-primary/20"
+            onError={(e) => {
+              console.error(
+                "Image load error for:",
+                product.name,
+                "URL:",
+                e.target.src
+              );
+              e.target.onerror = null; // Prevent infinite loop
+              e.target.src = "/images/placeholders/swordshirt.jpg";
+            }}
+          />
         );
       },
     },

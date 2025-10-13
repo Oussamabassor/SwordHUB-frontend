@@ -41,19 +41,19 @@ export function CartSidebar() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed top-0 right-0 z-50 flex flex-col w-full h-full shadow-2xl bg-background sm:w-96"
+            className="fixed top-0 right-0 z-[60] flex flex-col w-full h-full shadow-2xl bg-background sm:w-96"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-primary/10">
-              <div className="flex items-center gap-3">
+            <div className="relative z-[61] flex items-center justify-between p-4 border-b sm:p-6 border-primary/10">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <div className="p-2 rounded-lg bg-primary/10">
-                  <ShoppingBag className="text-primary" size={24} />
+                  <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-light">
+                  <h2 className="text-lg font-bold sm:text-xl text-light">
                     Shopping Cart
                   </h2>
-                  <p className="text-sm text-light/60">
+                  <p className="text-xs sm:text-sm text-light/60">
                     {getTotalItems()} items
                   </p>
                 </div>
@@ -62,12 +62,12 @@ export function CartSidebar() {
                 onClick={closeCart}
                 className="p-2 transition-colors rounded-lg hover:bg-surface text-light"
               >
-                <X size={24} />
+                <X size={20} className="sm:w-6 sm:h-6" />
               </button>
             </div>
 
             {/* Cart Items */}
-            <div className="flex-1 p-6 space-y-4 overflow-y-auto">
+            <div className="flex-1 p-3 space-y-3 overflow-y-auto sm:p-6 sm:space-y-4">
               <AnimatePresence mode="popLayout">
                 {cart.length === 0 ? (
                   <motion.div
@@ -76,18 +76,18 @@ export function CartSidebar() {
                     exit={{ opacity: 0, y: -20 }}
                     className="flex flex-col items-center justify-center h-full text-center"
                   >
-                    <div className="w-20 h-20 mb-4 rounded-full bg-surface/50 flex items-center justify-center">
-                      <ShoppingBag className="text-light/40" size={40} />
+                    <div className="flex items-center justify-center w-16 h-16 mb-4 rounded-full sm:w-20 sm:h-20 bg-surface/50">
+                      <ShoppingBag className="text-light/40" size={32} />
                     </div>
-                    <h3 className="mb-2 text-lg font-semibold text-light">
+                    <h3 className="mb-2 text-base font-semibold sm:text-lg text-light">
                       Your cart is empty
                     </h3>
-                    <p className="mb-6 text-sm text-light/60">
+                    <p className="mb-4 text-xs sm:text-sm sm:mb-6 text-light/60">
                       Add some amazing products to get started!
                     </p>
                     <button
                       onClick={closeCart}
-                      className="px-6 py-3 transition-all rounded-lg bg-primary text-background hover:shadow-neon-green"
+                      className="px-5 py-2 text-sm transition-all rounded-lg sm:px-6 sm:py-3 sm:text-base bg-primary text-background hover:shadow-neon-green"
                     >
                       Continue Shopping
                     </button>
@@ -100,10 +100,10 @@ export function CartSidebar() {
                       initial={{ opacity: 0, x: 50 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -50 }}
-                      className="flex gap-4 p-4 transition-all border rounded-xl border-primary/10 bg-surface/30 hover:bg-surface/50"
+                      className="flex gap-3 p-3 transition-all border sm:gap-4 sm:p-4 rounded-xl border-primary/10 bg-surface/30 hover:bg-surface/50"
                     >
                       {/* Product Image */}
-                      <div className="flex-shrink-0 w-20 h-20 overflow-hidden border rounded-lg border-primary/10">
+                      <div className="flex-shrink-0 w-16 h-16 overflow-hidden border rounded-lg sm:w-20 sm:h-20 border-primary/10">
                         <ImageWithLoader
                           src={
                             item.image || "/images/placeholders/swordshirt.jpg"
@@ -115,16 +115,16 @@ export function CartSidebar() {
 
                       {/* Product Info */}
                       <div className="flex-1 min-w-0">
-                        <h4 className="mb-1 font-semibold truncate text-light">
+                        <h4 className="mb-1 text-sm font-bold uppercase truncate sm:text-base lg:text-lg text-light">
                           {item.name}
                         </h4>
-                        <p className="mb-2 text-sm text-light/60">
+                        <p className="mb-2 text-xs sm:text-sm text-light/60">
                           Size: {item.selectedSize}
                         </p>
 
                         {/* Quantity Controls */}
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 p-1 border rounded-lg border-primary/20 bg-background/50">
+                          <div className="flex items-center gap-1 p-1 border rounded-lg sm:gap-2 border-primary/20 bg-background/50">
                             <button
                               onClick={() =>
                                 updateQuantity(item.cartId, item.quantity - 1)
@@ -132,9 +132,12 @@ export function CartSidebar() {
                               className="p-1 transition-colors rounded hover:bg-primary/20 text-light"
                               disabled={item.quantity <= 1}
                             >
-                              <Minus size={14} />
+                              <Minus
+                                size={12}
+                                className="sm:w-[14px] sm:h-[14px]"
+                              />
                             </button>
-                            <span className="w-8 text-sm font-medium text-center text-light">
+                            <span className="w-6 text-xs font-medium text-center sm:w-8 sm:text-sm text-light">
                               {item.quantity}
                             </span>
                             <button
@@ -143,7 +146,10 @@ export function CartSidebar() {
                               }
                               className="p-1 transition-colors rounded hover:bg-primary/20 text-light"
                             >
-                              <Plus size={14} />
+                              <Plus
+                                size={12}
+                                className="sm:w-[14px] sm:h-[14px]"
+                              />
                             </button>
                           </div>
 

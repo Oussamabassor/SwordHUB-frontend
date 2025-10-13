@@ -137,7 +137,7 @@ export function ProductGrid() {
             <p className="text-light/60">Check back soon for new arrivals!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

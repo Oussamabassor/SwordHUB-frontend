@@ -103,11 +103,12 @@
     mix-blend-mode: luminosity;
   }
 
+  /* Remove filters from product detail images on mobile */
   .view-bg img {
     opacity: 1;
-    filter: brightness(1.2) contrast(1.1);
+    filter: none !important;
     top: 0;
-    mix-blend-mode: luminosity;
+    mix-blend-mode: normal !important;
   }
 
   .hero-content {
@@ -130,12 +131,27 @@
 /* Dark theme */
 /* [data-theme="dark"] {
 } */
-/* .product-detail-container {
-  border: 1px solid red;
-  width: 150px;
-  padding: 0;
-  margin: 0;
-} */
+
+/* Fix product detail page images - no animation, proper positioning, no filters */
+.product-detail-container .view-bg img {
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+  width: 100% !important;
+  height: 100% !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  opacity: 1 !important;
+}
+
+.product-detail-container .view-bg:hover img {
+  position: relative !important;
+  transform: none !important;
+  top: 0 !important;
+  filter: none !important;
+}
+
 /* Base styles */
 body {
   background-color: var(--color-background);

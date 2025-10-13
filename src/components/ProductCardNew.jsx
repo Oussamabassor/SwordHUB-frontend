@@ -84,7 +84,7 @@ export function ProductCard({ product }) {
       </div>
 
       {/* Product Image */}
-      <div className="relative overflow-hidden aspect-[4/5] bg-surface/30 view-bg">
+      <div className="relative overflow-hidden aspect-[3/4] lg:aspect-[4/5] bg-surface/30 view-bg">
         <ImageWithLoader
           src={productImage}
           alt={product.name || "Product"}
@@ -94,21 +94,11 @@ export function ProductCard({ product }) {
         {/* Gradient Overlay */}
         <div className="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent group-hover:opacity-100"></div>
 
-        {/* Hover Overlay */}
-        <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+        {/* Hover Overlay - Hidden on large screens, buttons removed */}
+        {/* <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 lg:hidden">
           <div className="absolute flex gap-2 -translate-x-1/2 bottom-4 left-1/2">
-            {/* Quick View button - Hidden on mobile */}
-            <motion.button
-              onClick={handleQuickView}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="items-center hidden gap-2 px-5 py-2.5 text-sm font-bold transition-all rounded-xl sm:flex bg-primary text-background hover:shadow-neon-green"
-            >
-              <Eye size={18} />
-              Quick View
-            </motion.button>
           </div>
-        </div>
+        </div> */}
 
         {/* Stock Badge */}
         {product.stock !== undefined && product.stock < 5 && (
@@ -119,14 +109,14 @@ export function ProductCard({ product }) {
       </div>
 
       {/* Product Info */}
-      <div className="relative p-3 space-y-1.5 sm:p-4 sm:space-y-2">
+      <div className="relative p-2.5 space-y-1 sm:p-3 lg:p-3.5 sm:space-y-1.5">
         {/* Category Badge */}
-        <span className="inline-block px-2 py-0.5 text-[10px] sm:text-xs font-semibold uppercase rounded-md bg-primary/10 text-primary tracking-wide border border-primary/20">
+        <span className="inline-block px-1.5 py-0.5 text-[9px] sm:text-[10px] lg:text-xs font-semibold uppercase rounded-md bg-primary/10 text-primary tracking-wide border border-primary/20">
           {product.category}
         </span>
 
-        {/* Product Name - Compact and Professional */}
-        <h3 className="text-base sm:text-lg font-bold leading-snug transition-colors line-clamp-2 text-light group-hover:text-primary min-h-[2.5rem]">
+        {/* Product Name - Larger, Bold, Capitalized */}
+        <h3 className="text-base font-bold leading-snug text-center uppercase transition-colors sm:text-lg lg:text-xl xl:text-2xl line-clamp-2 text-light group-hover:text-primary min-h-[2.5rem] sm:min-h-[3rem] lg:min-h-[3.5rem]">
           {product.name}
         </h3>
 
@@ -135,33 +125,37 @@ export function ProductCard({ product }) {
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
-              size={12}
-              className={`sm:w-3.5 sm:h-3.5 transition-all ${
+              size={10}
+              className={`sm:w-3 sm:h-3 lg:w-3.5 lg:h-3.5 transition-all ${
                 i < 4
                   ? "fill-yellow-400 text-yellow-400"
                   : "text-gray-300 dark:text-gray-600"
               }`}
             />
           ))}
-          <span className="ml-1 text-xs font-medium text-light/70">4.0</span>
+          <span className="ml-1 text-[10px] sm:text-xs font-medium text-light/70">
+            4.0
+          </span>
         </div>
 
         {/* Price - Professional and Clear */}
-        <div className="flex items-center gap-2 pt-1">
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold sm:text-2xl text-primary">
+        <div className="flex items-center gap-2 pt-0.5">
+          <div className="flex items-baseline gap-1">
+            <span className="text-lg sm:text-xl lg:text-xl font-bold text-primary">
               {product.price}
             </span>
-            <span className="text-sm font-semibold text-primary">DH</span>
+            <span className="text-xs sm:text-sm font-semibold text-primary">
+              DH
+            </span>
             {product.originalPrice && (
-              <span className="ml-1 text-xs line-through text-light/40">
+              <span className="ml-1 text-[10px] sm:text-xs line-through text-light/40">
                 {product.originalPrice} DH
               </span>
             )}
           </div>
         </div>
 
-        {/* Add to Cart Button - More Professional */}
+        {/* Add to Cart Button - Hidden on large screens */}
         <motion.button
           onClick={(e) => {
             e.stopPropagation();
@@ -169,9 +163,9 @@ export function ProductCard({ product }) {
           }}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          className="flex items-center justify-center w-full gap-2 px-4 py-2 mt-2 text-xs font-semibold transition-all duration-300 transform rounded-lg sm:text-sm bg-primary text-background hover:bg-primary/90 hover:shadow-lg sm:opacity-0 sm:group-hover:opacity-100 sm:translate-y-1 sm:group-hover:translate-y-0"
+          className="flex items-center justify-center w-full gap-2 px-3 py-1.5 sm:py-2 mt-1.5 text-[11px] sm:text-xs font-semibold transition-all duration-300 transform rounded-lg bg-primary text-background hover:bg-primary/90 hover:shadow-lg lg:hidden"
         >
-          <ShoppingCart size={16} />
+          <ShoppingCart size={14} className="sm:w-4 sm:h-4" />
           <span>View Details</span>
         </motion.button>
       </div>
