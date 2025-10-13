@@ -192,14 +192,12 @@ export const OrdersManagement = () => {
       key: "createdAt",
       label: "Date",
       render: (order) => {
-        // Handle MongoDB date format
         const date = order.createdAt;
         if (!date) return "N/A";
 
         try {
-          // Check if it's a MongoDB date object with $date property
-          const dateValue = date.$date || date;
-          const parsedDate = new Date(dateValue);
+          // Parse ISO date string from backend
+          const parsedDate = new Date(date);
 
           // Verify it's a valid date
           if (isNaN(parsedDate.getTime())) {
