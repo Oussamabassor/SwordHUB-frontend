@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShoppingCart,
@@ -25,8 +25,12 @@ import { useToast } from "../components/ToastProvider";
 export function ProductDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToCart, openCart } = useOrders();
   const showToast = useToast();
+
+  // Track if user navigated from within our app
+  const hasNavigationState = useRef(!!location.state?.from);
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true); // Keep loading state to prevent "not found" flash
@@ -128,6 +132,55 @@ export function ProductDetailPage() {
     }
   };
 
+  const handleBackNavigation = () => {
+    // Check if we have navigation state from React Router
+    // This indicates user navigated from within the app
+    const hasInternalNavigation = !!location.state?.from;
+
+    if (hasInternalNavigation) {
+      // User navigated here from another page in the app
+      navigate(-1);
+    } else {
+      // User came directly (refresh, bookmark, external link, or direct URL)
+      // Navigate to home page and scroll to products section
+      navigate("/", { replace: true });
+
+      // Wait for NavigationLoader (1200ms) + extra time for render
+      setTimeout(() => {
+        const productsSection = document.getElementById("products-section");
+        if (productsSection) {
+          // Use custom smooth scroll animation (same as Hero's "Browse T-Shirts" button)
+          const targetPosition =
+            productsSection.getBoundingClientRect().top + window.pageYOffset;
+          const startPosition = window.pageYOffset;
+          const distance = targetPosition - startPosition;
+          const duration = 1500; // 1.5 seconds for smooth, slow scroll
+          let start = null;
+
+          // Easing function for smooth animation
+          const easeInOutCubic = (t) => {
+            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+          };
+
+          const animation = (currentTime) => {
+            if (start === null) start = currentTime;
+            const timeElapsed = currentTime - start;
+            const progress = Math.min(timeElapsed / duration, 1);
+            const ease = easeInOutCubic(progress);
+
+            window.scrollTo(0, startPosition + distance * ease);
+
+            if (timeElapsed < duration) {
+              requestAnimationFrame(animation);
+            }
+          };
+
+          requestAnimationFrame(animation);
+        }
+      }, 1400); // 1200ms loading + 200ms buffer
+    }
+  };
+
   // Show "not found" only if we're done loading AND product is null
   if (!loading && !product) {
     return (
@@ -169,7 +222,7 @@ export function ProductDetailPage() {
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          onClick={() => navigate(-1)}
+          onClick={handleBackNavigation}
           className="flex items-center gap-2 mb-6 transition-colors text-light hover:text-primary"
         >
           <ChevronLeft size={20} />
@@ -591,7 +644,9 @@ export function ProductDetailPage() {
                     transition: { duration: 0.15 },
                   }}
                   onClick={() => {
-                    navigate(`/products/${suggestedProduct.id}`);
+                    navigate(`/products/${suggestedProduct.id}`, {
+                      state: { from: "product-detail" },
+                    });
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                   className="relative overflow-hidden transition-all duration-200 border cursor-pointer rounded-xl group lg:rounded-2xl bg-surface/40 backdrop-blur-md border-primary/10 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/30"
@@ -717,7 +772,45 @@ export function ProductDetailPage() {
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => navigate("/products")}
+                onClick={() => {
+                  navigate("/");
+                  setTimeout(() => {
+                    const productsSection =
+                      document.getElementById("products-section");
+                    if (productsSection) {
+                      // Use custom smooth scroll animation (same as Hero's "Browse T-Shirts" button)
+                      const targetPosition =
+                        productsSection.getBoundingClientRect().top +
+                        window.pageYOffset;
+                      const startPosition = window.pageYOffset;
+                      const distance = targetPosition - startPosition;
+                      const duration = 1500; // 1.5 seconds for smooth, slow scroll
+                      let start = null;
+
+                      // Easing function for smooth animation
+                      const easeInOutCubic = (t) => {
+                        return t < 0.5
+                          ? 4 * t * t * t
+                          : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                      };
+
+                      const animation = (currentTime) => {
+                        if (start === null) start = currentTime;
+                        const timeElapsed = currentTime - start;
+                        const progress = Math.min(timeElapsed / duration, 1);
+                        const ease = easeInOutCubic(progress);
+
+                        window.scrollTo(0, startPosition + distance * ease);
+
+                        if (timeElapsed < duration) {
+                          requestAnimationFrame(animation);
+                        }
+                      };
+
+                      requestAnimationFrame(animation);
+                    }
+                  }, 100);
+                }}
                 className="inline-flex items-center gap-3 px-8 py-4 text-base font-bold transition-all border rounded-xl bg-gradient-to-r from-primary to-secondary text-background hover:shadow-xl hover:shadow-primary/40 border-primary/20"
               >
                 <span>Explore All Products</span>

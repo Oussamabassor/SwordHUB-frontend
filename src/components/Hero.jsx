@@ -170,7 +170,7 @@ export const Hero = () => {
   ];
 
   const handleProductClick = (productId) => {
-    navigate(`/products/${productId}`);
+    navigate(`/products/${productId}`, { state: { from: "home" } });
   };
 
   // Disabled old loading screen - NavigationLoader handles this now

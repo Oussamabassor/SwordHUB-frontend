@@ -28,7 +28,7 @@ export function ProductCard({ product }) {
     : null;
 
   const handleCardClick = () => {
-    navigate(`/products/${product.id}`);
+    navigate(`/products/${product.id}`, { state: { from: "products" } });
   };
 
   const handleWishlist = (e) => {
@@ -38,7 +38,7 @@ export function ProductCard({ product }) {
 
   const handleQuickView = (e) => {
     e.stopPropagation();
-    navigate(`/products/${product.id}`);
+    navigate(`/products/${product.id}`, { state: { from: "products" } });
   };
 
   return (
@@ -159,7 +159,9 @@ export function ProductCard({ product }) {
         <motion.button
           onClick={(e) => {
             e.stopPropagation();
-            navigate(`/products/${product.id}`);
+            navigate(`/products/${product.id}`, {
+              state: { from: "products" },
+            });
           }}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
