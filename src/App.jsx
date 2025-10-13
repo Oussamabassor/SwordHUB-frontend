@@ -11,6 +11,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { ToastProvider } from "./components/ToastProvider";
 import { CartSidebar } from "./components/CartSidebar";
 import { ProtectedRoute } from "./components/admin/ProtectedRoute";
+import { NavigationLoader } from "./components/NavigationLoader";
 
 // Customer Pages
 import { HomePage } from "./pages/HomePage";
@@ -37,68 +38,73 @@ function App() {
           <OrderProvider>
             <ToastProvider>
               <CartSidebar />
-              <Routes>
-                {/* Customer Routes */}
-                <Route path="/" element={<HomePage />} />
-                <Route path="/products/:id" element={<ProductDetailPage />} />
-                <Route path="/collection/:category" element={<Collection />} />
-                <Route path="/size-guide" element={<SizeGuide />} />
-                <Route path="/checkout" element={<CheckoutPage />} />
+              <NavigationLoader>
+                <Routes>
+                  {/* Customer Routes */}
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/products/:id" element={<ProductDetailPage />} />
+                  <Route
+                    path="/collection/:category"
+                    element={<Collection />}
+                  />
+                  <Route path="/size-guide" element={<SizeGuide />} />
+                  <Route path="/checkout" element={<CheckoutPage />} />
 
-                {/* Admin Routes */}
-                <Route path="/admin/login" element={<AdminLogin />} />
-                <Route
-                  path="/admin"
-                  element={
-                    <ProtectedRoute>
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/analytics"
-                  element={
-                    <ProtectedRoute>
-                      <AdminAnalytics />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/products"
-                  element={
-                    <ProtectedRoute>
-                      <ProductsManagement />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/orders"
-                  element={
-                    <ProtectedRoute>
-                      <OrdersManagement />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/categories"
-                  element={
-                    <ProtectedRoute>
-                      <CategoriesManagement />
-                    </ProtectedRoute>
-                  }
-                />
+                  {/* Admin Routes */}
+                  <Route path="/admin/login" element={<AdminLogin />} />
+                  <Route
+                    path="/admin"
+                    element={
+                      <ProtectedRoute>
+                        <AdminDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <AdminDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/analytics"
+                    element={
+                      <ProtectedRoute>
+                        <AdminAnalytics />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/products"
+                    element={
+                      <ProtectedRoute>
+                        <ProductsManagement />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/orders"
+                    element={
+                      <ProtectedRoute>
+                        <OrdersManagement />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/categories"
+                    element={
+                      <ProtectedRoute>
+                        <CategoriesManagement />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                {/* Fallback Route */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
+                  {/* Fallback Route */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </NavigationLoader>
             </ToastProvider>
           </OrderProvider>
         </AuthProvider>

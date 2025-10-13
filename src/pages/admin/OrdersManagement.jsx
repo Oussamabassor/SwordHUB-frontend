@@ -191,7 +191,32 @@ export const OrdersManagement = () => {
     {
       key: "createdAt",
       label: "Date",
-      render: (order) => new Date(order.createdAt).toLocaleDateString(),
+      render: (order) => {
+        // Handle MongoDB date format
+        const date = order.createdAt;
+        if (!date) return "N/A";
+
+        try {
+          // Check if it's a MongoDB date object with $date property
+          const dateValue = date.$date || date;
+          const parsedDate = new Date(dateValue);
+
+          // Verify it's a valid date
+          if (isNaN(parsedDate.getTime())) {
+            console.error("Invalid date for order:", order.id, date);
+            return "Invalid Date";
+          }
+
+          return parsedDate.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          });
+        } catch (error) {
+          console.error("Error parsing date:", error, date);
+          return "Invalid Date";
+        }
+      },
     },
   ];
 

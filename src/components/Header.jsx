@@ -1,246 +1,154 @@
 import React, { useState, useEffect } from "react";
-import { Search, ShoppingBag, User, Menu, X, ChevronDown } from "lucide-react";
-import { ThemeToggle } from "./ThemeToggle";
-import { motion, AnimatePresence } from "framer-motion";
+import { ShoppingBag } from "lucide-react";
+import { motion } from "framer-motion";
 import { useOrders } from "../contexts/OrderContext";
-
-const categories = [
-  {
-    id: "training",
-    name: "Training",
-    subcategories: [
-      "Performance T-Shirts",
-      "Compression Fit",
-      "Tank Tops",
-      "Long Sleeve",
-    ],
-  },
-  {
-    id: "style",
-    name: "Style",
-    subcategories: [
-      "Classic Fit",
-      "Modern Cut",
-      "Oversized",
-      "Limited Edition",
-    ],
-  },
-  {
-    id: "material",
-    name: "Material",
-    subcategories: [
-      "Dry-Fit",
-      "Cotton Blend",
-      "Performance Mesh",
-      "Eco-Friendly",
-    ],
-  },
-];
 
 export function Header() {
   const { getTotalItems, toggleCart } = useOrders();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
+      setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+    <motion.header
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
+      className={`fixed top-0 w-full z-50 transition-all duration-500 ${
         isScrolled
-          ? "bg-surface/95 backdrop-blur-md shadow-lg"
-          : "bg-transparent"
+          ? "bg-surface/80 backdrop-blur-xl shadow-2xl shadow-primary/5 border-b border-primary/10"
+          : "bg-gradient-to-b from-background/95 to-background/60 backdrop-blur-md"
       }`}
     >
-      {/* Main header */}
-      <div className="container px-4 mx-auto lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          {/* Left side - Logo and Menu button */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 transition-colors lg:hidden hover:bg-surface-alt rounded-xl"
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? (
-                <X className="w-6 h-6 text-text" />
-              ) : (
-                <Menu className="w-6 h-6 text-text" />
-              )}
-            </button>
+      <div className="container px-4 mx-auto sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20 lg:h-24">
+          {/* Logo Section - Premium Design */}
+          <motion.a
+            href="/"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="relative flex items-center gap-3 group"
+          >
+            {/* Animated glow effect */}
+            <motion.div
+              className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/20 to-secondary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              animate={{
+                scale: [1, 1.1, 1],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
 
-            <a
-              href="/"
-              className="flex items-center gap-2.5 flex-shrink-0 group"
-            >
+            {/* Logo Image Container */}
+            <div className="relative flex items-center justify-center w-12 h-12 overflow-hidden transition-all duration-300 rounded-xl lg:w-14 lg:h-14 bg-gradient-to-br from-primary/10 to-secondary/10 group-hover:from-primary/20 group-hover:to-secondary/20 group-hover:shadow-lg group-hover:shadow-primary/30">
               <img
                 src="/images/logo/sword-logo.png"
                 alt="SwordHub Logo"
-                className="object-contain w-8 h-8 transition-transform duration-200 lg:left-4 md:left-24 lg:w-9 lg:h-9"
+                className="object-contain w-8 h-8 transition-transform duration-300 lg:w-10 lg:h-10 group-hover:scale-110 group-hover:rotate-3"
                 onError={(e) => {
-                  console.log("Logo failed to load");
                   e.target.style.display = "none";
                 }}
               />
-              <h1 className="text-xl font-bold sm:text-2xl text-text whitespace-nowrap lg:ml-6 md:ml-8">
-                SWORD<span className="text-primary">HUB</span>
-              </h1>
-            </a>
-          </div>
-
-          {/* Center - Navigation */}
-          <nav className="items-center hidden gap-8 lg:flex">
-            {categories.map((category) => (
-              <div
-                key={category.id}
-                className="relative group"
-                onMouseEnter={() => setActiveCategory(category.id)}
-                onMouseLeave={() => setActiveCategory(null)}
-              >
-                <button className="flex items-center gap-1 px-1 py-2 transition-colors text-text hover:text-primary group">
-                  {category.name}
-                  <ChevronDown className="w-4 h-4 transition-transform duration-200 text-text-muted group-hover:text-primary group-hover:-rotate-180" />
-                </button>
-
-                <AnimatePresence>
-                  {activeCategory === category.id && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute left-0 w-64 p-3 mt-1 border shadow-lg top-full bg-surface rounded-xl shadow-primary/5 border-primary/5 backdrop-blur-md"
-                    >
-                      <div className="grid gap-1">
-                        {category.subcategories.map((sub, idx) => (
-                          <a
-                            key={idx}
-                            href="#"
-                            className="px-3 py-2 transition-colors rounded-lg text-text-muted hover:text-text hover:bg-surface-alt"
-                          >
-                            {sub}
-                          </a>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
-          </nav>
-
-          {/* Right side */}
-          <div className="flex items-center gap-2">
-            {/* Search */}
-            <div className="items-center hidden px-4 py-2 border md:flex bg-surface-alt rounded-xl border-primary/5">
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-40 bg-transparent text-text placeholder-text-muted focus:outline-none lg:w-60"
-              />
-              <Search className="w-5 h-5 text-text-muted" />
             </div>
 
-            {/* Theme Toggle */}
-            {/* <ThemeToggle /> */}
-
-            {/* User */}
-            <button className="p-2 transition-colors hover:bg-surface-alt rounded-xl">
-              <User className="w-6 h-6 text-text" />
-            </button>
-
-            {/* Cart */}
-            <button
-              onClick={toggleCart}
-              className="relative p-2 transition-colors hover:bg-surface-alt rounded-xl"
-            >
-              <ShoppingBag className="w-6 h-6 text-text" />
-              {getTotalItems() > 0 && (
-                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-medium rounded-full -top-1 -right-1 bg-primary text-background">
-                  {getTotalItems()}
+            {/* Brand Name - Modern Typography */}
+            <div className="relative">
+              <h1 className="text-2xl font-extrabold leading-none tracking-tight sm:text-3xl lg:text-4xl text-text">
+                SWORD
+                <span className="text-transparent transition-all duration-300 bg-clip-text bg-gradient-to-r from-primary via-primary/90 to-secondary group-hover:from-secondary group-hover:via-primary group-hover:to-primary">
+                  HUB
                 </span>
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
+              </h1>
+              {/* Animated underline */}
+              <motion.div
+                className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-primary to-secondary"
+                initial={{ width: 0 }}
+                whileHover={{ width: "100%" }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+          </motion.a>
 
-      {/* Mobile menu */}
-      <div
-        className={`lg:hidden ${
-          isMenuOpen ? "block" : "hidden"
-        } bg-surface/95 backdrop-blur-md border-t border-primary/5`}
-      >
-        <div className="container px-4 py-4 mx-auto">
-          {/* Mobile search */}
-          <div className="flex items-center px-4 py-2 mb-4 border bg-surface-alt rounded-xl border-primary/5">
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent text-text placeholder-text-muted focus:outline-none"
+          {/* Cart Button - Premium Design */}
+          <motion.button
+            onClick={toggleCart}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            className="relative flex items-center gap-3 px-5 py-3 overflow-hidden transition-all duration-300 border shadow-lg lg:px-6 lg:py-3.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-surface to-surface/80 backdrop-blur-xl border-primary/20 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/20 group"
+          >
+            {/* Animated background gradient */}
+            <motion.div
+              className="absolute inset-0 opacity-0 bg-gradient-to-r from-primary/10 to-secondary/10 group-hover:opacity-100 transition-opacity duration-300"
+              animate={{
+                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+              style={{
+                backgroundSize: "200% 200%",
+              }}
             />
-            <Search className="w-5 h-5 text-text-muted" />
-          </div>
 
-          {/* Mobile navigation */}
-          <nav className="space-y-1">
-            {categories.map((category) => (
-              <div key={category.id} className="space-y-1">
-                <button
-                  className="flex items-center justify-between w-full px-3 py-2 transition-colors rounded-lg text-text hover:bg-surface-alt"
-                  onClick={() =>
-                    setActiveCategory(
-                      activeCategory === category.id ? null : category.id
-                    )
-                  }
+            {/* Cart Icon with pulse effect */}
+            <div className="relative">
+              <ShoppingBag className="relative z-10 w-5 h-5 transition-transform duration-300 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-text group-hover:text-primary group-hover:rotate-12" />
+
+              {/* Badge */}
+              {getTotalItems() > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute z-20 flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full -top-2 -right-2 lg:-top-2.5 lg:-right-2.5 lg:w-6 lg:h-6 lg:text-sm bg-gradient-to-r from-primary to-secondary text-background shadow-lg shadow-primary/50 animate-pulse"
                 >
-                  <span>{category.name}</span>
-                  <ChevronDown
-                    className={`w-4 h-4 text-text-muted transition-transform duration-200 ${
-                      activeCategory === category.id ? "-rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                <AnimatePresence>
-                  {activeCategory === category.id && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="py-1 pl-4 space-y-1">
-                        {category.subcategories.map((sub, idx) => (
-                          <a
-                            key={idx}
-                            href="#"
-                            className="block px-3 py-2 transition-colors rounded-lg text-text-muted hover:text-text hover:bg-surface-alt"
-                          >
-                            {sub}
-                          </a>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
-          </nav>
+                  {getTotalItems()}
+                </motion.span>
+              )}
+            </div>
+
+            {/* Cart Text - Hidden on small screens */}
+            <span className="relative z-10 hidden font-bold tracking-wide uppercase transition-colors duration-300 sm:block text-text group-hover:text-primary">
+              Cart
+            </span>
+
+            {/* Shine effect on hover */}
+            <motion.div
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)",
+              }}
+              animate={{
+                x: ["-100%", "100%"],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                repeatDelay: 2,
+              }}
+            />
+          </motion.button>
         </div>
       </div>
-    </header>
+
+      {/* Bottom accent line */}
+      <motion.div
+        className="h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ duration: 1, delay: 0.2 }}
+      />
+    </motion.header>
   );
 }

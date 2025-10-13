@@ -115,7 +115,7 @@ export function CartSidebar() {
 
                       {/* Product Info */}
                       <div className="flex-1 min-w-0">
-                        <h4 className="mb-1 text-sm font-bold uppercase truncate sm:text-base lg:text-lg text-light">
+                        <h4 className="mb-1 text-sm font-extrabold leading-tight tracking-wide uppercase truncate transition-all duration-300 sm:text-base lg:text-lg text-light hover:text-primary hover:tracking-wider drop-shadow-sm">
                           {item.name}
                         </h4>
                         <p className="mb-2 text-xs sm:text-sm text-light/60">

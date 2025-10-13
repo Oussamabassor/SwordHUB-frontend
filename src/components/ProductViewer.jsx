@@ -227,17 +227,17 @@ export const ProductViewer = ({ products = [], onProductClick }) => {
             <span className="text-light/70">{items.length}</span>
           </div>
 
-          {/* Product name overlay - Modern card style */}
+          {/* Product name overlay - Modern card style with more bottom spacing */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="absolute z-10 bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6"
+            className="absolute z-10 bottom-20 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6"
           >
             <div className="p-3 sm:p-4 bg-surface/95 backdrop-blur-xl rounded-xl border border-primary/20 shadow-2xl">
               <div className="flex items-start justify-between gap-2 sm:gap-3">
                 <div className="flex-1 min-w-0">
-                  <p className="text-base sm:text-lg font-bold text-light truncate">
+                  <p className="text-base font-extrabold leading-tight tracking-wide uppercase transition-all duration-300 sm:text-lg text-light truncate hover:text-primary hover:tracking-wider drop-shadow-sm">
                     {items[currentIndex].name}
                   </p>
                   <div className="flex items-center gap-1.5 sm:gap-2 mt-1">
@@ -282,8 +282,8 @@ export const ProductViewer = ({ products = [], onProductClick }) => {
           <ChevronRight size={20} className="sm:w-6 sm:h-6" strokeWidth={2.5} />
         </motion.button>
 
-        {/* Dots indicator - Modern minimalist */}
-        <div className="absolute z-20 flex gap-1.5 sm:gap-2 -translate-x-1/2 bottom-16 sm:bottom-20 left-1/2">
+        {/* Dots indicator - Modern minimalist - moved up to avoid covering product name */}
+        <div className="absolute z-20 flex gap-1.5 sm:gap-2 -translate-x-1/2 bottom-12 sm:bottom-20 left-1/2">
           {items.map((_, index) => (
             <motion.button
               key={index}

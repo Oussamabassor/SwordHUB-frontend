@@ -29,7 +29,7 @@ export function ProductDetailPage() {
   const showToast = useToast();
 
   const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Keep loading state to prevent "not found" flash
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
@@ -128,21 +128,8 @@ export function ProductDetailPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="container flex items-center justify-center px-4 py-20 mx-auto">
-          <div className="text-center">
-            <div className="w-16 h-16 mx-auto mb-4 border-4 rounded-full border-primary border-t-transparent animate-spin"></div>
-            <p className="text-light">Loading product...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!product) {
+  // Show "not found" only if we're done loading AND product is null
+  if (!loading && !product) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -159,6 +146,11 @@ export function ProductDetailPage() {
         </div>
       </div>
     );
+  }
+
+  // If still loading, show nothing (NavigationLoader handles the loading animation)
+  if (loading || !product) {
+    return null;
   }
 
   const productImages = product.images || [product.image];
@@ -312,8 +304,8 @@ export function ProductDetailPage() {
               </div>
             </div>
 
-            {/* Product Name */}
-            <h1 className="text-3xl font-bold break-words sm:text-4xl lg:text-5xl text-light">
+            {/* Product Name - Professional & Modern */}
+            <h1 className="text-3xl font-extrabold leading-tight tracking-wide uppercase transition-all duration-300 break-words sm:text-4xl lg:text-5xl text-light hover:text-primary hover:tracking-wider drop-shadow-sm">
               {product.name}
             </h1>
 
@@ -596,16 +588,16 @@ export function ProductDetailPage() {
                   whileHover={{
                     y: -8,
                     scale: 1.05,
-                    transition: { duration: 0.3 },
+                    transition: { duration: 0.15 },
                   }}
                   onClick={() => {
                     navigate(`/products/${suggestedProduct.id}`);
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
-                  className="relative overflow-hidden transition-all duration-500 border cursor-pointer rounded-xl group lg:rounded-2xl bg-surface/40 backdrop-blur-md border-primary/10 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/30"
+                  className="relative overflow-hidden transition-all duration-200 border cursor-pointer rounded-xl group lg:rounded-2xl bg-surface/40 backdrop-blur-md border-primary/10 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/30"
                 >
                   {/* Animated gradient border effect */}
-                  <div className="absolute inset-0 transition-opacity duration-500 opacity-0 group-hover:opacity-100">
+                  <div className="absolute inset-0 transition-opacity duration-200 opacity-0 group-hover:opacity-100">
                     <div className="absolute inset-0 rounded-lg lg:rounded-xl bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 blur-xl"></div>
                   </div>
 
@@ -615,11 +607,11 @@ export function ProductDetailPage() {
                   {/* Image Container - Larger */}
                   <div className="relative overflow-hidden aspect-[3/4] bg-gradient-to-br from-surface/50 to-surface/30">
                     {/* Shimmer effect on hover */}
-                    <div className="absolute inset-0 transition-transform duration-1000 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                    <div className="absolute inset-0 transition-transform duration-500 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
                     <motion.div
                       whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.5, ease: "easeOut" }}
+                      transition={{ duration: 0.3, ease: "easeOut" }}
                       className="w-full h-full"
                     >
                       <ImageWithLoader
@@ -635,7 +627,7 @@ export function ProductDetailPage() {
                     </motion.div>
 
                     {/* Enhanced gradient overlay */}
-                    <div className="absolute inset-0 transition-opacity duration-500 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-background/90 via-background/40 to-transparent"></div>
+                    <div className="absolute inset-0 transition-opacity duration-200 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-background/90 via-background/40 to-transparent"></div>
 
                     {/* Discount badge if applicable */}
                     {suggestedProduct.originalPrice && (
@@ -652,8 +644,8 @@ export function ProductDetailPage() {
 
                   {/* Product Info - Larger Layout */}
                   <div className="relative p-3 space-y-2 lg:p-4 lg:space-y-3 bg-gradient-to-b from-surface/50 to-surface/30">
-                    {/* Product Name */}
-                    <h3 className="text-xs sm:text-sm lg:text-base font-bold leading-tight transition-colors line-clamp-2 text-light group-hover:text-primary min-h-[2.5rem] lg:min-h-[3rem]">
+                    {/* Product Name - Professional & Modern */}
+                    <h3 className="text-sm font-extrabold leading-tight tracking-wide text-left uppercase transition-all duration-300 sm:text-base lg:text-lg xl:text-xl line-clamp-2 text-light group-hover:text-primary group-hover:tracking-wider min-h-[2.5rem] sm:min-h-[3rem] lg:min-h-[3.5rem] drop-shadow-sm">
                       {suggestedProduct.name}
                     </h3>
 

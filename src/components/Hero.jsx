@@ -17,7 +17,7 @@ import "../styles/components/Hero.css";
 export const Hero = () => {
   const navigate = useNavigate();
   const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Disabled - using NavigationLoader instead
 
   useEffect(() => {
     fetchFeaturedProducts();
@@ -173,13 +173,14 @@ export const Hero = () => {
     navigate(`/products/${productId}`);
   };
 
-  if (loading) {
-    return (
-      <section className="relative overflow-hidden bg-background min-h-[600px] flex items-center justify-center py-6">
-        <Loader className="animate-spin h-12 w-12 text-primary" />
-      </section>
-    );
-  }
+  // Disabled old loading screen - NavigationLoader handles this now
+  // if (loading) {
+  //   return (
+  //     <section className="relative overflow-hidden bg-background min-h-[600px] flex items-center justify-center py-6">
+  //       <Loader className="animate-spin h-12 w-12 text-primary" />
+  //     </section>
+  //   );
+  // }
 
   return (
     <section className="relative overflow-hidden bg-background min-h-[600px] flex items-center py-6">

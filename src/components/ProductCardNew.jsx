@@ -115,8 +115,8 @@ export function ProductCard({ product }) {
           {product.category}
         </span>
 
-        {/* Product Name - Larger, Bold, Capitalized */}
-        <h3 className="text-base font-bold leading-snug text-center uppercase transition-colors sm:text-lg lg:text-xl xl:text-2xl line-clamp-2 text-light group-hover:text-primary min-h-[2.5rem] sm:min-h-[3rem] lg:min-h-[3.5rem]">
+        {/* Product Name - Professional & Modern */}
+        <h3 className="text-base font-extrabold leading-tight tracking-wide text-left uppercase transition-all duration-300 sm:text-lg lg:text-xl xl:text-2xl line-clamp-2 text-light group-hover:text-primary group-hover:tracking-wider min-h-[2.5rem] sm:min-h-[3rem] lg:min-h-[3.5rem] drop-shadow-sm">
           {product.name}
         </h3>
 
