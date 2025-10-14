@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import { AdminSidebar, AdminHeader } from "../../components/admin/AdminLayout";
 import { DataTable } from "../../components/admin/DataTable";
 import { OrderDetailsModal } from "../../components/admin/OrderDetailsModal";
+import { ConfirmationModal } from "../../components/admin/ConfirmationModal";
 import { ordersApi } from "../../services/apiService";
 import { Eye, Filter } from "lucide-react";
+import { useToast } from "../../components/ToastProvider";
 
 export const OrdersManagement = () => {
+  const showToast = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,6 +16,10 @@ export const OrdersManagement = () => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [selectedOrderData, setSelectedOrderData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState({
+    isOpen: false,
+    order: null,
+  });
 
   useEffect(() => {
     fetchOrders();
@@ -38,10 +45,15 @@ export const OrdersManagement = () => {
   const handleStatusChange = async (order, newStatus) => {
     try {
       await ordersApi.updateStatus(order.id, newStatus);
+      showToast(`Order status updated to "${newStatus}"`, "success", 3000);
       fetchOrders();
     } catch (error) {
       console.error("Error updating order status:", error);
-      alert("Failed to update order status");
+      showToast(
+        "Failed to update order status. Please try again.",
+        "error",
+        3000
+      );
     }
   };
 
@@ -91,15 +103,21 @@ export const OrdersManagement = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (order) => {
-    if (window.confirm(`Are you sure you want to delete order #${order.id}?`)) {
-      try {
-        await ordersApi.delete(order.id);
-        fetchOrders();
-      } catch (error) {
-        console.error("Error deleting order:", error);
-        alert("Failed to delete order");
-      }
+  const handleDelete = (order) => {
+    setConfirmDelete({ isOpen: true, order });
+  };
+
+  const confirmDeleteAction = async () => {
+    const order = confirmDelete.order;
+    if (!order) return;
+
+    try {
+      await ordersApi.delete(order.id);
+      showToast(`Order #${order.id} deleted successfully`, "success", 3000);
+      fetchOrders();
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      showToast("Failed to delete order. Please try again.", "error", 3000);
     }
   };
 
@@ -272,6 +290,18 @@ export const OrdersManagement = () => {
         }}
         orderId={selectedOrderId}
         orderData={selectedOrderData}
+      />
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmDelete.isOpen}
+        onClose={() => setConfirmDelete({ isOpen: false, order: null })}
+        onConfirm={confirmDeleteAction}
+        title="Delete Order"
+        message={`Are you sure you want to delete order #${confirmDelete.order?.id}? This action cannot be undone and all order data will be permanently removed.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
       />
     </div>
   );

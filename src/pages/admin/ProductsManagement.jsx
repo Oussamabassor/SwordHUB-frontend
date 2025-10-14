@@ -2,16 +2,23 @@ import React, { useState, useEffect } from "react";
 import { AdminSidebar, AdminHeader } from "../../components/admin/AdminLayout";
 import { DataTable } from "../../components/admin/DataTable";
 import { ProductForm } from "../../components/admin/ProductForm";
+import { ConfirmationModal } from "../../components/admin/ConfirmationModal";
 import { productsApi } from "../../services/apiService";
 import { Plus, Search, Loader } from "lucide-react";
+import { useToast } from "../../components/ToastProvider";
 
 export const ProductsManagement = () => {
+  const showToast = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState({
+    isOpen: false,
+    product: null,
+  });
 
   useEffect(() => {
     fetchProducts();
@@ -41,15 +48,25 @@ export const ProductsManagement = () => {
     setShowForm(true);
   };
 
-  const handleDelete = async (product) => {
-    if (window.confirm(`Are you sure you want to delete "${product.name}"?`)) {
-      try {
-        await productsApi.delete(product.id);
-        fetchProducts();
-      } catch (error) {
-        console.error("Error deleting product:", error);
-        alert("Failed to delete product");
-      }
+  const handleDelete = (product) => {
+    setConfirmDelete({ isOpen: true, product });
+  };
+
+  const confirmDeleteAction = async () => {
+    const product = confirmDelete.product;
+    if (!product) return;
+
+    try {
+      await productsApi.delete(product.id);
+      showToast(
+        `Product "${product.name}" deleted successfully`,
+        "success",
+        3000
+      );
+      fetchProducts();
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      showToast("Failed to delete product. Please try again.", "error", 3000);
     }
   };
 
@@ -191,6 +208,18 @@ export const ProductsManagement = () => {
           onSuccess={fetchProducts}
         />
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmDelete.isOpen}
+        onClose={() => setConfirmDelete({ isOpen: false, product: null })}
+        onConfirm={confirmDeleteAction}
+        title="Delete Product"
+        message={`Are you sure you want to delete "${confirmDelete.product?.name}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
     </div>
   );
 };
