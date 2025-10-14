@@ -196,7 +196,7 @@ export const ProductViewer = ({ products = [], onProductClick }) => {
               <motion.div
                 initial={{ x: "-100%" }}
                 animate={{ x: "100%" }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
+                transition={{ duration: 0.9, ease: "easeInOut" }}
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
                 style={{ pointerEvents: "none" }}
               />
@@ -269,7 +269,7 @@ export const ProductViewer = ({ products = [], onProductClick }) => {
           style={{
             transformOrigin: "center center",
             top: "50%",
-            transform: "translateY(-50%)",
+            // transform: "translateY(-50%)",
           }}
           className="absolute z-20 p-2 transition-all border rounded-lg shadow-xl sm:p-3 text-light sm:rounded-xl left-1 sm:-left-4 bg-surface/90 backdrop-blur-lg hover:bg-primary hover:text-background border-primary/30 hover:border-primary/50 hover:shadow-primary/20"
         >
@@ -285,7 +285,7 @@ export const ProductViewer = ({ products = [], onProductClick }) => {
           style={{
             transformOrigin: "center center",
             top: "50%",
-            transform: "translateY(-50%)",
+            // transform: "translateY(-50%)",
           }}
           className="absolute z-20 p-2 transition-all border rounded-lg shadow-xl sm:p-3 text-light sm:rounded-xl right-1 sm:-right-4 bg-surface/90 backdrop-blur-lg hover:bg-primary hover:text-background border-primary/30 hover:border-primary/50 hover:shadow-primary/20"
         >
