@@ -16,10 +16,7 @@ export function Header() {
   }, []);
 
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
+    <header
       className={`fixed top-0 w-full z-50 transition-all duration-500 ${
         isScrolled
           ? "bg-surface/80 backdrop-blur-xl shadow-2xl shadow-primary/5 border-b border-primary/10"
@@ -149,6 +146,6 @@ export function Header() {
         animate={{ scaleX: 1 }}
         transition={{ duration: 1, delay: 0.2 }}
       />
-    </motion.header>
+    </header>
   );
 }

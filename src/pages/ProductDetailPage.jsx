@@ -407,7 +407,7 @@ export function ProductDetailPage() {
             </div>
 
             {/* Product Name - Professional & Modern */}
-            <h1 className="text-3xl font-extrabold leading-tight tracking-wide uppercase transition-all duration-300 break-words sm:text-4xl lg:text-5xl text-light hover:text-primary hover:tracking-wider drop-shadow-sm">
+            <h1 className="text-3xl font-extrabold leading-tight tracking-wide uppercase break-words transition-all duration-300 sm:text-4xl lg:text-5xl text-light hover:text-primary hover:tracking-wider drop-shadow-sm">
               {product.name}
             </h1>
 
@@ -544,7 +544,7 @@ export function ProductDetailPage() {
                 )}
               </motion.button>
 
-              <motion.button
+              {/* <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsWishlisted(!isWishlisted)}
                 className={`p-3 sm:p-4 transition-all rounded-xl border ${
@@ -557,14 +557,14 @@ export function ProductDetailPage() {
                   size={22}
                   className={isWishlisted ? "fill-current" : ""}
                 />
-              </motion.button>
+              </motion.button> */}
 
-              <motion.button
+              {/* <motion.button
                 whileTap={{ scale: 0.95 }}
                 className="p-3 transition-all border sm:p-4 rounded-xl bg-surface/50 border-primary/20 text-light hover:border-primary"
               >
                 <Share2 size={22} />
-              </motion.button>
+              </motion.button> */}
             </div>
 
             {/* Features */}

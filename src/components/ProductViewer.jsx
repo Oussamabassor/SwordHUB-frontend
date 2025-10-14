@@ -105,22 +105,22 @@ export const ProductViewer = ({ products = [], onProductClick }) => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="absolute top-0 left-0 w-12 h-12 sm:w-16 sm:h-16 border-t-2 border-l-2 border-primary/30 rounded-tl-2xl"
+          className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 sm:w-16 sm:h-16 border-primary/30 rounded-tl-2xl"
         />
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="absolute top-0 right-0 w-12 h-12 sm:w-16 sm:h-16 border-t-2 border-r-2 border-primary/30 rounded-tr-2xl"
+          className="absolute top-0 right-0 w-12 h-12 border-t-2 border-r-2 sm:w-16 sm:h-16 border-primary/30 rounded-tr-2xl"
         />
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="absolute bottom-0 left-0 w-12 h-12 sm:w-16 sm:h-16 border-b-2 border-l-2 border-primary/30 rounded-bl-2xl"
+          className="absolute bottom-0 left-0 w-12 h-12 border-b-2 border-l-2 sm:w-16 sm:h-16 border-primary/30 rounded-bl-2xl"
         />
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="absolute bottom-0 right-0 w-12 h-12 sm:w-16 sm:h-16 border-b-2 border-r-2 border-primary/30 rounded-br-2xl"
+          className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 sm:w-16 sm:h-16 border-primary/30 rounded-br-2xl"
         />
 
         {/* Product image container */}
@@ -149,7 +149,7 @@ export const ProductViewer = ({ products = [], onProductClick }) => {
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
-                className="p-4 sm:p-6 rounded-full bg-primary/20 backdrop-blur-sm"
+                className="p-4 rounded-full sm:p-6 bg-primary/20 backdrop-blur-sm"
               >
                 <MousePointerClick
                   size={48}
@@ -158,10 +158,10 @@ export const ProductViewer = ({ products = [], onProductClick }) => {
                 />
               </motion.div>
               <div className="text-center">
-                <p className="text-xl sm:text-2xl font-bold text-light drop-shadow-lg">
+                <p className="text-xl font-bold sm:text-2xl text-light drop-shadow-lg">
                   View Product
                 </p>
-                <p className="mt-2 text-xs sm:text-sm font-medium text-primary">
+                <p className="mt-2 text-xs font-medium sm:text-sm text-primary">
                   Click to explore details
                 </p>
               </div>
@@ -222,7 +222,7 @@ export const ProductViewer = ({ products = [], onProductClick }) => {
 
           {/* Product count indicator - Sleek modern */}
           <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-10 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-background/80 backdrop-blur-md text-light text-xs sm:text-sm font-semibold rounded-lg border border-primary/30 shadow-lg">
-            <span className="text-primary font-bold">{currentIndex + 1}</span>
+            <span className="font-bold text-primary">{currentIndex + 1}</span>
             <span className="mx-1 sm:mx-1.5 text-light/40">/</span>
             <span className="text-light/70">{items.length}</span>
           </div>
@@ -234,10 +234,10 @@ export const ProductViewer = ({ products = [], onProductClick }) => {
             transition={{ delay: 0.3 }}
             className="absolute z-10 bottom-20 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6"
           >
-            <div className="p-3 sm:p-4 bg-surface/95 backdrop-blur-xl rounded-xl border border-primary/20 shadow-2xl">
+            <div className="p-3 border shadow-2xl sm:p-4 bg-surface/95 backdrop-blur-xl rounded-xl border-primary/20">
               <div className="flex items-start justify-between gap-2 sm:gap-3">
                 <div className="flex-1 min-w-0">
-                  <p className="text-base font-extrabold leading-tight tracking-wide uppercase transition-all duration-300 sm:text-lg text-light truncate hover:text-primary hover:tracking-wider drop-shadow-sm">
+                  <p className="text-base font-extrabold leading-tight tracking-wide uppercase truncate transition-all duration-300 sm:text-lg text-light hover:text-primary hover:tracking-wider drop-shadow-sm">
                     {items[currentIndex].name}
                   </p>
                   <div className="flex items-center gap-1.5 sm:gap-2 mt-1">
@@ -264,9 +264,14 @@ export const ProductViewer = ({ products = [], onProductClick }) => {
             e.stopPropagation();
             prevImage();
           }}
-          whileHover={{ scale: 1.1, x: -4 }}
+          whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className="absolute z-20 p-2 sm:p-3 text-light transition-all -translate-y-1/2 border rounded-lg sm:rounded-xl shadow-xl left-1 sm:-left-4 top-1/2 bg-surface/90 backdrop-blur-lg hover:bg-primary hover:text-background border-primary/30 hover:border-primary/50 hover:shadow-primary/20"
+          style={{
+            transformOrigin: "center center",
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}
+          className="absolute z-20 p-2 transition-all border rounded-lg shadow-xl sm:p-3 text-light sm:rounded-xl left-1 sm:-left-4 bg-surface/90 backdrop-blur-lg hover:bg-primary hover:text-background border-primary/30 hover:border-primary/50 hover:shadow-primary/20"
         >
           <ChevronLeft size={20} className="sm:w-6 sm:h-6" strokeWidth={2.5} />
         </motion.button>
@@ -275,9 +280,14 @@ export const ProductViewer = ({ products = [], onProductClick }) => {
             e.stopPropagation();
             nextImage();
           }}
-          whileHover={{ scale: 1.1, x: 4 }}
+          whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className="absolute z-20 p-2 sm:p-3 text-light transition-all -translate-y-1/2 border rounded-lg sm:rounded-xl shadow-xl right-1 sm:-right-4 top-1/2 bg-surface/90 backdrop-blur-lg hover:bg-primary hover:text-background border-primary/30 hover:border-primary/50 hover:shadow-primary/20"
+          style={{
+            transformOrigin: "center center",
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}
+          className="absolute z-20 p-2 transition-all border rounded-lg shadow-xl sm:p-3 text-light sm:rounded-xl right-1 sm:-right-4 bg-surface/90 backdrop-blur-lg hover:bg-primary hover:text-background border-primary/30 hover:border-primary/50 hover:shadow-primary/20"
         >
           <ChevronRight size={20} className="sm:w-6 sm:h-6" strokeWidth={2.5} />
         </motion.button>
@@ -313,7 +323,7 @@ export const ProductViewer = ({ products = [], onProductClick }) => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="absolute z-20 px-3 py-1 -translate-x-1/2 rounded-full top-6 left-1/2 bg-background/80 backdrop-blur-md border border-primary/30"
+            className="absolute z-20 px-3 py-1 -translate-x-1/2 border rounded-full top-6 left-1/2 bg-background/80 backdrop-blur-md border-primary/30"
           >
             <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
