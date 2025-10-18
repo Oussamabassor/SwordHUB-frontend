@@ -1,7 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { AdminSidebar, AdminHeader } from "../../components/admin/AdminLayout";
-import { dashboardApi } from "../../services/apiService";
+import { dashboardApi, ordersApi } from "../../services/apiService";
 import { motion } from "framer-motion";
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import {
   TrendingUp,
   TrendingDown,
@@ -12,12 +29,18 @@ import {
   Calendar,
   ArrowUpRight,
   Loader,
+  Activity,
 } from "lucide-react";
 
 export const AdminAnalytics = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [chartData, setChartData] = useState({
+    revenueData: [],
+    ordersData: [],
+    statusData: [],
+  });
 
   useEffect(() => {
     fetchAnalytics();
@@ -28,44 +51,97 @@ export const AdminAnalytics = () => {
       const response = await dashboardApi.getStats();
       const statsData = response?.data || response;
       setStats(statsData);
+
+      // Fetch orders for chart data
+      const ordersResponse = await ordersApi.getAll();
+      const orders =
+        ordersResponse?.data?.orders || ordersResponse?.orders || [];
+
+      // Process data for charts
+      processChartData(orders, statsData);
     } catch (error) {
       console.error("Error fetching analytics:", error);
-      // Fallback mock data for demonstration
-      setStats({
-        totalRevenue: 45678.9,
-        totalOrders: 342,
-        totalProducts: 89,
-        totalCustomers: 1234,
-        pendingOrders: 23,
-        revenueGrowth: 23.5,
-        ordersGrowth: 18.2,
-        customersGrowth: 15.7,
-        monthlyRevenue: [
-          { month: "Jan", revenue: 3200 },
-          { month: "Feb", revenue: 3800 },
-          { month: "Mar", revenue: 4100 },
-          { month: "Apr", revenue: 3900 },
-          { month: "May", revenue: 4500 },
-          { month: "Jun", revenue: 5200 },
-        ],
-        topProducts: [
-          { name: "Premium Gym T-Shirt", sales: 145, revenue: 7250 },
-          { name: "Performance Workout Shirt", sales: 98, revenue: 5880 },
-          { name: "Classic Fitness Tee", sales: 87, revenue: 4350 },
-          { name: "Sport Training Shirt", sales: 76, revenue: 3800 },
-          { name: "Athletic Performance Top", sales: 65, revenue: 3250 },
-        ],
-        ordersByStatus: [
-          { status: "Pending", count: 23, percentage: 12 },
-          { status: "Processing", count: 67, percentage: 35 },
-          { status: "Shipped", count: 45, percentage: 24 },
-          { status: "Delivered", count: 156, percentage: 82 },
-          { status: "Cancelled", count: 8, percentage: 4 },
-        ],
-      });
     } finally {
       setLoading(false);
     }
+  };
+
+  const processChartData = (orders, statsData) => {
+    // Revenue by month (last 6 months)
+    const revenueByMonth = {};
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const now = new Date();
+
+    // Initialize last 6 months
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+      revenueByMonth[key] = 0;
+    }
+
+    // Aggregate revenue by month
+    orders.forEach((order) => {
+      if (order.createdAt) {
+        const date = new Date(order.createdAt);
+        const key = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+        if (revenueByMonth.hasOwnProperty(key)) {
+          revenueByMonth[key] += order.total || 0;
+        }
+      }
+    });
+
+    const revenueData = Object.keys(revenueByMonth).map((month) => ({
+      name: month.split(" ")[0],
+      revenue: Math.round(revenueByMonth[month]),
+      orders: orders.filter((o) => {
+        if (!o.createdAt) return false;
+        const date = new Date(o.createdAt);
+        return `${monthNames[date.getMonth()]} ${date.getFullYear()}` === month;
+      }).length,
+    }));
+
+    // Orders by status for pie chart
+    const statusCount = {
+      pending: 0,
+      processing: 0,
+      shipped: 0,
+      delivered: 0,
+      cancelled: 0,
+    };
+
+    orders.forEach((order) => {
+      const status = (order.status || "pending").toLowerCase();
+      if (statusCount.hasOwnProperty(status)) {
+        statusCount[status]++;
+      }
+    });
+
+    const statusData = [
+      { name: "Pending", value: statusCount.pending, color: "#F59E0B" },
+      { name: "Processing", value: statusCount.processing, color: "#3B82F6" },
+      { name: "Shipped", value: statusCount.shipped, color: "#8B5CF6" },
+      { name: "Delivered", value: statusCount.delivered, color: "#10B981" },
+      { name: "Cancelled", value: statusCount.cancelled, color: "#EF4444" },
+    ].filter((item) => item.value > 0);
+
+    setChartData({
+      revenueData,
+      ordersData: revenueData,
+      statusData,
+    });
   };
 
   const statCards = [
@@ -100,16 +176,40 @@ export const AdminAnalytics = () => {
       iconColor: "text-purple-600 dark:text-purple-400",
     },
     {
-      title: "Total Customers",
-      value: stats?.totalCustomers || 0,
+      title: "Total Clients",
+      value: stats?.totalClients || 0,
       icon: Users,
-      change: `+${stats?.customersGrowth || 0}%`,
+      change: "+15%",
       isPositive: true,
       color: "from-orange-500 to-orange-600",
       bgColor: "bg-orange-50 dark:bg-orange-900/20",
       iconColor: "text-orange-600 dark:text-orange-400",
     },
   ];
+
+  // Custom tooltip for charts
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
+            {label}
+          </p>
+          {payload.map((entry, index) => (
+            <p key={index} className="text-sm text-gray-600 dark:text-gray-400">
+              <span style={{ color: entry.color }}>{entry.name}: </span>
+              <span className="font-semibold">
+                {entry.name.includes("Revenue") || entry.name === "revenue"
+                  ? `${entry.value.toLocaleString()} DH`
+                  : entry.value}
+              </span>
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
 
   if (loading) {
     return (
@@ -133,9 +233,12 @@ export const AdminAnalytics = () => {
         <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              Analytics Dashboard
-            </h1>
+            <div className="flex items-center gap-3 mb-2">
+              <Activity className="w-8 h-8 text-primary" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                Analytics Dashboard
+              </h1>
+            </div>
             <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
               Comprehensive insights into your business performance
             </p>
@@ -185,51 +288,62 @@ export const AdminAnalytics = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            {/* Monthly Revenue Chart */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Monthly Revenue
+          {/* Revenue Trend Chart */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+                  Revenue Trend
                 </h2>
-                <Calendar className="w-5 h-5 text-gray-400" />
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Last 6 months performance
+                </p>
               </div>
-              <div className="space-y-4">
-                {stats?.monthlyRevenue?.map((item, index) => (
-                  <motion.div
-                    key={item.month}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5 + index * 0.1 }}
-                    className="flex items-center gap-4"
-                  >
-                    <div className="w-12 text-sm font-medium text-gray-600 dark:text-gray-400">
-                      {item.month}
-                    </div>
-                    <div className="flex-1">
-                      <div className="relative h-8 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${(item.revenue / 6000) * 100}%` }}
-                          transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
-                          className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary to-primary/80 rounded-lg"
-                        />
-                      </div>
-                    </div>
-                    <div className="w-20 text-right text-sm font-semibold text-gray-900 dark:text-white">
-                      ${item.revenue.toLocaleString()}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
+              <DollarSign className="w-6 h-6 text-primary" />
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={chartData.revenueData}>
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#d4a574" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#d4a574" stopOpacity={0.1} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#374151"
+                  opacity={0.1}
+                />
+                <XAxis
+                  dataKey="name"
+                  stroke="#9CA3AF"
+                  style={{ fontSize: "12px" }}
+                />
+                <YAxis
+                  stroke="#9CA3AF"
+                  style={{ fontSize: "12px" }}
+                  tickFormatter={(value) => `${value} DH`}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#d4a574"
+                  strokeWidth={3}
+                  fillOpacity={1}
+                  fill="url(#colorRevenue)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </motion.div>
 
-            {/* Top Products */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            {/* Orders Trend Chart */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -237,95 +351,160 @@ export const AdminAnalytics = () => {
               className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Top Products
-                </h2>
-                <Package className="w-5 h-5 text-gray-400" />
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+                    Orders Overview
+                  </h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Monthly order count
+                  </p>
+                </div>
+                <ShoppingCart className="w-6 h-6 text-blue-500" />
               </div>
-              <div className="space-y-4">
-                {stats?.topProducts?.map((product, index) => (
-                  <motion.div
-                    key={product.name}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.6 + index * 0.1 }}
-                    className="flex items-center gap-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
-                  >
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <span className="text-sm font-bold text-primary">
-                        {index + 1}
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={chartData.ordersData}>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="#374151"
+                    opacity={0.1}
+                  />
+                  <XAxis
+                    dataKey="name"
+                    stroke="#9CA3AF"
+                    style={{ fontSize: "12px" }}
+                  />
+                  <YAxis stroke="#9CA3AF" style={{ fontSize: "12px" }} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="orders" fill="#3B82F6" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </motion.div>
+
+            {/* Orders by Status Pie Chart */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+                    Order Status Distribution
+                  </h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Current order breakdown
+                  </p>
+                </div>
+                <Package className="w-6 h-6 text-purple-500" />
+              </div>
+              <div className="flex items-center justify-center">
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={chartData.statusData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) =>
+                        `${name} (${(percent * 100).toFixed(0)}%)`
+                      }
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {chartData.statusData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CustomTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              {/* Legend */}
+              <div className="grid grid-cols-2 gap-3 mt-6">
+                {chartData.statusData.map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {item.name}:{" "}
+                      <span className="font-semibold text-gray-900 dark:text-white">
+                        {item.value}
                       </span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
-                        {product.name}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {product.sales} sales
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-primary">
-                        ${product.revenue.toLocaleString()}
-                      </p>
-                    </div>
-                  </motion.div>
+                    </span>
+                  </div>
                 ))}
               </div>
             </motion.div>
           </div>
 
-          {/* Orders by Status */}
+          {/* Revenue vs Orders Comparison */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
+            transition={{ delay: 0.7 }}
             className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Orders by Status
-              </h2>
-              <ShoppingCart className="w-5 h-5 text-gray-400" />
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+                  Revenue vs Orders Comparison
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Correlation between revenue and order volume
+                </p>
+              </div>
+              <TrendingUp className="w-6 h-6 text-green-500" />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-              {stats?.ordersByStatus?.map((item, index) => {
-                const statusColors = {
-                  Pending: "from-yellow-500 to-yellow-600",
-                  Processing: "from-blue-500 to-blue-600",
-                  Shipped: "from-purple-500 to-purple-600",
-                  Delivered: "from-green-500 to-green-600",
-                  Cancelled: "from-red-500 to-red-600",
-                };
-                return (
-                  <motion.div
-                    key={item.status}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.7 + index * 0.1 }}
-                    className="relative p-6 rounded-xl bg-gradient-to-br overflow-hidden"
-                    style={{
-                      backgroundImage: `linear-gradient(135deg, ${
-                        statusColors[item.status] || "from-gray-500 to-gray-600"
-                      })`,
-                    }}
-                  >
-                    <div className="relative z-10">
-                      <p className="text-sm font-medium text-white/80 mb-2">
-                        {item.status}
-                      </p>
-                      <p className="text-3xl font-bold text-white mb-1">
-                        {item.count}
-                      </p>
-                      <p className="text-xs text-white/80">
-                        {item.percentage}% of total
-                      </p>
-                    </div>
-                    <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
-                  </motion.div>
-                );
-              })}
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={chartData.revenueData}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#374151"
+                  opacity={0.1}
+                />
+                <XAxis
+                  dataKey="name"
+                  stroke="#9CA3AF"
+                  style={{ fontSize: "12px" }}
+                />
+                <YAxis
+                  yAxisId="left"
+                  stroke="#9CA3AF"
+                  style={{ fontSize: "12px" }}
+                  tickFormatter={(value) => `${value} DH`}
+                />
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  stroke="#9CA3AF"
+                  style={{ fontSize: "12px" }}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                <Line
+                  yAxisId="left"
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#d4a574"
+                  strokeWidth={3}
+                  dot={{ fill: "#d4a574", r: 5 }}
+                  activeDot={{ r: 7 }}
+                />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="orders"
+                  stroke="#3B82F6"
+                  strokeWidth={3}
+                  dot={{ fill: "#3B82F6", r: 5 }}
+                  activeDot={{ r: 7 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </motion.div>
         </div>
       </main>

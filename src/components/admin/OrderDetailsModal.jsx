@@ -15,8 +15,17 @@ import {
   XCircle,
   ShoppingBag,
 } from "lucide-react";
+import { ordersApi } from "../../services/apiService";
+import { useToast } from "../ToastProvider";
 
-export const OrderDetailsModal = ({ isOpen, onClose, orderId, orderData }) => {
+export const OrderDetailsModal = ({
+  isOpen,
+  onClose,
+  orderId,
+  orderData,
+  onStatusUpdate,
+}) => {
+  const showToast = useToast();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -30,6 +39,24 @@ export const OrderDetailsModal = ({ isOpen, onClose, orderId, orderData }) => {
       fetchOrderDetails();
     }
   }, [isOpen, orderId, orderData]);
+
+  const handleStatusChange = async (newStatus) => {
+    try {
+      await ordersApi.updateStatus(orderId, newStatus);
+      setOrder({ ...order, status: newStatus });
+      showToast(`Order status updated to "${newStatus}"`, "success", 3000);
+      if (onStatusUpdate) {
+        onStatusUpdate();
+      }
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      showToast(
+        "Failed to update order status. Please try again.",
+        "error",
+        3000
+      );
+    }
+  };
 
   const fetchOrderDetails = async () => {
     setLoading(true);
@@ -220,23 +247,38 @@ export const OrderDetailsModal = ({ isOpen, onClose, orderId, orderData }) => {
                         {(() => {
                           const config = getStatusConfig(order.status);
                           return (
-                            <div
-                              className={`flex items-center gap-3 p-4 rounded-lg ${config.bgColor}`}
-                            >
-                              <config.icon
-                                className={`w-8 h-8 ${config.color}`}
-                              />
-                              <div>
-                                <p
-                                  className={`text-lg font-bold ${config.color}`}
-                                >
-                                  {config.label}
-                                </p>
-                                <p className="text-xs text-gray-600 dark:text-gray-400">
-                                  Updated {formatDate(order.createdAt)}
-                                </p>
+                            <>
+                              <div
+                                className={`flex items-center gap-3 p-4 rounded-lg ${config.bgColor} mb-3`}
+                              >
+                                <config.icon
+                                  className={`w-8 h-8 ${config.color}`}
+                                />
+                                <div>
+                                  <p
+                                    className={`text-lg font-bold ${config.color}`}
+                                  >
+                                    {config.label}
+                                  </p>
+                                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                                    Updated {formatDate(order.createdAt)}
+                                  </p>
+                                </div>
                               </div>
-                            </div>
+                              <select
+                                value={order.status}
+                                onChange={(e) =>
+                                  handleStatusChange(e.target.value)
+                                }
+                                className="w-full text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                              >
+                                <option value="pending">Pending</option>
+                                <option value="processing">Processing</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="cancelled">Cancelled</option>
+                              </select>
+                            </>
                           );
                         })()}
                       </motion.div>
@@ -291,7 +333,7 @@ export const OrderDetailsModal = ({ isOpen, onClose, orderId, orderData }) => {
                       <div className="space-y-3">
                         {order.items.map((item, index) => (
                           <motion.div
-                            key={item.id}
+                            key={item.id || index}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.4 + index * 0.1 }}
@@ -299,9 +341,21 @@ export const OrderDetailsModal = ({ isOpen, onClose, orderId, orderData }) => {
                           >
                             <div className="flex-shrink-0 w-16 h-16 overflow-hidden border-2 rounded-lg border-primary/20">
                               <img
-                                src={item.image}
+                                src={
+                                  item.image
+                                    ? item.image.startsWith("http")
+                                      ? item.image // Full URL already
+                                      : `${
+                                          import.meta.env.VITE_API_URL ||
+                                          "http://localhost:5000"
+                                        }${item.image}`
+                                    : "/placeholder-product.jpg"
+                                }
                                 alt={item.name}
                                 className="object-cover w-full h-full"
+                                onError={(e) => {
+                                  e.target.src = "/placeholder-product.jpg";
+                                }}
                               />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -309,7 +363,14 @@ export const OrderDetailsModal = ({ isOpen, onClose, orderId, orderData }) => {
                                 {item.name}
                               </p>
                               <p className="text-sm text-gray-600 dark:text-gray-400">
-                                Size: {item.size} • Quantity: {item.quantity}
+                                {item.size ? (
+                                  <>
+                                    <span className="font-medium">Size:</span>{" "}
+                                    {item.size} •{" "}
+                                  </>
+                                ) : null}
+                                <span className="font-medium">Qty:</span>{" "}
+                                {item.quantity}
                               </p>
                             </div>
                             <div className="text-right">

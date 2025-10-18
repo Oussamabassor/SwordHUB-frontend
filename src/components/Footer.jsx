@@ -125,19 +125,19 @@ const socialLinks = [
 const contactInfo = [
   {
     icon: Mail,
-    text: "support@swordhub.com",
-    href: "mailto:support@swordhub.com",
+    text: "mohamedbourggad@gmail.com",
+    href: "mailto:mohamedbourggad@gmail.com",
   },
   {
     icon: Phone,
-    text: "+212 675643119",
-    href: "tel:+212 675643119",
+    text: "+212 607678795",
+    href: "tel:+212 607678795",
   },
-  {
-    icon: MapPin,
-    text: "123 Fitness Ave, NY 10001",
-    href: "#",
-  },
+  // {
+  //   icon: MapPin,
+  //   text: "123 Fitness Ave, NY 10001",
+  //   href: "#",
+  // },
 ];
 
 const features = [

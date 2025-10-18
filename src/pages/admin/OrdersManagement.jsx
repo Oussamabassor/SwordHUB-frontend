@@ -146,7 +146,6 @@ export const OrdersManagement = () => {
   };
 
   const columns = [
-    { key: "id", label: "Order ID" },
     {
       key: "customerName",
       label: "Customer",
@@ -154,9 +153,6 @@ export const OrdersManagement = () => {
         <div>
           <div className="text-sm font-medium text-gray-900 dark:text-white">
             {order.customerName}
-          </div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            {order.customerEmail || order.customerPhone}
           </div>
         </div>
       ),
@@ -188,23 +184,6 @@ export const OrdersManagement = () => {
       key: "total",
       label: "Total",
       render: (order) => <span className="font-medium">{order.total} DH</span>,
-    },
-    {
-      key: "status",
-      label: "Status",
-      render: (order) => (
-        <select
-          value={order.status}
-          onChange={(e) => handleStatusChange(order, e.target.value)}
-          className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 dark:bg-gray-700 dark:text-white"
-        >
-          <option value="pending">Pending</option>
-          <option value="processing">Processing</option>
-          <option value="shipped">Shipped</option>
-          <option value="delivered">Delivered</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
-      ),
     },
     {
       key: "createdAt",
@@ -290,6 +269,7 @@ export const OrdersManagement = () => {
         }}
         orderId={selectedOrderId}
         orderData={selectedOrderData}
+        onStatusUpdate={fetchOrders}
       />
 
       {/* Confirmation Modal */}

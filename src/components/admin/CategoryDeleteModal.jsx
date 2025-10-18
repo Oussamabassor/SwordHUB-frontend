@@ -142,10 +142,14 @@ export const CategoryDeleteModal = ({
                           >
                             {product.image && (
                               <img
-                                src={`${
-                                  import.meta.env.VITE_API_URL ||
-                                  "http://localhost"
-                                }${product.image}`}
+                                src={
+                                  product.image.startsWith("http")
+                                    ? product.image // Full URL already
+                                    : `${
+                                        import.meta.env.VITE_API_URL ||
+                                        "http://localhost:5000"
+                                      }${product.image}`
+                                }
                                 alt={product.name}
                                 className="w-12 h-12 object-cover rounded-lg"
                                 onError={(e) => {

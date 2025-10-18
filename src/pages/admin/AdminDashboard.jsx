@@ -8,7 +8,7 @@ import {
   Package,
   ShoppingCart,
   DollarSign,
-  TrendingUp,
+  Users,
   Loader,
   ArrowUpRight,
   ArrowDownRight,
@@ -126,14 +126,14 @@ export const AdminDashboard = () => {
       isPositive: true,
     },
     {
-      title: "Pending Orders",
-      value: stats?.pendingOrders || 0,
-      icon: TrendingUp,
+      title: "Total Clients",
+      value: stats?.totalClients || 0,
+      icon: Users,
       color: "from-purple-500 to-purple-600",
       bgColor: "bg-purple-50 dark:bg-purple-900/20",
       iconColor: "text-purple-600 dark:text-purple-400",
-      change: "-5%",
-      isPositive: false,
+      change: "+15%",
+      isPositive: true,
     },
   ];
 
@@ -163,45 +163,76 @@ export const AdminDashboard = () => {
     }
   };
 
-  const openOrderDetails = (order) => {
-    setSelectedOrderId(order.id);
-    setSelectedOrderData({
-      id: order.id,
-      orderNumber: `#${order.id.slice(-8).toUpperCase()}`,
-      customerName: order.customer,
-      customerPhone: "+1 234 567 8900", // Mock data
-      customerAddress: "123 Main Street, New York, NY 10001", // Mock data
-      status: order.status,
-      totalAmount: parseFloat(order.amount.replace("$", "")),
-      createdAt: new Date().toISOString(),
-      items: order.items || [],
-      timeline: [
-        { status: "placed", date: new Date().toISOString(), completed: true },
-        {
-          status: "processing",
-          date:
-            order.status === "processing" || order.status === "completed"
-              ? new Date().toISOString()
-              : null,
-          completed:
-            order.status === "processing" || order.status === "completed",
-        },
-        {
-          status: "shipped",
-          date: order.status === "completed" ? new Date().toISOString() : null,
-          completed: order.status === "completed",
-        },
-        { status: "delivered", date: null, completed: false },
-      ],
-    });
-    setIsModalOpen(true);
+  const openOrderDetails = async (order) => {
+    try {
+      // Fetch full order details from API to get real customer info
+      const response = await ordersApi.getAll();
+      const allOrders = response?.data?.orders || response?.orders || [];
+      const fullOrderData = allOrders.find((o) => (o._id || o.id) === order.id);
+
+      if (fullOrderData) {
+        setSelectedOrderId(order.id);
+        setSelectedOrderData({
+          id: order.id,
+          orderNumber: `#${order.id.slice(-8).toUpperCase()}`,
+          customerName: fullOrderData.customerName || order.customer,
+          customerPhone: fullOrderData.customerPhone || "N/A",
+          customerAddress: fullOrderData.customerAddress || "N/A",
+          status: order.status,
+          totalAmount:
+            fullOrderData.total ||
+            fullOrderData.totalAmount ||
+            parseFloat(order.amount.replace(" DH", "")),
+          createdAt: fullOrderData.createdAt || new Date().toISOString(),
+          items: fullOrderData.items || order.items || [],
+          timeline: [
+            {
+              status: "placed",
+              date: fullOrderData.createdAt,
+              completed: true,
+            },
+            {
+              status: "processing",
+              date:
+                order.status === "processing" ||
+                order.status === "shipped" ||
+                order.status === "delivered"
+                  ? fullOrderData.createdAt
+                  : null,
+              completed:
+                order.status === "processing" ||
+                order.status === "shipped" ||
+                order.status === "delivered",
+            },
+            {
+              status: "shipped",
+              date:
+                order.status === "shipped" || order.status === "delivered"
+                  ? fullOrderData.createdAt
+                  : null,
+              completed:
+                order.status === "shipped" || order.status === "delivered",
+            },
+            {
+              status: "delivered",
+              date:
+                order.status === "delivered" ? fullOrderData.createdAt : null,
+              completed: order.status === "delivered",
+            },
+          ],
+        });
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+    }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
-          <Loader className="animate-spin h-12 w-12 text-primary mx-auto mb-4" />
+          <Loader className="w-12 h-12 mx-auto mb-4 animate-spin text-primary" />
           <p className="text-gray-600 dark:text-gray-400">
             Loading dashboard...
           </p>
@@ -215,20 +246,20 @@ export const AdminDashboard = () => {
       <AdminSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       <AdminHeader setSidebarOpen={setSidebarOpen} />
 
-      <main className="lg:pl-64 pt-16">
-        <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+      <main className="pt-16 lg:pl-64">
+        <div className="p-4 mx-auto sm:p-6 lg:p-8 max-w-7xl">
           {/* Header */}
           <div className="mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            <h1 className="mb-2 text-2xl font-bold text-gray-900 sm:text-3xl dark:text-white">
               Dashboard Overview
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+            <p className="text-sm text-gray-600 dark:text-gray-400 sm:text-base">
               Welcome back! Here's what's happening with your store today.
             </p>
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 sm:mb-8">
             {statCards.map((stat, index) => (
               <motion.div
                 key={index}
@@ -236,7 +267,7 @@ export const AdminDashboard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                className="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-5 sm:p-6 border border-gray-200 dark:border-gray-700"
+                className="p-5 transition-all duration-300 bg-white border border-gray-200 shadow-sm group dark:bg-gray-800 rounded-xl hover:shadow-lg sm:p-6 dark:border-gray-700"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div
@@ -260,10 +291,10 @@ export const AdminDashboard = () => {
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                  <p className="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">
                     {stat.title}
                   </p>
-                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-2xl font-bold text-gray-900 sm:text-3xl dark:text-white">
                     {stat.value}
                   </p>
                 </div>
@@ -271,22 +302,22 @@ export const AdminDashboard = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Recent Orders */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+              className="bg-white border border-gray-200 shadow-sm lg:col-span-2 dark:bg-gray-800 rounded-xl dark:border-gray-700"
             >
-              <div className="p-5 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="p-5 border-b border-gray-200 sm:p-6 dark:border-gray-700">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
+                  <h2 className="text-lg font-semibold text-gray-900 sm:text-xl dark:text-white">
                     Recent Orders
                   </h2>
                   <button
                     onClick={() => navigate("/admin/orders")}
-                    className="text-sm text-primary hover:text-primary-hover font-medium flex items-center gap-1 transition-colors"
+                    className="flex items-center gap-1 text-sm font-medium transition-colors text-primary hover:text-primary-hover"
                   >
                     View All
                     <ArrowUpRight className="w-4 h-4" />
@@ -296,11 +327,11 @@ export const AdminDashboard = () => {
               <div className="p-4 sm:p-6">
                 {ordersLoading ? (
                   <div className="flex items-center justify-center py-12">
-                    <Loader className="animate-spin h-8 w-8 text-primary" />
+                    <Loader className="w-8 h-8 animate-spin text-primary" />
                   </div>
                 ) : recentOrders.length === 0 ? (
-                  <div className="text-center py-12">
-                    <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <div className="py-12 text-center">
+                    <ShoppingCart className="w-12 h-12 mx-auto mb-3 text-gray-400" />
                     <p className="text-gray-500 dark:text-gray-400">
                       No orders yet
                     </p>
@@ -313,10 +344,10 @@ export const AdminDashboard = () => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.5 + index * 0.1 }}
-                        className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors cursor-pointer"
+                        className="flex items-center justify-between p-4 transition-colors rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-100 dark:hover:bg-gray-900"
                         onClick={() => openOrderDetails(order)}
                       >
-                        <div className="flex items-center gap-4 flex-1 min-w-0">
+                        <div className="flex items-center flex-1 min-w-0 gap-4">
                           <div
                             className={`p-2 rounded-lg ${getStatusColor(
                               order.status
@@ -325,16 +356,16 @@ export const AdminDashboard = () => {
                             {getStatusIcon(order.status)}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">
+                            <p className="text-sm font-medium text-gray-900 truncate dark:text-white sm:text-base">
                               Order #{order.id.slice(-8)}
                             </p>
-                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">
+                            <p className="text-xs text-gray-600 truncate sm:text-sm dark:text-gray-400">
                               {order.customer}
                             </p>
                           </div>
                         </div>
-                        <div className="text-right ml-4">
-                          <p className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">
+                        <div className="ml-4 text-right">
+                          <p className="text-sm font-semibold text-gray-900 dark:text-white sm:text-base">
                             {order.amount}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-500">
@@ -342,7 +373,7 @@ export const AdminDashboard = () => {
                           </p>
                         </div>
                         <button
-                          className="ml-2 sm:ml-4 p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                          className="p-2 ml-2 transition-colors rounded-lg sm:ml-4 hover:bg-gray-200 dark:hover:bg-gray-800"
                           onClick={(e) => {
                             e.stopPropagation();
                             openOrderDetails(order);
@@ -362,37 +393,37 @@ export const AdminDashboard = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+              className="bg-white border border-gray-200 shadow-sm dark:bg-gray-800 rounded-xl dark:border-gray-700"
             >
-              <div className="p-5 sm:p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
+              <div className="p-5 border-b border-gray-200 sm:p-6 dark:border-gray-700">
+                <h2 className="text-lg font-semibold text-gray-900 sm:text-xl dark:text-white">
                   Quick Actions
                 </h2>
               </div>
-              <div className="p-4 sm:p-6 space-y-3">
+              <div className="p-4 space-y-3 sm:p-6">
                 <button
                   onClick={() => navigate("/admin/products")}
-                  className="w-full flex items-center gap-3 p-4 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors group"
+                  className="flex items-center w-full gap-3 p-4 transition-colors rounded-lg bg-primary/10 hover:bg-primary/20 text-primary group"
                 >
                   <Package className="w-5 h-5" />
                   <span className="font-medium">Add New Product</span>
-                  <ArrowUpRight className="w-4 h-4 ml-auto group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  <ArrowUpRight className="w-4 h-4 ml-auto transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                 </button>
                 <button
                   onClick={() => navigate("/admin/orders")}
-                  className="w-full flex items-center gap-3 p-4 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-900 dark:text-white transition-colors group"
+                  className="flex items-center w-full gap-3 p-4 text-gray-900 transition-colors bg-gray-100 rounded-lg dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white group"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   <span className="font-medium">View Orders</span>
-                  <ArrowUpRight className="w-4 h-4 ml-auto group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  <ArrowUpRight className="w-4 h-4 ml-auto transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                 </button>
                 <button
                   onClick={() => navigate("/admin/analytics")}
-                  className="w-full flex items-center gap-3 p-4 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-900 dark:text-white transition-colors group"
+                  className="flex items-center w-full gap-3 p-4 text-gray-900 transition-colors bg-gray-100 rounded-lg dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white group"
                 >
                   <BarChart3 className="w-5 h-5" />
                   <span className="font-medium">View Analytics</span>
-                  <ArrowUpRight className="w-4 h-4 ml-auto group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  <ArrowUpRight className="w-4 h-4 ml-auto transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                 </button>
               </div>
             </motion.div>
@@ -410,6 +441,7 @@ export const AdminDashboard = () => {
         }}
         orderId={selectedOrderId}
         orderData={selectedOrderData}
+        onStatusUpdate={fetchRecentOrders}
       />
     </div>
   );
