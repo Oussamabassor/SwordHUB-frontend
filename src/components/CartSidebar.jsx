@@ -35,16 +35,16 @@ export function CartSidebar() {
             className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
           />
 
-          {/* Cart Panel */}
+          {/* Cart Panel - Ensure 100vh and proper flex distribution */}
           <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed top-0 right-0 z-[60] flex flex-col w-full h-full shadow-2xl bg-background sm:w-[450px] md:w-[500px] lg:w-[550px] xl:w-[600px]"
+            className="fixed top-0 right-0 z-[60] flex flex-col w-full h-screen shadow-2xl bg-background sm:w-[450px] md:w-[500px] lg:w-[550px] xl:w-[600px]"
           >
-            {/* Premium Header with enhanced design */}
-            <div className="relative z-[61] overflow-hidden border-b bg-gradient-to-r from-surface/95 via-surface/90 to-surface/95 backdrop-blur-xl border-primary/20">
+            {/* Premium Header with enhanced design - Fixed height */}
+            <div className="relative z-[61] flex-shrink-0 overflow-hidden border-b bg-gradient-to-r from-surface/95 via-surface/90 to-surface/95 backdrop-blur-xl border-primary/20">
               {/* Animated top gradient line */}
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent animate-pulse"></div>
 
@@ -232,12 +232,12 @@ export function CartSidebar() {
               </AnimatePresence>
             </div>
 
-            {/* Premium Footer - Better spacing and design */}
+            {/* Premium Footer - Fixed at bottom, never hidden */}
             {cart.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-5 space-y-4 border-t sm:p-6 lg:p-7 bg-surface/30 backdrop-blur-md border-primary/20"
+                className="flex-shrink-0 p-5 space-y-4 border-t sm:p-6 lg:p-7 bg-surface/30 backdrop-blur-md border-primary/20"
               >
                 {/* Subtotal with enhanced design */}
                 <div className="p-4 border shadow-lg rounded-xl bg-gradient-to-br from-primary/10 to-secondary/5 border-primary/20">
