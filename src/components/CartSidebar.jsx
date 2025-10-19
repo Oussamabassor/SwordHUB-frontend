@@ -110,8 +110,8 @@ export function CartSidebar() {
               <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
             </div>
 
-            {/* Cart Items - Improved spacing and distribution */}
-            <div className="flex-1 p-4 space-y-3 overflow-y-auto sm:p-5 lg:p-6 sm:space-y-4">
+            {/* Cart Items - Optimized for mobile viewport */}
+            <div className="flex-1 p-3 space-y-2 overflow-y-auto sm:p-5 lg:p-6 sm:space-y-4">
               <AnimatePresence mode="popLayout">
                 {cart.length === 0 ? (
                   <motion.div
@@ -154,9 +154,9 @@ export function CartSidebar() {
                       {/* Enhanced hover glow effect */}
                       <div className="absolute inset-0 transition-opacity duration-500 opacity-0 bg-gradient-to-br from-primary/10 via-secondary/5 to-transparent group-hover:opacity-100"></div>
 
-                      <div className="relative flex gap-3 p-3 sm:gap-4 sm:p-4 lg:p-5">
-                        {/* Product Image */}
-                        <div className="relative flex-shrink-0 w-20 h-20 overflow-hidden border shadow-lg sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-xl border-primary/10 bg-gradient-to-br from-surface/50 to-surface/20">
+                      <div className="relative flex gap-2 p-2.5 sm:gap-4 sm:p-4 lg:p-5">
+                        {/* Product Image - Smaller on mobile */}
+                        <div className="relative flex-shrink-0 w-16 h-16 overflow-hidden border shadow-lg sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-xl border-primary/10 bg-gradient-to-br from-surface/50 to-surface/20">
                           <ImageWithLoader
                             src={
                               item.image ||
@@ -171,54 +171,53 @@ export function CartSidebar() {
                         {/* Product Info */}
                         <div className="flex flex-col justify-between flex-1 min-w-0">
                           <div>
-                            <h4 className="mb-1.5 text-sm font-extrabold leading-tight tracking-wide uppercase transition-all duration-300 sm:text-base lg:text-lg text-light group-hover:text-primary group-hover:tracking-wider drop-shadow-sm line-clamp-2">
+                            <h4 className="mb-1 text-xs font-extrabold leading-tight tracking-wide uppercase transition-all duration-300 sm:text-base lg:text-lg text-light group-hover:text-primary group-hover:tracking-wider drop-shadow-sm line-clamp-1 sm:line-clamp-2">
                               {item.name}
                             </h4>
-                            <span className="inline-block px-2.5 py-1 text-xs font-bold rounded-lg sm:text-sm bg-gradient-to-r from-primary/10 to-secondary/10 text-primary border border-primary/20 shadow-md backdrop-blur-sm">
+                            <span className="inline-block px-2 py-0.5 text-xs font-bold rounded-lg sm:text-sm bg-gradient-to-r from-primary/10 to-secondary/10 text-primary border border-primary/20 shadow-md backdrop-blur-sm">
                               Size: {item.selectedSize}
                             </span>
                           </div>
 
-                          {/* Quantity Controls and Price */}
-                          <div className="flex items-center justify-between mt-3">
-                            <div className="flex items-center gap-1.5 p-1 border rounded-lg sm:gap-2 border-primary/20 bg-background/50 backdrop-blur-sm shadow-inner">
+                          {/* Quantity Controls and Price - Compact on mobile */}
+                          <div className="flex items-center justify-between mt-2 sm:mt-3">
+                            <div className="flex items-center gap-1 p-0.5 border rounded-lg sm:gap-2 sm:p-1 border-primary/20 bg-background/50 backdrop-blur-sm shadow-inner">
                               <button
                                 onClick={() =>
                                   updateQuantity(item.cartId, item.quantity - 1)
                                 }
-                                className="p-1.5 transition-all rounded hover:bg-primary/20 text-light disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="p-1 transition-all rounded sm:p-1.5 hover:bg-primary/20 text-light disabled:opacity-50 disabled:cursor-not-allowed"
                                 disabled={item.quantity <= 1}
                               >
-                                <Minus size={14} className="sm:w-4 sm:h-4" />
+                                <Minus size={12} className="sm:w-4 sm:h-4" />
                               </button>
-                              <span className="w-8 text-sm font-bold text-center sm:w-10 sm:text-base text-light">
+                              <span className="w-6 text-xs font-bold text-center sm:w-10 sm:text-base text-light">
                                 {item.quantity}
                               </span>
                               <button
                                 onClick={() =>
                                   updateQuantity(item.cartId, item.quantity + 1)
                                 }
-                                className="p-1.5 transition-all rounded hover:bg-primary/20 text-light"
-                              >
-                                <Plus size={14} className="sm:w-4 sm:h-4" />
+                                className="p-1 transition-all rounded sm:p-1.5 hover:bg-primary/20 text-light">
+                                <Plus size={12} className="sm:w-4 sm:h-4" />
                               </button>
                             </div>
 
                             <div className="text-right">
-                              <p className="text-lg font-extrabold text-transparent sm:text-xl lg:text-2xl bg-clip-text bg-gradient-to-r from-primary to-secondary drop-shadow-lg">
+                              <p className="text-sm font-extrabold text-transparent sm:text-xl lg:text-2xl bg-clip-text bg-gradient-to-r from-primary to-secondary drop-shadow-lg">
                                 {(item.price * item.quantity).toFixed(2)} DH
                               </p>
                             </div>
                           </div>
                         </div>
 
-                        {/* Remove Button - Repositioned */}
+                        {/* Remove Button - Repositioned and smaller on mobile */}
                         <button
                           onClick={() => removeFromCart(item.cartId)}
-                          className="absolute p-2 transition-all duration-300 border rounded-lg top-3 right-3 hover:bg-red-500/10 text-light/60 hover:text-red-500 border-primary/5 hover:border-red-500/30 hover:shadow-lg hover:shadow-red-500/20 hover:scale-110 active:scale-95 group/remove"
+                          className="absolute p-1.5 transition-all duration-300 border rounded-lg sm:p-2 top-2 right-2 sm:top-3 sm:right-3 hover:bg-red-500/10 text-light/60 hover:text-red-500 border-primary/5 hover:border-red-500/30 hover:shadow-lg hover:shadow-red-500/20 hover:scale-110 active:scale-95 group/remove"
                         >
                           <Trash2
-                            size={16}
+                            size={14}
                             className="transition-transform sm:w-5 sm:h-5 group-hover/remove:rotate-12"
                           />
                         </button>
@@ -232,26 +231,26 @@ export function CartSidebar() {
               </AnimatePresence>
             </div>
 
-            {/* Premium Footer - Better spacing and design */}
+            {/* Premium Footer - Compact on mobile */}
             {cart.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-5 space-y-4 border-t sm:p-6 lg:p-7 bg-surface/30 backdrop-blur-md border-primary/20"
+                className="p-3 space-y-2 border-t sm:p-6 lg:p-7 sm:space-y-4 bg-surface/30 backdrop-blur-md border-primary/20"
               >
                 {/* Subtotal with enhanced design */}
-                <div className="p-4 border shadow-lg rounded-xl bg-gradient-to-br from-primary/10 to-secondary/5 border-primary/20">
+                <div className="p-3 border shadow-lg sm:p-4 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/5 border-primary/20">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <ShoppingBag
-                        size={18}
+                        size={16}
                         className="sm:w-5 sm:h-5 text-primary"
                       />
-                      <span className="text-base font-medium sm:text-lg text-light">
+                      <span className="text-sm font-medium sm:text-lg text-light">
                         Subtotal
                       </span>
                     </div>
-                    <span className="text-2xl font-extrabold text-transparent sm:text-3xl bg-clip-text bg-gradient-to-r from-primary to-secondary drop-shadow-lg">
+                    <span className="text-xl font-extrabold text-transparent sm:text-3xl bg-clip-text bg-gradient-to-r from-primary to-secondary drop-shadow-lg">
                       {getTotalPrice().toFixed(2)} DH
                     </span>
                   </div>
@@ -260,7 +259,7 @@ export function CartSidebar() {
                 {/* Checkout Button - Enhanced */}
                 <button
                   onClick={handleCheckout}
-                  className="relative flex items-center justify-center w-full gap-2 px-6 py-4 text-lg font-bold overflow-hidden transition-all rounded-xl sm:text-xl bg-gradient-to-r from-primary to-secondary text-background hover:shadow-2xl hover:shadow-primary/50 hover:scale-[1.02] active:scale-95 group"
+                  className="relative flex items-center justify-center w-full gap-2 px-4 py-3 text-base font-bold overflow-hidden transition-all sm:px-6 sm:py-4 sm:text-xl rounded-xl bg-gradient-to-r from-primary to-secondary text-background hover:shadow-2xl hover:shadow-primary/50 hover:scale-[1.02] active:scale-95 group"
                 >
                   {/* Shine effect */}
                   <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
@@ -268,14 +267,14 @@ export function CartSidebar() {
                   <span className="relative">Proceed to Checkout</span>
                   <ArrowRight
                     className="relative transition-transform group-hover:translate-x-1"
-                    size={22}
+                    size={18}
                   />
                 </button>
 
                 {/* Continue Shopping - Subtle */}
                 <button
                   onClick={closeCart}
-                  className="w-full py-3 text-sm font-medium transition-all rounded-lg sm:text-base text-light/70 hover:text-primary hover:bg-surface/30"
+                  className="w-full py-2 text-xs font-medium transition-all rounded-lg sm:py-3 sm:text-base text-light/70 hover:text-primary hover:bg-surface/30"
                 >
                   Continue Shopping
                 </button>

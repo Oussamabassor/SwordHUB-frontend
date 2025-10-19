@@ -229,7 +229,7 @@ export function ProductDetailPage() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main className="container px-4 mx-auto pt-24 lg:pt-28 pb-8 lg:pb-12 overflow-hidden sm:px-6 lg:px-8 max-w-7xl product-detail-container">
+      <main className="container px-4 pt-24 pb-8 mx-auto overflow-hidden lg:pt-28 lg:pb-12 sm:px-6 lg:px-8 max-w-7xl product-detail-container">
         {/* Back Button */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
@@ -875,6 +875,5 @@ export function ProductDetailPage() {
     </div>
   );
 }
-
 
 export default ProductDetailPage;

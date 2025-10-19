@@ -205,7 +205,7 @@ export function CheckoutPage() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main className="container px-4 py-8 mx-auto mt-20 lg:py-12">
+      <main className="container px-4 mx-auto pt-24 lg:pt-28 pb-8 lg:pb-12">
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
