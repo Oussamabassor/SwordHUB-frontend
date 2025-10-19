@@ -103,12 +103,15 @@
     mix-blend-mode: luminosity;
   }
 
-  /* Remove filters from product detail images on mobile */
-  .view-bg img {
-    opacity: 1;
+  /* Remove filters from product images on mobile and everywhere */
+  .view-bg img,
+  .view-container img,
+  .product-card img {
+    opacity: 1 !important;
     filter: none !important;
-    top: 0;
     mix-blend-mode: normal !important;
+    position: relative;
+    top: 0;
   }
 
   .hero-content {
@@ -174,8 +177,10 @@ body {
 }
 
 .view-container:hover img {
-  transform: scale(1.05);
+  transform: none;
   top: 0;
+  filter: none !important;
+  opacity: 1 !important;
 }
 /* Typography */
 html {

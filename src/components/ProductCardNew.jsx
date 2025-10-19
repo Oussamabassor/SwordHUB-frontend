@@ -110,7 +110,7 @@ export const ProductCard = memo(({ product }) => {
       </div>
 
       {/* Product Image */}
-      <div className="relative overflow-hidden aspect-[3/4] lg:aspect-[4/5] bg-surface/30 view-bg">
+      <div className="relative overflow-hidden aspect-[3/4] lg:aspect-[4/5] bg-surface/10 view-bg">
         {/* Premium Compact Centered Diagonal "OUT OF STOCK" Badge */}
         {isOutOfStock && (
           <div className="absolute inset-0 z-30 flex items-center justify-center overflow-hidden pointer-events-none">
@@ -142,8 +142,8 @@ export const ProductCard = memo(({ product }) => {
           }`}
         />
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent group-hover:opacity-100"></div>
+        {/* Gradient Overlay - Very subtle */}
+        <div className="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-t from-background/30 via-transparent to-transparent group-hover:opacity-100"></div>
 
         {/* Hover Overlay - Hidden on large screens, buttons removed */}
         {/* <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 lg:hidden">
