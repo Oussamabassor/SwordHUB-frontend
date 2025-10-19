@@ -15,24 +15,30 @@ export const ProductCard = memo(({ product }) => {
   }
 
   // Memoize computed values to prevent recalculation on re-renders
-  const productImage = useMemo(() => 
-    (product.images && product.images[0]) ||
-    product.image ||
-    "/images/placeholders/swordshirt.jpg",
+  const productImage = useMemo(
+    () =>
+      (product.images && product.images[0]) ||
+      product.image ||
+      "/images/placeholders/swordshirt.jpg",
     [product.images, product.image]
   );
 
-  const discount = useMemo(() =>
-    product.originalPrice
-      ? Math.round(
-          ((product.originalPrice - product.price) / product.originalPrice) * 100
-        )
-      : null,
+  const discount = useMemo(
+    () =>
+      product.originalPrice
+        ? Math.round(
+            ((product.originalPrice - product.price) / product.originalPrice) *
+              100
+          )
+        : null,
     [product.originalPrice, product.price]
   );
 
   const isOutOfStock = useMemo(() => product.stock === 0, [product.stock]);
-  const isLowStock = useMemo(() => product.stock > 0 && product.stock < 10, [product.stock]);
+  const isLowStock = useMemo(
+    () => product.stock > 0 && product.stock < 10,
+    [product.stock]
+  );
 
   const handleCardClick = () => {
     // Allow navigation even if out of stock (user can view details, just can't order)
@@ -51,10 +57,13 @@ export const ProductCard = memo(({ product }) => {
   };
 
   // Reduce animations - only animate on initial mount, not on hover for mobile performance
-  const cardVariants = useMemo(() => ({
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-  }), []);
+  const cardVariants = useMemo(
+    () => ({
+      initial: { opacity: 0, y: 20 },
+      animate: { opacity: 1, y: 0 },
+    }),
+    []
+  );
 
   return (
     <motion.div
@@ -66,7 +75,7 @@ export const ProductCard = memo(({ product }) => {
       whileTap={{ scale: 0.98 }}
       onClick={handleCardClick}
       className="product-card relative flex flex-col overflow-hidden transition-all duration-300 border cursor-pointer group bg-surface/50 backdrop-blur-sm rounded-xl hover:shadow-xl hover:shadow-primary/20 border-primary/10 hover:border-primary/30 hover:bg-surface/70 view-container"
-      style={{ willChange: 'transform' }}
+      style={{ willChange: "transform" }}
     >
       {/* Hover Glow Effect */}
       <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 blur-xl bg-gradient-to-br from-primary/10 via-transparent to-primary/5"></div>
@@ -222,6 +231,6 @@ export const ProductCard = memo(({ product }) => {
 });
 
 // Add display name for better debugging
-ProductCard.displayName = 'ProductCard';
+ProductCard.displayName = "ProductCard";
 
 export default ProductCard;

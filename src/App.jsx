@@ -27,9 +27,13 @@ const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
-const ProductsManagement = lazy(() => import("./pages/admin/ProductsManagement"));
+const ProductsManagement = lazy(() =>
+  import("./pages/admin/ProductsManagement")
+);
 const OrdersManagement = lazy(() => import("./pages/admin/OrdersManagement"));
-const CategoriesManagement = lazy(() => import("./pages/admin/CategoriesManagement"));
+const CategoriesManagement = lazy(() =>
+  import("./pages/admin/CategoriesManagement")
+);
 
 import "./index.css";
 
@@ -46,7 +50,10 @@ function App() {
                   <Routes>
                     {/* Customer Routes */}
                     <Route path="/" element={<HomePage />} />
-                    <Route path="/products/:id" element={<ProductDetailPage />} />
+                    <Route
+                      path="/products/:id"
+                      element={<ProductDetailPage />}
+                    />
                     <Route
                       path="/collection/:category"
                       element={<Collection />}

@@ -151,25 +151,28 @@ export const Hero = memo(() => {
   const navigateToSizeGuide = () => {
     navigate("/size-guide");
   };
-  
+
   // Memoize stats array to prevent re-creation on each render
-  const stats = useMemo(() => [
-    {
-      label: "Eco-Friendly Materials",
-      value: "100%",
-      icon: <Leaf className="text-primary" size={20} />,
-    },
-    {
-      label: "Express Delivery",
-      value: "2-3 Days",
-      icon: <Truck className="text-primary" size={20} />,
-    },
-    {
-      label: "Quality Guarantee",
-      value: "Lifetime",
-      icon: <Shield className="text-primary" size={20} />,
-    },
-  ], []);
+  const stats = useMemo(
+    () => [
+      {
+        label: "Eco-Friendly Materials",
+        value: "100%",
+        icon: <Leaf className="text-primary" size={20} />,
+      },
+      {
+        label: "Express Delivery",
+        value: "2-3 Days",
+        icon: <Truck className="text-primary" size={20} />,
+      },
+      {
+        label: "Quality Guarantee",
+        value: "Lifetime",
+        icon: <Shield className="text-primary" size={20} />,
+      },
+    ],
+    []
+  );
 
   const handleProductClick = (productId) => {
     navigate(`/products/${productId}`, { state: { from: "home" } });

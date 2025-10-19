@@ -229,7 +229,7 @@ export function ProductDetailPage() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main className="container px-4 py-8 mx-auto mt-20 overflow-hidden sm:px-6 lg:px-8 lg:py-12 max-w-7xl product-detail-container">
+      <main className="container px-4 mx-auto mt-20 overflow-hidden sm:px-6 lg:px-8 pt-8 pb-8 lg:pt-12 lg:pb-12 max-w-7xl product-detail-container">
         {/* Back Button */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
@@ -716,29 +716,23 @@ export function ProductDetailPage() {
                   <div className="absolute inset-0 transition-all duration-500 opacity-0 group-hover:opacity-100 blur-xl bg-gradient-to-br from-primary/30 via-secondary/20 to-primary/30 -z-10" />
 
                   {/* Image Container - Larger */}
-                  <div className="relative overflow-hidden aspect-[3/4] bg-gradient-to-br from-surface/50 to-surface/30">
+                  <div className="relative overflow-hidden aspect-[3/4] bg-surface/20">
                     {/* Shimmer effect on hover */}
                     <div className="absolute inset-0 transition-transform duration-500 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
-                    <motion.div
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
-                      className="w-full h-full"
-                    >
-                      <ImageWithLoader
-                        src={
-                          (suggestedProduct.images &&
-                            suggestedProduct.images[0]) ||
-                          suggestedProduct.image ||
-                          "/images/placeholders/swordshirt.jpg"
-                        }
-                        alt={suggestedProduct.name}
-                        className="object-cover w-full h-full"
-                      />
-                    </motion.div>
+                    <ImageWithLoader
+                      src={
+                        (suggestedProduct.images &&
+                          suggestedProduct.images[0]) ||
+                        suggestedProduct.image ||
+                        "/images/placeholders/swordshirt.jpg"
+                      }
+                      alt={suggestedProduct.name}
+                      className="object-cover w-full h-full"
+                    />
 
-                    {/* Enhanced gradient overlay */}
-                    <div className="absolute inset-0 transition-opacity duration-200 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-background/90 via-background/40 to-transparent"></div>
+                    {/* Gradient overlay only on hover */}
+                    <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-background/60 via-background/10 to-transparent"></div>
 
                     {/* Discount badge if applicable */}
                     {suggestedProduct.originalPrice && (

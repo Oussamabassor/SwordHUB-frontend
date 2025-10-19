@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { visualizer } from 'rollup-plugin-visualizer'
-import viteCompression from 'vite-plugin-compression'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { visualizer } from "rollup-plugin-visualizer";
+import viteCompression from "vite-plugin-compression";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -10,19 +10,19 @@ export default defineConfig({
     // Bundle analyzer - generates stats.html after build
     visualizer({
       open: false,
-      filename: 'dist/stats.html',
+      filename: "dist/stats.html",
       gzipSize: true,
       brotliSize: true,
     }),
     // Gzip compression for production
     viteCompression({
-      algorithm: 'gzip',
-      ext: '.gz',
+      algorithm: "gzip",
+      ext: ".gz",
     }),
     // Brotli compression for better performance
     viteCompression({
-      algorithm: 'brotliCompress',
-      ext: '.br',
+      algorithm: "brotliCompress",
+      ext: ".br",
     }),
   ],
   build: {
@@ -31,9 +31,9 @@ export default defineConfig({
       output: {
         manualChunks: {
           // Split vendor chunks for better caching
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui-vendor': ['framer-motion', 'lucide-react'],
-          'data-vendor': ['axios', 'recharts'],
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "ui-vendor": ["framer-motion", "lucide-react"],
+          "data-vendor": ["axios", "recharts"],
         },
       },
     },
@@ -42,12 +42,18 @@ export default defineConfig({
     // Source maps for debugging (disable in production if needed)
     sourcemap: false,
     // Minify with esbuild for faster builds
-    minify: 'esbuild',
+    minify: "esbuild",
     // Target modern browsers for smaller bundle
-    target: 'es2015',
+    target: "es2015",
   },
   // Optimize dependencies
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'framer-motion', 'axios'],
+    include: [
+      "react",
+      "react-dom",
+      "react-router-dom",
+      "framer-motion",
+      "axios",
+    ],
   },
-})
+});
