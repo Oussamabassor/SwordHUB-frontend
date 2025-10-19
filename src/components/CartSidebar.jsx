@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Minus, Plus, ShoppingBag, ArrowRight, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +16,34 @@ export function CartSidebar() {
     getTotalItems,
     getTotalPrice,
   } = useOrders();
+
+  // Lock body scroll when cart is open
+  useEffect(() => {
+    if (isCartOpen) {
+      // Save current scroll position
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflowY = 'scroll'; // Keep scrollbar space to prevent layout shift
+    } else {
+      // Restore scroll position
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflowY = '';
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflowY = '';
+    };
+  }, [isCartOpen]);
 
   const handleCheckout = () => {
     closeCart();
