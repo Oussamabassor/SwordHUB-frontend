@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ShoppingBag,
@@ -14,7 +14,7 @@ import { ProductViewer } from "./ProductViewer";
 import { productsApi } from "../services/apiService";
 import "../styles/components/Hero.css";
 
-export const Hero = () => {
+export const Hero = memo(() => {
   const navigate = useNavigate();
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(false); // Disabled - using NavigationLoader instead
@@ -151,7 +151,9 @@ export const Hero = () => {
   const navigateToSizeGuide = () => {
     navigate("/size-guide");
   };
-  const stats = [
+  
+  // Memoize stats array to prevent re-creation on each render
+  const stats = useMemo(() => [
     {
       label: "Eco-Friendly Materials",
       value: "100%",
@@ -167,7 +169,7 @@ export const Hero = () => {
       value: "Lifetime",
       icon: <Shield className="text-primary" size={20} />,
     },
-  ];
+  ], []);
 
   const handleProductClick = (productId) => {
     navigate(`/products/${productId}`, { state: { from: "home" } });
@@ -292,6 +294,6 @@ export const Hero = () => {
       </div>
     </section>
   );
-};
+});
 
 export default Hero;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -12,21 +12,24 @@ import { ToastProvider } from "./components/ToastProvider";
 import { CartSidebar } from "./components/CartSidebar";
 import { ProtectedRoute } from "./components/admin/ProtectedRoute";
 import { NavigationLoader } from "./components/NavigationLoader";
+import { LoadingScreen } from "./components/LoadingScreen";
 
-// Customer Pages
+// Eager load HomePage for instant first render
 import { HomePage } from "./pages/HomePage";
-import { ProductDetailPage } from "./pages/ProductDetailPage";
-import { Collection } from "./pages/Collection";
-import { SizeGuide } from "./pages/SizeGuide";
-import { CheckoutPage } from "./pages/CheckoutPage";
 
-// Admin Pages
-import { AdminLogin } from "./pages/admin/AdminLogin";
-import { AdminDashboard } from "./pages/admin/AdminDashboard";
-import { AdminAnalytics } from "./pages/admin/AdminAnalytics";
-import { ProductsManagement } from "./pages/admin/ProductsManagement";
-import { OrdersManagement } from "./pages/admin/OrdersManagement";
-import { CategoriesManagement } from "./pages/admin/CategoriesManagement";
+// Lazy load customer pages (code splitting for better initial load)
+const ProductDetailPage = lazy(() => import("./pages/ProductDetailPage"));
+const Collection = lazy(() => import("./pages/Collection"));
+const SizeGuide = lazy(() => import("./pages/SizeGuide"));
+const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
+
+// Lazy load all admin pages (users rarely visit admin, no need to bundle initially)
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
+const ProductsManagement = lazy(() => import("./pages/admin/ProductsManagement"));
+const OrdersManagement = lazy(() => import("./pages/admin/OrdersManagement"));
+const CategoriesManagement = lazy(() => import("./pages/admin/CategoriesManagement"));
 
 import "./index.css";
 
@@ -39,71 +42,73 @@ function App() {
             <ToastProvider>
               <CartSidebar />
               <NavigationLoader>
-                <Routes>
-                  {/* Customer Routes */}
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/products/:id" element={<ProductDetailPage />} />
-                  <Route
-                    path="/collection/:category"
-                    element={<Collection />}
-                  />
-                  <Route path="/size-guide" element={<SizeGuide />} />
-                  <Route path="/checkout" element={<CheckoutPage />} />
+                <Suspense fallback={<LoadingScreen />}>
+                  <Routes>
+                    {/* Customer Routes */}
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/products/:id" element={<ProductDetailPage />} />
+                    <Route
+                      path="/collection/:category"
+                      element={<Collection />}
+                    />
+                    <Route path="/size-guide" element={<SizeGuide />} />
+                    <Route path="/checkout" element={<CheckoutPage />} />
 
-                  {/* Admin Routes */}
-                  <Route path="/admin/login" element={<AdminLogin />} />
-                  <Route
-                    path="/admin"
-                    element={
-                      <ProtectedRoute>
-                        <AdminDashboard />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/dashboard"
-                    element={
-                      <ProtectedRoute>
-                        <AdminDashboard />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/analytics"
-                    element={
-                      <ProtectedRoute>
-                        <AdminAnalytics />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/products"
-                    element={
-                      <ProtectedRoute>
-                        <ProductsManagement />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/orders"
-                    element={
-                      <ProtectedRoute>
-                        <OrdersManagement />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/categories"
-                    element={
-                      <ProtectedRoute>
-                        <CategoriesManagement />
-                      </ProtectedRoute>
-                    }
-                  />
+                    {/* Admin Routes */}
+                    <Route path="/admin/login" element={<AdminLogin />} />
+                    <Route
+                      path="/admin"
+                      element={
+                        <ProtectedRoute>
+                          <AdminDashboard />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/admin/dashboard"
+                      element={
+                        <ProtectedRoute>
+                          <AdminDashboard />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/admin/analytics"
+                      element={
+                        <ProtectedRoute>
+                          <AdminAnalytics />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/admin/products"
+                      element={
+                        <ProtectedRoute>
+                          <ProductsManagement />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/admin/orders"
+                      element={
+                        <ProtectedRoute>
+                          <OrdersManagement />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/admin/categories"
+                      element={
+                        <ProtectedRoute>
+                          <CategoriesManagement />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                  {/* Fallback Route */}
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
+                    {/* Fallback Route */}
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </Suspense>
               </NavigationLoader>
             </ToastProvider>
           </OrderProvider>

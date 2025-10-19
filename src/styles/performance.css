@@ -1,0 +1,164 @@
+/* Performance Optimizations for Mobile Smooth Scrolling */
+
+/* Enable hardware acceleration for smoother animations */
+.product-card,
+.motion-div,
+[class*="motion"] {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Optimize scroll performance */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  /* Enable GPU compositing for smooth scrolling */
+  transform: translateZ(0);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Optimize animated elements for mobile */
+.hero-wrapper,
+.product-grid,
+.animated-section {
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Reduce motion for users who prefer reduced animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Optimize images for performance */
+img {
+  /* Prevent layout shift */
+  max-width: 100%;
+  height: auto;
+  display: block;
+  
+  /* Better image rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Lazy-loaded images fade in smoothly */
+img[loading="lazy"] {
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+img[loading="lazy"].loaded {
+  opacity: 1;
+}
+
+/* Optimize CSS transitions for mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* GPU acceleration for hover effects */
+.group:hover .group-hover\:scale-110,
+.hover\:scale-105:hover,
+.hover\:scale-110:hover {
+  will-change: transform;
+  transform: scale(1.1) translateZ(0);
+}
+
+/* Optimize backdrop blur (expensive on mobile) */
+@media (max-width: 768px) {
+  .backdrop-blur-sm,
+  .backdrop-blur-md,
+  .backdrop-blur-lg {
+    backdrop-filter: none;
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* Smooth font rendering - font-display applied in theme.css */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Contain layout shifts */
+.view-container {
+  contain: layout style paint;
+}
+
+/* Optimize for mobile touch */
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Prevent layout shifts with aspect ratios */
+.aspect-square,
+.aspect-\[3\/4\],
+.aspect-\[4\/5\] {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Force GPU acceleration for key animations */
+@keyframes slideUp {
+  from {
+    transform: translate3d(0, 20px, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+/* Optimize gradient rendering */
+.bg-gradient-to-r,
+.bg-gradient-to-b,
+.bg-gradient-to-br {
+  will-change: auto;
+}
+
+/* Critical rendering path optimization */
+.above-fold {
+  content-visibility: auto;
+}
+
+.below-fold {
+  content-visibility: auto;
+  contain-intrinsic-size: 500px;
+}
+
+/* Reduce repaints/reflows */
+.fixed,
+.sticky,
+.absolute {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Optimize scrolling containers */
+.overflow-y-auto,
+.overflow-x-auto,
+.overflow-auto {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}

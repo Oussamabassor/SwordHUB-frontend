@@ -1,7 +1,7 @@
-import React from "react";
+import React, { memo } from "react";
 import { useImageLoader, getFallbackImage } from "../utils/imageLoader";
 
-export function ImageWithLoader({ src, alt, className, type = "product" }) {
+export const ImageWithLoader = memo(({ src, alt, className, type = "product" }) => {
   // Safety check: if no src provided, use fallback immediately
   if (!src) {
     return (
@@ -10,6 +10,8 @@ export function ImageWithLoader({ src, alt, className, type = "product" }) {
           src={getFallbackImage(type)}
           alt={alt || "Product image"}
           className={className}
+          loading="lazy"
+          decoding="async"
         />
         <div className="absolute inset-0 flex items-center justify-center bg-surface/50 backdrop-blur-sm">
           <p className="text-text-muted text-sm">No image</p>
@@ -27,6 +29,8 @@ export function ImageWithLoader({ src, alt, className, type = "product" }) {
           src={getFallbackImage(type)}
           alt={alt || "Product image"}
           className={className}
+          loading="lazy"
+          decoding="async"
         />
         <div className="absolute inset-0 flex items-center justify-center bg-surface/50 backdrop-blur-sm">
           <p className="text-text-muted text-sm">Image not available</p>
@@ -63,5 +67,17 @@ export function ImageWithLoader({ src, alt, className, type = "product" }) {
     );
   }
 
-  return <img src={src} alt={alt || "Product image"} className={className} />;
-}
+  return (
+    <img
+      src={src}
+      alt={alt || "Product image"}
+      className={className}
+      loading="lazy"
+      decoding="async"
+    />
+  );
+});
+
+ImageWithLoader.displayName = 'ImageWithLoader';
+
+export default ImageWithLoader;

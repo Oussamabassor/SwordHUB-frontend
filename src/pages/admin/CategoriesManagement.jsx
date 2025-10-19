@@ -304,3 +304,6 @@ export const CategoriesManagement = () => {
     </div>
   );
 };
+
+
+export default CategoriesManagement;

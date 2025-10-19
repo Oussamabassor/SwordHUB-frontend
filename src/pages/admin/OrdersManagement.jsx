@@ -286,3 +286,6 @@ export const OrdersManagement = () => {
     </div>
   );
 };
+
+
+export default OrdersManagement;
