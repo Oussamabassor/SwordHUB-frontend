@@ -137,7 +137,7 @@ export const ProductCard = memo(({ product }) => {
         <ImageWithLoader
           src={productImage}
           alt={product.name || "Product"}
-          className={`object-cover w-full h-full transition-all duration-700 group-hover:scale-110 ${
+          className={`object-cover w-full h-full ${
             isOutOfStock ? "blur-[3px] brightness-[0.65]" : ""
           }`}
         />

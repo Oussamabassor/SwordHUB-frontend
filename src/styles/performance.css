@@ -56,10 +56,9 @@ img {
   image-rendering: crisp-edges;
 }
 
-/* Lazy-loaded images fade in smoothly */
+/* Lazy-loaded images - always visible for product cards */
 img[loading="lazy"] {
-  opacity: 0;
-  transition: opacity 0.3s ease-in;
+  opacity: 1;
 }
 
 img[loading="lazy"].loaded {
@@ -72,12 +71,12 @@ img[loading="lazy"].loaded {
   -webkit-touch-callout: none;
 }
 
-/* GPU acceleration for hover effects */
+/* GPU acceleration for hover effects - disabled scale on images */
 .group:hover .group-hover\:scale-110,
 .hover\:scale-105:hover,
 .hover\:scale-110:hover {
-  will-change: transform;
-  transform: scale(1.1) translateZ(0);
+  will-change: auto;
+  transform: none;
 }
 
 /* Optimize backdrop blur (expensive on mobile) */
