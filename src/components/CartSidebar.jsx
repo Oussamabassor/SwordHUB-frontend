@@ -69,7 +69,8 @@ export function CartSidebar() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed top-0 right-0 bottom-0 z-[110] flex flex-col w-full h-screen shadow-2xl bg-background sm:w-[450px] md:w-[500px] lg:w-[550px] xl:w-[600px]"
+            className="fixed inset-y-0 right-0 z-[110] flex flex-col w-full h-full shadow-2xl bg-background sm:w-[450px] md:w-[500px] lg:w-[550px] xl:w-[600px]"
+            style={{ maxHeight: '100vh', maxHeight: '100dvh' }}
           >
             {/* Premium Header with enhanced design - Fixed height */}
             <div className="relative flex-shrink-0 overflow-hidden border-b bg-gradient-to-r from-surface/95 via-surface/90 to-surface/95 backdrop-blur-xl border-primary/20">

@@ -344,7 +344,7 @@ export function ProductDetailPage() {
                   </span>
                 </div>
 
-                {/* Desktop/Tablet: Horizontal scroll with navigation arrows */}
+                {/* Desktop/Tablet: Horizontal scroll with navigation arrows - NO SCROLLBAR */}
                 <div className="hidden sm:block">
                   <div className="relative">
                     {/* Left Arrow */}
@@ -359,8 +359,8 @@ export function ProductDetailPage() {
                       <ChevronLeft className="w-5 h-5 text-light" />
                     </button>
 
-                    {/* Thumbnails - Horizontal Scroll */}
-                    <div className="flex gap-2 px-10 overflow-x-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-surface/20">
+                    {/* Thumbnails - Horizontal Scroll WITHOUT visible scrollbar */}
+                    <div className="flex gap-2 px-10 overflow-x-auto scrollbar-hide">
                       {allImages.map((img, index) => (
                         <motion.button
                           key={index}
@@ -402,14 +402,14 @@ export function ProductDetailPage() {
                   </div>
                 </div>
 
-                {/* Mobile: Horizontal Scroll */}
+                {/* Mobile: Grid Layout - 5 images per row, scrollable */}
                 <div className="sm:hidden">
-                  <div className="flex gap-2 pb-2 overflow-x-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-surface/20">
+                  <div className="grid grid-cols-5 gap-2 pb-2 overflow-y-auto max-h-32 scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-surface/20">
                     {allImages.map((img, index) => (
                       <button
                         key={index}
                         onClick={() => setSelectedImage(index)}
-                        className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                        className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
                           selectedImage === index
                             ? "border-primary ring-2 ring-primary/30 shadow-lg shadow-primary/20"
                             : "border-primary/20"
@@ -423,7 +423,7 @@ export function ProductDetailPage() {
                         {selectedImage === index && (
                           <div className="absolute inset-0 bg-primary/20" />
                         )}
-                        <div className="absolute bottom-0 right-0 px-1.5 py-0.5 text-xs font-bold bg-black/70 text-white rounded-tl">
+                        <div className="absolute bottom-0 right-0 px-1 py-0.5 text-[10px] font-bold bg-black/70 text-white rounded-tl">
                           {index + 1}
                         </div>
                       </button>
