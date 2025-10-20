@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ReactDOM from "react-dom";
 import { ShoppingBag } from "lucide-react";
 import { motion } from "framer-motion";
 import { useOrders } from "../contexts/OrderContext";
@@ -15,8 +16,9 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  return (
+  const headerContent = (
     <header
+      id="app-header"
       className={`fixed top-0 left-0 right-0 w-full z-[150] transition-all duration-500 ${
         isScrolled
           ? "bg-surface/80 backdrop-blur-xl shadow-2xl shadow-primary/5 border-b border-primary/10"
@@ -156,4 +158,9 @@ export function Header() {
       />
     </header>
   );
+
+  // Render header using portal to document.body - ensures it's always fixed
+  return typeof document !== 'undefined' 
+    ? ReactDOM.createPortal(headerContent, document.body)
+    : headerContent;
 }

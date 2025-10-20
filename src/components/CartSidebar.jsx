@@ -17,7 +17,7 @@ export function CartSidebar() {
     getTotalPrice,
   } = useOrders();
 
-  // Lock body scroll when cart is open - Using better method that doesn't break fixed elements
+  // Lock body scroll when cart is open - Keep header visible and fixed
   useEffect(() => {
     if (isCartOpen) {
       // Get current scroll position
@@ -26,16 +26,20 @@ export function CartSidebar() {
       // Store scroll position
       document.body.setAttribute("data-scroll-lock", scrollY.toString());
       
-      // Method 1: Lock scroll without breaking fixed positioning
+      // Lock scroll using position fixed on body - this keeps fixed elements working
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
       document.body.style.overflow = "hidden";
-      document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`; // Prevent layout shift from scrollbar
-      document.body.style.touchAction = "none"; // Prevent mobile scroll
+      document.body.style.touchAction = "none";
       
-      // Keep the window at the current scroll position
-      document.documentElement.style.scrollBehavior = "auto";
-      
-      // Apply to html element to ensure header stays fixed
-      document.documentElement.style.overflow = "hidden";
+      // Ensure scrollbar space is maintained to prevent layout shift
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
     } else {
       // Get stored scroll position
       const scrollY = parseInt(
@@ -44,11 +48,14 @@ export function CartSidebar() {
       );
       
       // Remove all lock styles
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
       document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
       document.body.style.touchAction = "";
-      document.documentElement.style.overflow = "";
-      document.documentElement.style.scrollBehavior = "";
+      document.body.style.paddingRight = "";
       
       // Restore scroll position
       window.scrollTo(0, scrollY);
@@ -63,11 +70,14 @@ export function CartSidebar() {
         document.body.getAttribute("data-scroll-lock") || "0",
         10
       );
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
       document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
       document.body.style.touchAction = "";
-      document.documentElement.style.overflow = "";
-      document.documentElement.style.scrollBehavior = "";
+      document.body.style.paddingRight = "";
       document.body.removeAttribute("data-scroll-lock");
       if (scrollY > 0) {
         window.scrollTo(0, scrollY);
