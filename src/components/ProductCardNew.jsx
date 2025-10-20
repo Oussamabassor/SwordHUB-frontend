@@ -159,54 +159,51 @@ export const ProductCard = memo(({ product }) => {
         )}
       </div>
 
-      {/* Product Info */}
-      <div className="relative p-2.5 space-y-1 sm:p-3 lg:p-3.5 sm:space-y-1.5">
+      {/* Product Info - Compact with no whitespace */}
+      <div className="relative flex flex-col p-2 space-y-0 sm:p-2.5 lg:p-3">
         {/* Category Badge */}
-        <span className="inline-block px-1.5 py-0.5 text-[9px] sm:text-[10px] lg:text-xs font-semibold uppercase rounded-md bg-primary/10 text-primary tracking-wide border border-primary/20">
+        <span className="inline-block px-1.5 py-0.5 mb-1 text-[9px] sm:text-[10px] font-semibold uppercase rounded bg-primary/10 text-primary tracking-wide border border-primary/20 w-fit">
           {product.category}
         </span>
 
-        {/* Product Name - Professional & Modern */}
-        <h3 className="text-base font-extrabold leading-tight tracking-wide text-left uppercase transition-all duration-300 sm:text-lg lg:text-xl xl:text-2xl line-clamp-2 text-light group-hover:text-primary group-hover:tracking-wider min-h-[2.5rem] sm:min-h-[3rem] lg:min-h-[3.5rem] drop-shadow-sm">
+        {/* Product Name - Compact & Professional */}
+        <h3 className="text-sm font-bold leading-tight tracking-wide uppercase transition-colors duration-300 sm:text-base lg:text-lg line-clamp-2 text-light group-hover:text-primary">
           {product.name}
         </h3>
 
-        {/* Rating Stars - Compact */}
-        <div className="flex items-center gap-1 py-0.5">
+        {/* Rating Stars - Compact, tight spacing */}
+        <div className="flex items-center gap-0.5 mt-1">
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
-              size={10}
-              className={`sm:w-3 sm:h-3 lg:w-3.5 lg:h-3.5 transition-all ${
+              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${
                 i < 4
                   ? "fill-yellow-400 text-yellow-400"
-                  : "text-gray-300 dark:text-gray-600"
+                  : "text-gray-400"
               }`}
             />
           ))}
-          <span className="ml-1 text-[10px] sm:text-xs font-medium text-light/70">
+          <span className="ml-1 text-[9px] sm:text-[10px] font-medium text-light/60">
             4.0
           </span>
         </div>
 
-        {/* Price - Professional and Clear */}
-        <div className="flex items-center gap-2 pt-0.5">
-          <div className="flex items-baseline gap-1">
-            <span className="text-lg sm:text-xl lg:text-xl font-bold text-primary">
-              {product.price}
+        {/* Price - Compact & Clear */}
+        <div className="flex items-baseline gap-1 mt-1">
+          <span className="text-base font-bold sm:text-lg lg:text-xl text-primary">
+            {product.price}
+          </span>
+          <span className="text-[10px] sm:text-xs font-semibold text-primary">
+            DH
+          </span>
+          {product.originalPrice && (
+            <span className="text-[9px] sm:text-[10px] line-through text-light/30">
+              {product.originalPrice} DH
             </span>
-            <span className="text-xs sm:text-sm font-semibold text-primary">
-              DH
-            </span>
-            {product.originalPrice && (
-              <span className="ml-1 text-[10px] sm:text-xs line-through text-light/40">
-                {product.originalPrice} DH
-              </span>
-            )}
-          </div>
+          )}
         </div>
 
-        {/* Add to Cart Button - Hidden on large screens */}
+        {/* Add to Cart Button - Compact */}
         <motion.button
           onClick={(e) => {
             e.stopPropagation();
@@ -214,16 +211,16 @@ export const ProductCard = memo(({ product }) => {
               state: { from: "products" },
             });
           }}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          className={`flex items-center justify-center w-full gap-2 px-3 py-1.5 sm:py-2 mt-1.5 text-[11px] sm:text-xs font-semibold transition-all duration-300 transform rounded-lg lg:hidden ${
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className={`flex items-center justify-center w-full gap-1.5 px-2.5 py-1.5 mt-2 text-[10px] sm:text-xs font-semibold transition-all duration-300 rounded-lg lg:hidden ${
             isOutOfStock
               ? "bg-gray-600/80 text-white hover:bg-gray-600 border border-gray-500"
-              : "bg-primary text-background hover:bg-primary/90 hover:shadow-lg"
+              : "bg-primary text-background hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30"
           }`}
         >
-          <ShoppingCart size={14} className="sm:w-4 sm:h-4" />
-          <span>{isOutOfStock ? "View Details" : "View Details"}</span>
+          <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+          <span>View Details</span>
         </motion.button>
       </div>
     </motion.div>

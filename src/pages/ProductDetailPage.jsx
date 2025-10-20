@@ -298,12 +298,13 @@ export function ProductDetailPage() {
         </motion.button>
 
         <div className="grid gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12">
-          {/* Product Images Gallery Section - Sticky on large screens until suggestions */}
+          {/* Product Images Gallery Section - Sticky on large screens */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className={`space-y-3 sm:space-y-4 ${isGallerySticky ? 'lg:sticky lg:top-24' : ''}`}
+            className="space-y-3 sm:space-y-4 lg:sticky lg:top-24 lg:self-start"
+            style={{ maxHeight: 'calc(100vh - 7rem)' }}
           >
             {/* Main Image Viewer - Optimized sizes for better viewport fit */}
             <div className="relative overflow-hidden border rounded-2xl border-primary/10 bg-surface/50 aspect-square md:aspect-[4/3] lg:aspect-[3/2]">
