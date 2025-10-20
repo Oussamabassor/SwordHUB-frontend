@@ -32,6 +32,14 @@ export const ProductForm = ({ product, onClose, onSuccess }) => {
     fetchCategories();
   }, []);
 
+  // Disable body scroll when modal is open
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
   const fetchCategories = async () => {
     try {
       const response = await categoriesApi.getAll();

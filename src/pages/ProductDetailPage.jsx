@@ -14,9 +14,6 @@ import {
   Minus,
   Plus,
   Eye,
-  X,
-  ZoomIn,
-  Maximize2,
 } from "lucide-react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
@@ -41,23 +38,27 @@ export function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
   const [suggestedProducts, setSuggestedProducts] = useState([]);
 
-  // Get sizes from product data or use default
-  const sizes = product?.sizes && product.sizes.length > 0 
-    ? product.sizes 
-    : ["S", "M", "L", "XL", "XXL"];
+  // Get available sizes from product data
+  const availableSizes =
+    product?.sizes && product.sizes.length > 0 ? product.sizes : [];
 
-  // Get all images including main image and additional images
+  // All possible sizes
+  const allSizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+
+  // Determine which sizes to show based on available sizes
+  const displaySizes = availableSizes.length > 0 ? allSizes : allSizes;
+
+  // Get all images from product.images array (first image is the main image)
   const allImages = React.useMemo(() => {
     if (!product) return [];
-    const images = [product.image];
     if (product.images && product.images.length > 0) {
-      images.push(...product.images);
+      return product.images; // Use all images from the images array
     }
-    return images;
+    // Fallback to single image if no images array
+    return product.image ? [product.image] : [];
   }, [product]);
 
   useEffect(() => {
@@ -239,12 +240,16 @@ export function ProductDetailPage() {
   const productImages = (() => {
     const images = [];
     if (product.image) images.push(product.image);
-    if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+    if (
+      product.images &&
+      Array.isArray(product.images) &&
+      product.images.length > 0
+    ) {
       images.push(...product.images);
     }
     return images.length > 0 ? images : ["/images/placeholders/swordshirt.jpg"];
   })();
-  
+
   const discount = product.originalPrice
     ? Math.round(
         ((product.originalPrice - product.price) / product.originalPrice) * 100
@@ -268,26 +273,15 @@ export function ProductDetailPage() {
         </motion.button>
 
         <div className="grid gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12">
-          {/* Images Section - Fixed/Sticky on scroll */}
+          {/* Product Images Gallery Section */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="space-y-4 lg:sticky lg:top-20 lg:self-start lg:max-h-screen"
-            style={{
-              position: window.innerWidth >= 1024 ? "sticky" : "relative",
-            }}
+            className="space-y-3 sm:space-y-4"
           >
-            {/* Main Image - With Fullscreen Button */}
-            <div className="relative overflow-hidden border aspect-square rounded-2xl border-primary/10 bg-surface/50 view-bg">
-              {/* Fullscreen Button */}
-              <button
-                onClick={() => setIsGalleryOpen(true)}
-                className="absolute z-20 p-2.5 transition-all rounded-full bg-black/50 backdrop-blur-sm hover:bg-black/70 top-4 left-4 group"
-              >
-                <Maximize2 className="w-5 h-5 text-white transition-transform group-hover:scale-110" />
-              </button>
-
+            {/* Main Image Viewer */}
+            <div className="relative overflow-hidden border aspect-square rounded-2xl border-primary/10 bg-surface/50">
               {/* OUT OF STOCK Badge Overlay */}
               {product.stock === 0 && (
                 <div className="absolute inset-0 z-30 flex items-center justify-center overflow-hidden pointer-events-none">
@@ -321,10 +315,11 @@ export function ProductDetailPage() {
                   Save {discount}%
                 </motion.div>
               )}
+
               <div className="relative w-full h-full">
                 <ImageWithLoader
                   src={
-                    productImages[selectedImage] ||
+                    allImages[selectedImage] ||
                     "/images/placeholders/swordshirt.jpg"
                   }
                   alt={product.name}
@@ -333,90 +328,109 @@ export function ProductDetailPage() {
                   }`}
                 />
               </div>
-
-              {/* Image navigation arrows for mobile */}
-              {productImages.length > 1 && (
-                <>
-                  <button
-                    onClick={() =>
-                      setSelectedImage(
-                        (prev) =>
-                          (prev - 1 + productImages.length) %
-                          productImages.length
-                      )
-                    }
-                    className="absolute z-10 p-2 transition-all -translate-y-1/2 rounded-full bg-black/50 backdrop-blur-sm left-2 top-1/2 hover:bg-black/70 sm:hidden"
-                  >
-                    <ChevronLeft className="w-6 h-6 text-white" />
-                  </button>
-                  <button
-                    onClick={() =>
-                      setSelectedImage(
-                        (prev) => (prev + 1) % productImages.length
-                      )
-                    }
-                    className="absolute z-10 p-2 transition-all -translate-y-1/2 rounded-full bg-black/50 backdrop-blur-sm right-2 top-1/2 hover:bg-black/70 sm:hidden"
-                  >
-                    <ChevronLeft className="w-6 h-6 text-white rotate-180" />
-                  </button>
-                </>
-              )}
             </div>
 
-            {/* Enhanced Thumbnail Gallery */}
-            {productImages.length > 1 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="space-y-2"
-              >
+            {/* Image Navigation Section */}
+            {allImages.length > 1 && (
+              <div className="space-y-2">
+                {/* Counter */}
                 <div className="flex items-center justify-between px-1">
                   <span className="text-xs font-semibold text-light/60">
-                    📸 Gallery ({productImages.length} images)
+                    📸 {allImages.length}{" "}
+                    {allImages.length === 1 ? "Image" : "Images"}
                   </span>
                   <span className="text-xs text-light/40">
-                    {selectedImage + 1} / {productImages.length}
+                    {selectedImage + 1} / {allImages.length}
                   </span>
                 </div>
-                <div className="hidden grid-cols-4 gap-3 sm:grid md:gap-4">
-                  {productImages.map((img, index) => (
-                    <motion.button
-                      key={index}
-                      onClick={() => setSelectedImage(index)}
-                      whileHover={{ scale: 1.05, y: -4 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${
-                        selectedImage === index
-                          ? "border-primary shadow-xl shadow-primary/30 ring-2 ring-primary/20"
-                          : "border-primary/10 hover:border-primary/40 hover:shadow-lg"
-                      }`}
+
+                {/* Desktop/Tablet: Horizontal scroll with navigation arrows */}
+                <div className="hidden sm:block">
+                  <div className="relative">
+                    {/* Left Arrow */}
+                    <button
+                      onClick={() =>
+                        setSelectedImage((prev) =>
+                          prev === 0 ? allImages.length - 1 : prev - 1
+                        )
+                      }
+                      className="absolute left-0 z-10 p-2 transition-all -translate-y-1/2 rounded-full bg-surface/80 backdrop-blur-sm hover:bg-primary/20 hover:border hover:border-primary top-1/2 shadow-lg"
                     >
-                      <ImageWithLoader
-                        src={img}
-                        alt={`${product.name} view ${index + 1}`}
-                        className="object-cover w-full h-full"
-                      />
-                      {selectedImage === index && (
-                        <>
-                          <motion.div
-                            layoutId="selected-image-indicator"
-                            className="absolute inset-0 border-3 rounded-xl border-primary bg-primary/10"
+                      <ChevronLeft className="w-5 h-5 text-light" />
+                    </button>
+
+                    {/* Thumbnails - Horizontal Scroll */}
+                    <div className="flex gap-2 px-10 overflow-x-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-surface/20">
+                      {allImages.map((img, index) => (
+                        <motion.button
+                          key={index}
+                          onClick={() => setSelectedImage(index)}
+                          whileHover={{ scale: 1.05, y: -2 }}
+                          whileTap={{ scale: 0.95 }}
+                          className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                            selectedImage === index
+                              ? "border-primary ring-2 ring-primary/30 shadow-lg shadow-primary/20"
+                              : "border-primary/20 hover:border-primary/50"
+                          }`}
+                        >
+                          <ImageWithLoader
+                            src={img}
+                            alt={`View ${index + 1}`}
+                            className="object-cover w-full h-full"
                           />
-                          <div className="absolute flex items-center justify-center w-6 h-6 rounded-full shadow-lg top-1 right-1 bg-primary">
-                            <Check className="w-4 h-4 text-background" />
+                          {selectedImage === index && (
+                            <div className="absolute inset-0 bg-primary/20" />
+                          )}
+                          <div className="absolute bottom-0 right-0 px-1.5 py-0.5 text-xs font-bold bg-black/70 text-white rounded-tl">
+                            {index + 1}
                           </div>
-                        </>
-                      )}
-                      <div className="absolute bottom-0 left-0 right-0 py-1 bg-gradient-to-t from-black/60 to-transparent">
-                        <span className="block text-xs font-medium text-center text-white">
-                          #{index + 1}
-                        </span>
-                      </div>
-                    </motion.button>
-                  ))}
+                        </motion.button>
+                      ))}
+                    </div>
+
+                    {/* Right Arrow */}
+                    <button
+                      onClick={() =>
+                        setSelectedImage(
+                          (prev) => (prev + 1) % allImages.length
+                        )
+                      }
+                      className="absolute right-0 z-10 p-2 transition-all -translate-y-1/2 rounded-full bg-surface/80 backdrop-blur-sm hover:bg-primary/20 hover:border hover:border-primary top-1/2 shadow-lg"
+                    >
+                      <ChevronLeft className="w-5 h-5 rotate-180 text-light" />
+                    </button>
+                  </div>
                 </div>
-              </motion.div>
+
+                {/* Mobile: Vertical Scroll */}
+                <div className="sm:hidden">
+                  <div className="flex flex-col gap-2 overflow-y-auto max-h-64 scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-surface/20">
+                    {allImages.map((img, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedImage(index)}
+                        className={`relative flex-shrink-0 w-full h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                          selectedImage === index
+                            ? "border-primary ring-2 ring-primary/30 shadow-lg shadow-primary/20"
+                            : "border-primary/20"
+                        }`}
+                      >
+                        <ImageWithLoader
+                          src={img}
+                          alt={`View ${index + 1}`}
+                          className="object-cover w-full h-full"
+                        />
+                        {selectedImage === index && (
+                          <div className="absolute inset-0 bg-primary/20" />
+                        )}
+                        <div className="absolute top-2 left-2 px-2 py-1 text-xs font-bold bg-black/70 text-white rounded">
+                          Image {index + 1}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             )}
           </motion.div>
 
@@ -487,7 +501,12 @@ export function ProductDetailPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium text-light">
-                  Select Size
+                  Select Size{" "}
+                  {availableSizes.length > 0 && (
+                    <span className="text-xs text-light/60">
+                      (Available sizes)
+                    </span>
+                  )}
                 </label>
                 <button
                   onClick={() => navigate("/size-guide")}
@@ -497,25 +516,43 @@ export function ProductDetailPage() {
                 </button>
               </div>
               <div className="flex flex-wrap gap-2 sm:gap-3">
-                {sizes.map((size, index) => (
-                  <motion.button
-                    key={size}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.05 }}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setSelectedSize(size)}
-                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center font-semibold transition-all ${
-                      selectedSize === size
-                        ? "bg-primary text-background shadow-neon-green scale-105"
-                        : "bg-surface/50 border border-primary/20 text-light hover:border-primary hover:bg-surface"
-                    }`}
-                  >
-                    {size}
-                  </motion.button>
-                ))}
+                {displaySizes.map((size, index) => {
+                  const isAvailable =
+                    availableSizes.length === 0 ||
+                    availableSizes.includes(size);
+                  return (
+                    <motion.button
+                      key={size}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: index * 0.05 }}
+                      whileHover={isAvailable ? { scale: 1.1 } : {}}
+                      whileTap={isAvailable ? { scale: 0.95 } : {}}
+                      onClick={() => isAvailable && setSelectedSize(size)}
+                      disabled={!isAvailable}
+                      className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center font-semibold transition-all relative ${
+                        !isAvailable
+                          ? "bg-surface/20 border border-primary/10 text-light/30 cursor-not-allowed"
+                          : selectedSize === size
+                          ? "bg-primary text-background shadow-neon-green scale-105"
+                          : "bg-surface/50 border border-primary/20 text-light hover:border-primary hover:bg-surface"
+                      }`}
+                    >
+                      {size}
+                      {!isAvailable && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-full h-0.5 bg-red-500 transform rotate-45"></div>
+                        </div>
+                      )}
+                    </motion.button>
+                  );
+                })}
               </div>
+              {availableSizes.length > 0 && (
+                <p className="text-xs text-light/50">
+                  Only showing available sizes for this product
+                </p>
+              )}
             </div>
 
             {/* Quantity Selector */}
@@ -924,110 +961,6 @@ export function ProductDetailPage() {
           </motion.section>
         )}
       </main>
-
-      {/* Fullscreen Image Gallery Modal */}
-      <AnimatePresence>
-        {isGalleryOpen && product && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl"
-            onClick={() => setIsGalleryOpen(false)}
-          >
-            {/* Close Button */}
-            <button
-              onClick={() => setIsGalleryOpen(false)}
-              className="absolute z-50 p-3 transition-all rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 top-6 right-6 group"
-            >
-              <X className="w-6 h-6 text-white transition-transform group-hover:rotate-90" />
-            </button>
-
-            {/* Image Counter */}
-            <div className="absolute z-50 px-4 py-2 text-sm font-medium text-white rounded-full bg-white/10 backdrop-blur-sm top-6 left-6">
-              {selectedImage + 1} / {allImages.length}
-            </div>
-
-            {/* Main Gallery Image */}
-            <div
-              className="relative w-full h-full px-4 py-20 sm:px-12 md:px-20"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <motion.div
-                key={selectedImage}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
-                className="relative flex items-center justify-center w-full h-full"
-              >
-                <img
-                  src={allImages[selectedImage]}
-                  alt={`${product.name} - Image ${selectedImage + 1}`}
-                  className="object-contain w-full h-full max-h-full rounded-lg"
-                />
-              </motion.div>
-
-              {/* Navigation Arrows */}
-              {allImages.length > 1 && (
-                <>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedImage(
-                        (prev) =>
-                          (prev - 1 + allImages.length) % allImages.length
-                      );
-                    }}
-                    className="absolute z-50 p-4 transition-all -translate-y-1/2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 left-4 top-1/2 sm:left-8 group"
-                  >
-                    <ChevronLeft className="w-6 h-6 text-white transition-transform group-hover:scale-110" />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedImage((prev) => (prev + 1) % allImages.length);
-                    }}
-                    className="absolute z-50 p-4 transition-all -translate-y-1/2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 right-4 top-1/2 sm:right-8 group"
-                  >
-                    <ChevronLeft className="w-6 h-6 text-white transition-transform rotate-180 group-hover:scale-110" />
-                  </button>
-                </>
-              )}
-            </div>
-
-            {/* Thumbnail Strip at Bottom */}
-            {allImages.length > 1 && (
-              <div
-                className="absolute bottom-6 left-0 right-0 mx-auto w-full max-w-4xl px-6"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                  {allImages.map((img, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedImage(index)}
-                      className={`relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                        selectedImage === index
-                          ? "border-primary scale-110 shadow-xl shadow-primary/50"
-                          : "border-white/20 hover:border-white/50"
-                      }`}
-                    >
-                      <img
-                        src={img}
-                        alt={`Thumbnail ${index + 1}`}
-                        className="object-cover w-full h-full"
-                      />
-                      {selectedImage === index && (
-                        <div className="absolute inset-0 bg-primary/20" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <Footer />
     </div>
