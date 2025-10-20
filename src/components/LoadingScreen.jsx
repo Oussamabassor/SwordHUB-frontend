@@ -9,7 +9,6 @@ export function LoadingScreen() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
       className="fixed inset-0 z-40 flex items-center justify-center bg-background/80 backdrop-blur-sm"
-      style={{ top: '80px' }}
     >
       <div className="flex flex-col items-center gap-4">
         <div className="relative">

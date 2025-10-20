@@ -17,23 +17,58 @@ export function CartSidebar() {
     getTotalPrice,
   } = useOrders();
 
-  // Lock body scroll when cart is open - Simple & reliable approach
+  // Lock body scroll when cart is open - Prevent page shift with position fixed
   useEffect(() => {
     if (isCartOpen) {
-      // Simply prevent scrolling without changing position
+      // Get current scroll position
+      const scrollY = window.scrollY;
+      
+      // Store scroll position
+      document.body.setAttribute("data-scroll-lock", scrollY.toString());
+      
+      // Lock scroll and maintain position
       document.body.style.overflow = "hidden";
-      // Prevent scroll on mobile
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+      // Prevent mobile scroll
       document.body.style.touchAction = "none";
     } else {
-      // Restore scrolling
+      // Get stored scroll position
+      const scrollY = parseInt(document.body.getAttribute("data-scroll-lock") || "0", 10);
+      
+      // Remove all lock styles
       document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
       document.body.style.touchAction = "";
+      
+      // Restore scroll position
+      window.scrollTo(0, scrollY);
+      
+      // Clean up attribute
+      document.body.removeAttribute("data-scroll-lock");
     }
 
     // Cleanup on unmount
     return () => {
+      const scrollY = parseInt(document.body.getAttribute("data-scroll-lock") || "0", 10);
       document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
       document.body.style.touchAction = "";
+      document.body.removeAttribute("data-scroll-lock");
+      if (scrollY > 0) {
+        window.scrollTo(0, scrollY);
+      }
     };
   }, [isCartOpen]);
 

@@ -303,10 +303,9 @@ export function ProductDetailPage() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="space-y-3 sm:space-y-4 lg:sticky lg:top-24 lg:self-start"
+            className={`space-y-3 sm:space-y-4 ${isGallerySticky ? 'lg:sticky lg:top-24 lg:self-start' : ''}`}
             style={{
-              maxHeight: "calc(100vh - 7rem)",
-              position: isGallerySticky ? undefined : 'relative',
+              maxHeight: isGallerySticky ? "calc(100vh - 7rem)" : "auto",
             }}
           >
             {/* Main Image Viewer - Optimized sizes for better viewport fit */}
@@ -378,7 +377,7 @@ export function ProductDetailPage() {
                   <div className="relative">
                     {/* Left Shadow Gradient - Creates infinity scroll effect */}
                     <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-background via-background/80 to-transparent z-20 pointer-events-none"></div>
-                    
+
                     {/* Right Shadow Gradient - Creates infinity scroll effect */}
                     <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background via-background/80 to-transparent z-20 pointer-events-none"></div>
 
