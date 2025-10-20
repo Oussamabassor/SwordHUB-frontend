@@ -22,7 +22,14 @@ export function Header() {
           ? "bg-surface/80 backdrop-blur-xl shadow-2xl shadow-primary/5 border-b border-primary/10"
           : "bg-gradient-to-b from-background/95 to-background/60 backdrop-blur-md"
       }`}
-      style={{ position: 'fixed' }}
+      style={{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        width: '100%',
+        zIndex: 150
+      }}
     >
       <div className="container px-4 mx-auto sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 lg:h-24">
