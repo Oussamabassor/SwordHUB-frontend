@@ -303,13 +303,7 @@ export function ProductDetailPage() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="space-y-3 sm:space-y-4"
-            style={{
-              position: isGallerySticky ? 'sticky' : 'relative',
-              top: isGallerySticky ? '6rem' : 'auto',
-              alignSelf: 'start',
-              maxHeight: isGallerySticky ? 'calc(100vh - 7rem)' : 'auto',
-            }}
+            className={`space-y-3 sm:space-y-4 ${isGallerySticky ? 'lg:sticky lg:top-24' : ''}`}
           >
             {/* Main Image Viewer - Optimized sizes for better viewport fit */}
             <div className="relative overflow-hidden border rounded-2xl border-primary/10 bg-surface/50 aspect-square md:aspect-[4/3] lg:aspect-[3/2]">
