@@ -402,14 +402,14 @@ export function ProductDetailPage() {
                   </div>
                 </div>
 
-                {/* Mobile: Vertical Scroll */}
+                {/* Mobile: Horizontal Scroll */}
                 <div className="sm:hidden">
-                  <div className="flex flex-col gap-2 overflow-y-auto max-h-64 scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-surface/20">
+                  <div className="flex gap-2 pb-2 overflow-x-auto scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-surface/20">
                     {allImages.map((img, index) => (
                       <button
                         key={index}
                         onClick={() => setSelectedImage(index)}
-                        className={`relative flex-shrink-0 w-full h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                        className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
                           selectedImage === index
                             ? "border-primary ring-2 ring-primary/30 shadow-lg shadow-primary/20"
                             : "border-primary/20"
@@ -423,8 +423,8 @@ export function ProductDetailPage() {
                         {selectedImage === index && (
                           <div className="absolute inset-0 bg-primary/20" />
                         )}
-                        <div className="absolute top-2 left-2 px-2 py-1 text-xs font-bold bg-black/70 text-white rounded">
-                          Image {index + 1}
+                        <div className="absolute bottom-0 right-0 px-1.5 py-0.5 text-xs font-bold bg-black/70 text-white rounded-tl">
+                          {index + 1}
                         </div>
                       </button>
                     ))}
