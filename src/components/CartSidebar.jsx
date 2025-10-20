@@ -17,71 +17,54 @@ export function CartSidebar() {
     getTotalPrice,
   } = useOrders();
 
-  // Lock body scroll when cart is open - Keep header visible and fixed
+  // Prevent background scroll when cart is open - WITHOUT touching body positioning
   useEffect(() => {
+    const mainContent = document.querySelector('main');
+    const header = document.getElementById('app-header');
+    
     if (isCartOpen) {
-      // Get current scroll position
+      // Save current scroll position
       const scrollY = window.scrollY;
+      sessionStorage.setItem('scrollPosition', scrollY.toString());
       
-      // Store scroll position
-      document.body.setAttribute("data-scroll-lock", scrollY.toString());
+      // Prevent scrolling on html element only
+      document.documentElement.style.overflow = 'hidden';
+      document.documentElement.style.height = '100vh';
       
-      // Lock scroll using position fixed on body - this keeps fixed elements working
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.left = "0";
-      document.body.style.right = "0";
-      document.body.style.width = "100%";
-      document.body.style.overflow = "hidden";
-      document.body.style.touchAction = "none";
+      // Prevent scrolling on body
+      document.body.style.overflow = 'hidden';
+      document.body.style.height = '100vh';
+      document.body.style.touchAction = 'none';
       
-      // Ensure scrollbar space is maintained to prevent layout shift
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-      if (scrollbarWidth > 0) {
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      // Keep header always visible
+      if (header) {
+        header.style.position = 'fixed';
+        header.style.top = '0';
+        header.style.left = '0';
+        header.style.right = '0';
+        header.style.zIndex = '9999';
       }
     } else {
-      // Get stored scroll position
-      const scrollY = parseInt(
-        document.body.getAttribute("data-scroll-lock") || "0",
-        10
-      );
-      
-      // Remove all lock styles
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.left = "";
-      document.body.style.right = "";
-      document.body.style.width = "";
-      document.body.style.overflow = "";
-      document.body.style.touchAction = "";
-      document.body.style.paddingRight = "";
+      // Restore scrolling
+      document.documentElement.style.overflow = '';
+      document.documentElement.style.height = '';
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+      document.body.style.touchAction = '';
       
       // Restore scroll position
+      const scrollY = parseInt(sessionStorage.getItem('scrollPosition') || '0', 10);
       window.scrollTo(0, scrollY);
-      
-      // Clean up attribute
-      document.body.removeAttribute("data-scroll-lock");
+      sessionStorage.removeItem('scrollPosition');
     }
 
-    // Cleanup on unmount
     return () => {
-      const scrollY = parseInt(
-        document.body.getAttribute("data-scroll-lock") || "0",
-        10
-      );
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.left = "";
-      document.body.style.right = "";
-      document.body.style.width = "";
-      document.body.style.overflow = "";
-      document.body.style.touchAction = "";
-      document.body.style.paddingRight = "";
-      document.body.removeAttribute("data-scroll-lock");
-      if (scrollY > 0) {
-        window.scrollTo(0, scrollY);
-      }
+      // Cleanup
+      document.documentElement.style.overflow = '';
+      document.documentElement.style.height = '';
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+      document.body.style.touchAction = '';
     };
   }, [isCartOpen]);
 
@@ -94,23 +77,40 @@ export function CartSidebar() {
     <AnimatePresence>
       {isCartOpen && (
         <>
-          {/* Overlay */}
+          {/* Overlay - Below header but above content */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeCart}
-            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            style={{ 
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 9998
+            }}
           />
 
-          {/* Cart Panel - Ensure proper z-index above header and proper flex distribution */}
+          {/* Cart Panel - Always visible in viewport, full height */}
           <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed inset-y-0 right-0 z-[110] flex flex-col w-full h-full shadow-2xl bg-background sm:w-[450px] md:w-[500px] lg:w-[550px] xl:w-[600px]"
-            style={{ maxHeight: "100vh", maxHeight: "100dvh" }}
+            className="flex flex-col w-full shadow-2xl bg-background sm:w-[450px] md:w-[500px] lg:w-[550px] xl:w-[600px]"
+            style={{ 
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              bottom: 0,
+              height: '100vh',
+              maxHeight: '100vh',
+              zIndex: 10000,
+              overflowY: 'auto'
+            }}
           >
             {/* Premium Header with enhanced design - Fixed height */}
             <div className="relative flex-shrink-0 overflow-hidden border-b bg-gradient-to-r from-surface/95 via-surface/90 to-surface/95 backdrop-blur-xl border-primary/20">
