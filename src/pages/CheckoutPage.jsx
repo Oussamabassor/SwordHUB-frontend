@@ -347,7 +347,9 @@ export function CheckoutPage() {
                     <div className="flex-shrink-0 w-16 h-16 overflow-hidden border rounded-lg border-primary/10 view-bg">
                       <ImageWithLoader
                         src={
-                          (item.images && item.images.length > 0 ? item.images[0] : item.image) ||
+                          (item.images && item.images.length > 0
+                            ? item.images[0]
+                            : item.image) ||
                           "/images/placeholders/swordshirt.jpg"
                         }
                         alt={item.name}

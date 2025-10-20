@@ -60,19 +60,19 @@ export function CartSidebar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeCart}
-            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm"
           />
 
-          {/* Cart Panel - Ensure 100vh and proper flex distribution */}
+          {/* Cart Panel - Ensure proper z-index above header and proper flex distribution */}
           <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed top-0 right-0 bottom-0 z-50 flex flex-col w-full shadow-2xl bg-background sm:w-[450px] md:w-[500px] lg:w-[550px] xl:w-[600px]"
+            className="fixed top-0 right-0 bottom-0 z-[110] flex flex-col w-full h-screen shadow-2xl bg-background sm:w-[450px] md:w-[500px] lg:w-[550px] xl:w-[600px]"
           >
             {/* Premium Header with enhanced design - Fixed height */}
-            <div className="relative z-[61] flex-shrink-0 overflow-hidden border-b bg-gradient-to-r from-surface/95 via-surface/90 to-surface/95 backdrop-blur-xl border-primary/20">
+            <div className="relative flex-shrink-0 overflow-hidden border-b bg-gradient-to-r from-surface/95 via-surface/90 to-surface/95 backdrop-blur-xl border-primary/20">
               {/* Animated top gradient line */}
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent animate-pulse"></div>
 
@@ -187,7 +187,9 @@ export function CartSidebar() {
                         <div className="relative flex-shrink-0 w-20 h-20 overflow-hidden border shadow-lg sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-xl border-primary/10 bg-gradient-to-br from-surface/50 to-surface/20">
                           <ImageWithLoader
                             src={
-                              (item.images && item.images.length > 0 ? item.images[0] : item.image) ||
+                              (item.images && item.images.length > 0
+                                ? item.images[0]
+                                : item.image) ||
                               "/images/placeholders/swordshirt.jpg"
                             }
                             alt={item.name}
