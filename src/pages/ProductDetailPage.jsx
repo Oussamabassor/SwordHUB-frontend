@@ -303,7 +303,9 @@ export function ProductDetailPage() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className={`space-y-3 sm:space-y-4 ${isGallerySticky ? 'lg:sticky lg:top-24 lg:self-start' : ''}`}
+            className={`space-y-3 sm:space-y-4 ${
+              isGallerySticky ? "lg:sticky lg:top-24 lg:self-start" : ""
+            }`}
             style={{
               maxHeight: isGallerySticky ? "calc(100vh - 7rem)" : "auto",
             }}

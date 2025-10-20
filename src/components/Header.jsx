@@ -17,11 +17,12 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 w-full z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 w-full z-[150] transition-all duration-500 ${
         isScrolled
           ? "bg-surface/80 backdrop-blur-xl shadow-2xl shadow-primary/5 border-b border-primary/10"
           : "bg-gradient-to-b from-background/95 to-background/60 backdrop-blur-md"
       }`}
+      style={{ position: 'fixed' }}
     >
       <div className="container px-4 mx-auto sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 lg:h-24">
