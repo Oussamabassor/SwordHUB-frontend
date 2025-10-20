@@ -353,16 +353,20 @@ export const OrderDetailsModal = ({
                           >
                             <div className="flex-shrink-0 w-16 h-16 overflow-hidden border-2 rounded-lg border-primary/20">
                               <img
-                                src={
-                                  item.image
-                                    ? item.image.startsWith("http")
-                                      ? item.image // Full URL already
-                                      : `${
-                                          import.meta.env.VITE_API_URL ||
-                                          "http://localhost:5000"
-                                        }${item.image}`
-                                    : "/placeholder-product.jpg"
-                                }
+                                src={(() => {
+                                  // Handle multiple images array or single image
+                                  const imageSource = item.images && Array.isArray(item.images) && item.images.length > 0
+                                    ? item.images[0] // First image from array
+                                    : item.image; // Fallback to single image
+                                  
+                                  if (!imageSource) return "/placeholder-product.jpg";
+                                  
+                                  // If it's already a full URL, use it
+                                  if (imageSource.startsWith("http")) return imageSource;
+                                  
+                                  // Otherwise, construct the URL
+                                  return `${import.meta.env.VITE_API_URL || "http://localhost:5000"}${imageSource}`;
+                                })()}
                                 alt={item.name}
                                 className="object-cover w-full h-full"
                                 onError={(e) => {

@@ -166,8 +166,8 @@ export const ProductCard = memo(({ product }) => {
           {product.category}
         </span>
 
-        {/* Product Name - Compact & Professional */}
-        <h3 className="text-sm font-bold leading-tight tracking-wide uppercase transition-colors duration-300 sm:text-base lg:text-lg line-clamp-2 text-light group-hover:text-primary">
+        {/* Product Name - Larger & More Readable */}
+        <h3 className="text-base font-bold leading-tight tracking-wide uppercase transition-colors duration-300 sm:text-lg lg:text-xl xl:text-2xl line-clamp-2 text-light group-hover:text-primary">
           {product.name}
         </h3>
 
@@ -188,12 +188,12 @@ export const ProductCard = memo(({ product }) => {
           </span>
         </div>
 
-        {/* Price - Compact & Clear */}
+        {/* Price - Larger & More Prominent */}
         <div className="flex items-baseline gap-1 mt-1">
-          <span className="text-base font-bold sm:text-lg lg:text-xl text-primary">
+          <span className="text-lg font-bold sm:text-xl lg:text-2xl xl:text-3xl text-primary">
             {product.price}
           </span>
-          <span className="text-[10px] sm:text-xs font-semibold text-primary">
+          <span className="text-xs sm:text-sm font-semibold text-primary">
             DH
           </span>
           {product.originalPrice && (
