@@ -14,6 +14,9 @@ import {
   Minus,
   Plus,
   Eye,
+  X,
+  ZoomIn,
+  Maximize2,
 } from "lucide-react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
@@ -38,6 +41,7 @@ export function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
   const [suggestedProducts, setSuggestedProducts] = useState([]);
 
@@ -274,8 +278,16 @@ export function ProductDetailPage() {
               position: window.innerWidth >= 1024 ? "sticky" : "relative",
             }}
           >
-            {/* Main Image - No Hover Animation */}
+            {/* Main Image - With Fullscreen Button */}
             <div className="relative overflow-hidden border aspect-square rounded-2xl border-primary/10 bg-surface/50 view-bg">
+              {/* Fullscreen Button */}
+              <button
+                onClick={() => setIsGalleryOpen(true)}
+                className="absolute z-20 p-2.5 transition-all rounded-full bg-black/50 backdrop-blur-sm hover:bg-black/70 top-4 left-4 group"
+              >
+                <Maximize2 className="w-5 h-5 text-white transition-transform group-hover:scale-110" />
+              </button>
+
               {/* OUT OF STOCK Badge Overlay */}
               {product.stock === 0 && (
                 <div className="absolute inset-0 z-30 flex items-center justify-center overflow-hidden pointer-events-none">
@@ -912,6 +924,110 @@ export function ProductDetailPage() {
           </motion.section>
         )}
       </main>
+
+      {/* Fullscreen Image Gallery Modal */}
+      <AnimatePresence>
+        {isGalleryOpen && product && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl"
+            onClick={() => setIsGalleryOpen(false)}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setIsGalleryOpen(false)}
+              className="absolute z-50 p-3 transition-all rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 top-6 right-6 group"
+            >
+              <X className="w-6 h-6 text-white transition-transform group-hover:rotate-90" />
+            </button>
+
+            {/* Image Counter */}
+            <div className="absolute z-50 px-4 py-2 text-sm font-medium text-white rounded-full bg-white/10 backdrop-blur-sm top-6 left-6">
+              {selectedImage + 1} / {allImages.length}
+            </div>
+
+            {/* Main Gallery Image */}
+            <div
+              className="relative w-full h-full px-4 py-20 sm:px-12 md:px-20"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <motion.div
+                key={selectedImage}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="relative flex items-center justify-center w-full h-full"
+              >
+                <img
+                  src={allImages[selectedImage]}
+                  alt={`${product.name} - Image ${selectedImage + 1}`}
+                  className="object-contain w-full h-full max-h-full rounded-lg"
+                />
+              </motion.div>
+
+              {/* Navigation Arrows */}
+              {allImages.length > 1 && (
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedImage(
+                        (prev) =>
+                          (prev - 1 + allImages.length) % allImages.length
+                      );
+                    }}
+                    className="absolute z-50 p-4 transition-all -translate-y-1/2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 left-4 top-1/2 sm:left-8 group"
+                  >
+                    <ChevronLeft className="w-6 h-6 text-white transition-transform group-hover:scale-110" />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedImage((prev) => (prev + 1) % allImages.length);
+                    }}
+                    className="absolute z-50 p-4 transition-all -translate-y-1/2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 right-4 top-1/2 sm:right-8 group"
+                  >
+                    <ChevronLeft className="w-6 h-6 text-white transition-transform rotate-180 group-hover:scale-110" />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Thumbnail Strip at Bottom */}
+            {allImages.length > 1 && (
+              <div
+                className="absolute bottom-6 left-0 right-0 mx-auto w-full max-w-4xl px-6"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                  {allImages.map((img, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImage(index)}
+                      className={`relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                        selectedImage === index
+                          ? "border-primary scale-110 shadow-xl shadow-primary/50"
+                          : "border-white/20 hover:border-white/50"
+                      }`}
+                    >
+                      <img
+                        src={img}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="object-cover w-full h-full"
+                      />
+                      {selectedImage === index && (
+                        <div className="absolute inset-0 bg-primary/20" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </div>

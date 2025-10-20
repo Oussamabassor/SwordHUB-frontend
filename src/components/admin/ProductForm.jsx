@@ -12,14 +12,8 @@ import { productsApi, categoriesApi } from "../../services/apiService";
 export const ProductForm = ({ product, onClose, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [imagePreview, setImagePreview] = useState(product?.image || "");
-  const [additionalImages, setAdditionalImages] = useState(
-    product?.images || []
-  );
+  const [allImages, setAllImages] = useState(product?.images || []);
   const [uploadingImages, setUploadingImages] = useState(false);
-  const [enableMultipleImages, setEnableMultipleImages] = useState(
-    (product?.images?.length || 0) > 0
-  );
 
   const availableSizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
@@ -29,7 +23,6 @@ export const ProductForm = ({ product, onClose, onSuccess }) => {
     price: product?.price || "",
     category: product?.category || "",
     stock: product?.stock || "",
-    image: product?.image || "",
     images: product?.images || [],
     sizes: product?.sizes || [],
     featured: product?.featured || false,
@@ -68,28 +61,7 @@ export const ProductForm = ({ product, onClose, onSuccess }) => {
     });
   };
 
-  const handleMainImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-
-      // Upload to server
-      try {
-        const result = await productsApi.uploadImage(file);
-        setFormData((prev) => ({ ...prev, image: result.imageUrl }));
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        alert("Failed to upload image");
-      }
-    }
-  };
-
-  const handleAdditionalImagesChange = async (e) => {
+  const handleImagesChange = async (e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
@@ -102,8 +74,8 @@ export const ProductForm = ({ product, onClose, onSuccess }) => {
         uploadedUrls.push(result.imageUrl);
       }
 
-      const newImages = [...additionalImages, ...uploadedUrls];
-      setAdditionalImages(newImages);
+      const newImages = [...allImages, ...uploadedUrls];
+      setAllImages(newImages);
       setFormData((prev) => ({ ...prev, images: newImages }));
     } catch (error) {
       console.error("Error uploading images:", error);
@@ -113,9 +85,9 @@ export const ProductForm = ({ product, onClose, onSuccess }) => {
     }
   };
 
-  const removeAdditionalImage = (index) => {
-    const newImages = additionalImages.filter((_, i) => i !== index);
-    setAdditionalImages(newImages);
+  const removeImage = (index) => {
+    const newImages = allImages.filter((_, i) => i !== index);
+    setAllImages(newImages);
     setFormData((prev) => ({ ...prev, images: newImages }));
   };
 
@@ -124,15 +96,10 @@ export const ProductForm = ({ product, onClose, onSuccess }) => {
     setLoading(true);
 
     try {
-      const submitData = {
-        ...formData,
-        images: enableMultipleImages ? formData.images : [],
-      };
-
       if (product) {
-        await productsApi.update(product.id, submitData);
+        await productsApi.update(product.id, formData);
       } else {
-        await productsApi.create(submitData);
+        await productsApi.create(formData);
       }
       onSuccess();
       onClose();
@@ -171,128 +138,76 @@ export const ProductForm = ({ product, onClose, onSuccess }) => {
             onSubmit={handleSubmit}
             className="p-6 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto"
           >
-            {/* Main Product Image */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                📸 Main Product Image *
+            {/* Product Images - Multiple Upload */}
+            <div className="space-y-4">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                📸 Product Images * (First image will be the main image)
               </label>
-              <div className="flex items-start space-x-4">
-                {imagePreview && (
-                  <div className="relative group">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="w-32 h-32 object-cover rounded-xl border-2 border-primary/30 shadow-lg"
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
-                      <span className="text-white text-xs font-medium">
-                        Main Image
-                      </span>
-                    </div>
-                  </div>
-                )}
-                <label className="flex-1 flex flex-col items-center justify-center px-6 py-8 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:border-primary hover:bg-primary/5 transition-all">
-                  <Upload size={32} className="mb-2 text-primary" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Click to upload main image
-                  </span>
-                  <span className="text-xs text-gray-500 mt-1">
-                    PNG, JPG up to 10MB
-                  </span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleMainImageChange}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-            </div>
 
-            {/* Multiple Images Section */}
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  🖼️ Additional Images (Gallery)
-                </label>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="enableMultipleImages"
-                    checked={enableMultipleImages}
-                    onChange={(e) => setEnableMultipleImages(e.target.checked)}
-                    className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
-                  />
-                  <label
-                    htmlFor="enableMultipleImages"
-                    className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
-                  >
-                    Enable multiple images
-                  </label>
-                </div>
-              </div>
-
-              {enableMultipleImages && (
-                <div className="space-y-4">
-                  {/* Image Grid */}
-                  {additionalImages.length > 0 && (
-                    <div className="grid grid-cols-4 gap-4 mb-4">
-                      {additionalImages.map((img, index) => (
-                        <div key={index} className="relative group">
-                          <img
-                            src={img}
-                            alt={`Additional ${index + 1}`}
-                            className="w-full h-24 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeAdditionalImage(index)}
-                            className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                          <div className="absolute bottom-1 left-1 px-2 py-0.5 bg-black/60 text-white text-xs rounded">
-                            #{index + 1}
-                          </div>
+              {/* Images Grid */}
+              {allImages.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+                  {allImages.map((img, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={img}
+                        alt={`Product ${index + 1}`}
+                        className="w-full h-32 object-cover rounded-lg border-2 border-gray-300 dark:border-gray-600"
+                      />
+                      {index === 0 && (
+                        <div className="absolute top-2 left-2 px-2 py-1 bg-primary text-background text-xs font-bold rounded-full shadow-lg">
+                          ⭐ Main
                         </div>
-                      ))}
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-lg"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                      <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/70 text-white text-xs rounded font-medium">
+                        #{index + 1}
+                      </div>
                     </div>
-                  )}
-
-                  {/* Upload Button */}
-                  <label className="flex flex-col items-center justify-center px-6 py-6 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:border-primary hover:bg-primary/5 transition-all">
-                    {uploadingImages ? (
-                      <>
-                        <Loader
-                          size={28}
-                          className="mb-2 text-primary animate-spin"
-                        />
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Uploading images...
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <ImageIcon size={28} className="mb-2 text-primary" />
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Add more images
-                        </span>
-                        <span className="text-xs text-gray-500 mt-1">
-                          Select multiple files
-                        </span>
-                      </>
-                    )}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleAdditionalImagesChange}
-                      className="hidden"
-                      disabled={uploadingImages}
-                    />
-                  </label>
+                  ))}
                 </div>
               )}
+
+              {/* Upload Button */}
+              <label className="flex flex-col items-center justify-center px-6 py-8 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:border-primary hover:bg-primary/5 transition-all">
+                {uploadingImages ? (
+                  <>
+                    <Loader
+                      size={32}
+                      className="mb-3 text-primary animate-spin"
+                    />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Uploading images...
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Upload size={32} className="mb-3 text-primary" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      {allImages.length === 0
+                        ? "Upload product images"
+                        : "Add more images"}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      Click to select multiple files (PNG, JPG)
+                    </span>
+                  </>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImagesChange}
+                  className="hidden"
+                  disabled={uploadingImages}
+                />
+              </label>
             </div>
 
             {/* Product Name */}
