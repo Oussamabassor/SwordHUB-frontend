@@ -68,8 +68,8 @@ export function ProductDetailPage() {
 
   // Intersection Observer to stop sticky gallery when suggestions section comes into view
   useEffect(() => {
-    const suggestedSection = document.getElementById('suggested-products');
-    
+    const suggestedSection = document.getElementById("suggested-products");
+
     if (!suggestedSection) return;
 
     const observer = new IntersectionObserver(
@@ -78,8 +78,8 @@ export function ProductDetailPage() {
         setIsGallerySticky(!entry.isIntersecting);
       },
       {
-        rootMargin: '-100px 0px 0px 0px', // Trigger slightly before reaching section
-        threshold: 0
+        rootMargin: "-100px 0px 0px 0px", // Trigger slightly before reaching section
+        threshold: 0,
       }
     );
 
@@ -303,8 +303,11 @@ export function ProductDetailPage() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className={`space-y-3 sm:space-y-4 ${isGallerySticky ? 'lg:sticky lg:top-24 lg:self-start' : ''}`}
-            style={{ maxHeight: isGallerySticky ? 'calc(100vh - 7rem)' : 'auto' }}
+            className="space-y-3 sm:space-y-4 lg:sticky lg:top-24 lg:self-start"
+            style={{
+              maxHeight: "calc(100vh - 7rem)",
+              position: isGallerySticky ? undefined : 'relative',
+            }}
           >
             {/* Main Image Viewer - Optimized sizes for better viewport fit */}
             <div className="relative overflow-hidden border rounded-2xl border-primary/10 bg-surface/50 aspect-square md:aspect-[4/3] lg:aspect-[3/2]">
@@ -370,9 +373,15 @@ export function ProductDetailPage() {
                   </span>
                 </div>
 
-                {/* Desktop/Tablet: Horizontal scroll with navigation arrows - NO SCROLLBAR */}
+                {/* Desktop/Tablet: Infinite scroll effect with fade shadows */}
                 <div className="hidden sm:block">
                   <div className="relative">
+                    {/* Left Shadow Gradient - Creates infinity scroll effect */}
+                    <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-background via-background/80 to-transparent z-20 pointer-events-none"></div>
+                    
+                    {/* Right Shadow Gradient - Creates infinity scroll effect */}
+                    <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background via-background/80 to-transparent z-20 pointer-events-none"></div>
+
                     {/* Left Arrow */}
                     <button
                       onClick={() =>
@@ -380,13 +389,13 @@ export function ProductDetailPage() {
                           prev === 0 ? allImages.length - 1 : prev - 1
                         )
                       }
-                      className="absolute left-0 z-10 p-2 transition-all -translate-y-1/2 rounded-full bg-surface/80 backdrop-blur-sm hover:bg-primary/20 hover:border hover:border-primary top-1/2 shadow-lg"
+                      className="absolute left-0 z-30 p-2 transition-all -translate-y-1/2 rounded-full bg-surface/90 backdrop-blur-sm hover:bg-primary/20 hover:border hover:border-primary top-1/2 shadow-xl"
                     >
                       <ChevronLeft className="w-5 h-5 text-light" />
                     </button>
 
-                    {/* Thumbnails - Horizontal Scroll WITHOUT visible scrollbar - Larger sizes */}
-                    <div className="flex gap-2 px-10 overflow-x-auto md:gap-3 scrollbar-hide">
+                    {/* Thumbnails - Horizontal Scroll WITHOUT scrollbar - Infinite feel */}
+                    <div className="flex gap-2 px-10 overflow-x-auto md:gap-3 scrollbar-hide scroll-smooth">
                       {allImages.map((img, index) => (
                         <motion.button
                           key={index}
@@ -421,7 +430,7 @@ export function ProductDetailPage() {
                           (prev) => (prev + 1) % allImages.length
                         )
                       }
-                      className="absolute right-0 z-10 p-2 transition-all -translate-y-1/2 rounded-full bg-surface/80 backdrop-blur-sm hover:bg-primary/20 hover:border hover:border-primary top-1/2 shadow-lg"
+                      className="absolute right-0 z-30 p-2 transition-all -translate-y-1/2 rounded-full bg-surface/90 backdrop-blur-sm hover:bg-primary/20 hover:border hover:border-primary top-1/2 shadow-xl"
                     >
                       <ChevronLeft className="w-5 h-5 rotate-180 text-light" />
                     </button>
