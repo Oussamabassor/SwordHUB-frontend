@@ -303,11 +303,12 @@ export function ProductDetailPage() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className={`space-y-3 sm:space-y-4 ${
-              isGallerySticky ? "lg:sticky lg:top-24 lg:self-start" : ""
-            }`}
+            className="space-y-3 sm:space-y-4"
             style={{
-              maxHeight: isGallerySticky ? "calc(100vh - 7rem)" : "auto",
+              position: isGallerySticky ? 'sticky' : 'relative',
+              top: isGallerySticky ? '6rem' : 'auto',
+              alignSelf: 'start',
+              maxHeight: isGallerySticky ? 'calc(100vh - 7rem)' : 'auto',
             }}
           >
             {/* Main Image Viewer - Optimized sizes for better viewport fit */}
@@ -374,36 +375,18 @@ export function ProductDetailPage() {
                   </span>
                 </div>
 
-                {/* Desktop/Tablet: Infinite scroll effect with fade shadows */}
+                {/* Desktop/Tablet: Grid layout with all images visible */}
                 <div className="hidden sm:block">
                   <div className="relative">
-                    {/* Left Shadow Gradient - Creates infinity scroll effect */}
-                    <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-background via-background/80 to-transparent z-20 pointer-events-none"></div>
-
-                    {/* Right Shadow Gradient - Creates infinity scroll effect */}
-                    <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background via-background/80 to-transparent z-20 pointer-events-none"></div>
-
-                    {/* Left Arrow */}
-                    <button
-                      onClick={() =>
-                        setSelectedImage((prev) =>
-                          prev === 0 ? allImages.length - 1 : prev - 1
-                        )
-                      }
-                      className="absolute left-0 z-30 p-2 transition-all -translate-y-1/2 rounded-full bg-surface/90 backdrop-blur-sm hover:bg-primary/20 hover:border hover:border-primary top-1/2 shadow-xl"
-                    >
-                      <ChevronLeft className="w-5 h-5 text-light" />
-                    </button>
-
-                    {/* Thumbnails - Horizontal Scroll WITHOUT scrollbar - Infinite feel */}
-                    <div className="flex gap-2 px-10 overflow-x-auto md:gap-3 scrollbar-hide scroll-smooth">
+                    {/* Thumbnails Grid - All visible, no scrolling */}
+                    <div className="grid grid-cols-5 gap-2 md:gap-3">
                       {allImages.map((img, index) => (
                         <motion.button
                           key={index}
                           onClick={() => setSelectedImage(index)}
                           whileHover={{ scale: 1.05, y: -2 }}
                           whileTap={{ scale: 0.95 }}
-                          className={`relative flex-shrink-0 w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-lg overflow-hidden border-2 transition-all ${
+                          className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
                             selectedImage === index
                               ? "border-primary ring-2 ring-primary/30 shadow-lg shadow-primary/20"
                               : "border-primary/20 hover:border-primary/50"
@@ -423,18 +406,6 @@ export function ProductDetailPage() {
                         </motion.button>
                       ))}
                     </div>
-
-                    {/* Right Arrow */}
-                    <button
-                      onClick={() =>
-                        setSelectedImage(
-                          (prev) => (prev + 1) % allImages.length
-                        )
-                      }
-                      className="absolute right-0 z-30 p-2 transition-all -translate-y-1/2 rounded-full bg-surface/90 backdrop-blur-sm hover:bg-primary/20 hover:border hover:border-primary top-1/2 shadow-xl"
-                    >
-                      <ChevronLeft className="w-5 h-5 rotate-180 text-light" />
-                    </button>
                   </div>
                 </div>
 

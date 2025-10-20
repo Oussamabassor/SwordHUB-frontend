@@ -26,11 +26,11 @@ export function Header() {
         right: 0,
         width: '100%',
         zIndex: 9999,
-        backgroundColor: isScrolled 
-          ? 'rgba(30, 30, 30, 0.8)' 
-          : 'rgba(18, 18, 18, 0.95)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+        background: isScrolled 
+          ? 'linear-gradient(to bottom, rgba(30, 30, 30, 0.85), rgba(30, 30, 30, 0.75))' 
+          : 'linear-gradient(to bottom, rgba(18, 18, 18, 0.95), rgba(18, 18, 18, 0.6))',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
         boxShadow: isScrolled 
           ? '0 25px 50px -12px rgba(0, 255, 157, 0.05)' 
           : 'none',
