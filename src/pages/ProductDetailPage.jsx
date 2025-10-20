@@ -41,7 +41,20 @@ export function ProductDetailPage() {
   const [addingToCart, setAddingToCart] = useState(false);
   const [suggestedProducts, setSuggestedProducts] = useState([]);
 
-  const sizes = ["S", "M", "L", "XL", "XXL"];
+  // Get sizes from product data or use default
+  const sizes = product?.sizes && product.sizes.length > 0 
+    ? product.sizes 
+    : ["S", "M", "L", "XL", "XXL"];
+
+  // Get all images including main image and additional images
+  const allImages = React.useMemo(() => {
+    if (!product) return [];
+    const images = [product.image];
+    if (product.images && product.images.length > 0) {
+      images.push(...product.images);
+    }
+    return images;
+  }, [product]);
 
   useEffect(() => {
     fetchProduct();
@@ -218,7 +231,16 @@ export function ProductDetailPage() {
     return null;
   }
 
-  const productImages = product.images || [product.image];
+  // Build array of all product images (main image + additional images)
+  const productImages = (() => {
+    const images = [];
+    if (product.image) images.push(product.image);
+    if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+      images.push(...product.images);
+    }
+    return images.length > 0 ? images : ["/images/placeholders/swordshirt.jpg"];
+  })();
+  
   const discount = product.originalPrice
     ? Math.round(
         ((product.originalPrice - product.price) / product.originalPrice) * 100
@@ -329,39 +351,59 @@ export function ProductDetailPage() {
               )}
             </div>
 
-            {/* Thumbnail Images */}
+            {/* Enhanced Thumbnail Gallery */}
             {productImages.length > 1 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="hidden grid-cols-4 gap-3 sm:grid md:gap-4"
+                className="space-y-2"
               >
-                {productImages.map((img, index) => (
-                  <motion.button
-                    key={index}
-                    onClick={() => setSelectedImage(index)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                      selectedImage === index
-                        ? "border-primary shadow-neon-green"
-                        : "border-primary/10 hover:border-primary/30"
-                    }`}
-                  >
-                    <ImageWithLoader
-                      src={img}
-                      alt={`${product.name} view ${index + 1}`}
-                      className="object-cover w-full h-full"
-                    />
-                    {selectedImage === index && (
-                      <motion.div
-                        layoutId="selected-image-indicator"
-                        className="absolute inset-0 border-2 rounded-lg border-primary"
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-xs font-semibold text-light/60">
+                    📸 Gallery ({productImages.length} images)
+                  </span>
+                  <span className="text-xs text-light/40">
+                    {selectedImage + 1} / {productImages.length}
+                  </span>
+                </div>
+                <div className="hidden grid-cols-4 gap-3 sm:grid md:gap-4">
+                  {productImages.map((img, index) => (
+                    <motion.button
+                      key={index}
+                      onClick={() => setSelectedImage(index)}
+                      whileHover={{ scale: 1.05, y: -4 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${
+                        selectedImage === index
+                          ? "border-primary shadow-xl shadow-primary/30 ring-2 ring-primary/20"
+                          : "border-primary/10 hover:border-primary/40 hover:shadow-lg"
+                      }`}
+                    >
+                      <ImageWithLoader
+                        src={img}
+                        alt={`${product.name} view ${index + 1}`}
+                        className="object-cover w-full h-full"
                       />
-                    )}
-                  </motion.button>
-                ))}
+                      {selectedImage === index && (
+                        <>
+                          <motion.div
+                            layoutId="selected-image-indicator"
+                            className="absolute inset-0 border-3 rounded-xl border-primary bg-primary/10"
+                          />
+                          <div className="absolute flex items-center justify-center w-6 h-6 rounded-full shadow-lg top-1 right-1 bg-primary">
+                            <Check className="w-4 h-4 text-background" />
+                          </div>
+                        </>
+                      )}
+                      <div className="absolute bottom-0 left-0 right-0 py-1 bg-gradient-to-t from-black/60 to-transparent">
+                        <span className="block text-xs font-medium text-center text-white">
+                          #{index + 1}
+                        </span>
+                      </div>
+                    </motion.button>
+                  ))}
+                </div>
               </motion.div>
             )}
           </motion.div>
