@@ -19,52 +19,55 @@ export function CartSidebar() {
 
   // Prevent background scroll when cart is open - WITHOUT touching body positioning
   useEffect(() => {
-    const mainContent = document.querySelector('main');
-    const header = document.getElementById('app-header');
-    
+    const mainContent = document.querySelector("main");
+    const header = document.getElementById("app-header");
+
     if (isCartOpen) {
       // Save current scroll position
       const scrollY = window.scrollY;
-      sessionStorage.setItem('scrollPosition', scrollY.toString());
-      
+      sessionStorage.setItem("scrollPosition", scrollY.toString());
+
       // Prevent scrolling on html element only
-      document.documentElement.style.overflow = 'hidden';
-      document.documentElement.style.height = '100vh';
-      
+      document.documentElement.style.overflow = "hidden";
+      document.documentElement.style.height = "100vh";
+
       // Prevent scrolling on body
-      document.body.style.overflow = 'hidden';
-      document.body.style.height = '100vh';
-      document.body.style.touchAction = 'none';
-      
+      document.body.style.overflow = "hidden";
+      document.body.style.height = "100vh";
+      document.body.style.touchAction = "none";
+
       // Keep header always visible
       if (header) {
-        header.style.position = 'fixed';
-        header.style.top = '0';
-        header.style.left = '0';
-        header.style.right = '0';
-        header.style.zIndex = '9999';
+        header.style.position = "fixed";
+        header.style.top = "0";
+        header.style.left = "0";
+        header.style.right = "0";
+        header.style.zIndex = "9999";
       }
     } else {
       // Restore scrolling
-      document.documentElement.style.overflow = '';
-      document.documentElement.style.height = '';
-      document.body.style.overflow = '';
-      document.body.style.height = '';
-      document.body.style.touchAction = '';
-      
+      document.documentElement.style.overflow = "";
+      document.documentElement.style.height = "";
+      document.body.style.overflow = "";
+      document.body.style.height = "";
+      document.body.style.touchAction = "";
+
       // Restore scroll position
-      const scrollY = parseInt(sessionStorage.getItem('scrollPosition') || '0', 10);
+      const scrollY = parseInt(
+        sessionStorage.getItem("scrollPosition") || "0",
+        10
+      );
       window.scrollTo(0, scrollY);
-      sessionStorage.removeItem('scrollPosition');
+      sessionStorage.removeItem("scrollPosition");
     }
 
     return () => {
       // Cleanup
-      document.documentElement.style.overflow = '';
-      document.documentElement.style.height = '';
-      document.body.style.overflow = '';
-      document.body.style.height = '';
-      document.body.style.touchAction = '';
+      document.documentElement.style.overflow = "";
+      document.documentElement.style.height = "";
+      document.body.style.overflow = "";
+      document.body.style.height = "";
+      document.body.style.touchAction = "";
     };
   }, [isCartOpen]);
 
@@ -84,13 +87,13 @@ export function CartSidebar() {
             exit={{ opacity: 0 }}
             onClick={closeCart}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm"
-            style={{ 
-              position: 'fixed',
+            style={{
+              position: "fixed",
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              zIndex: 9998
+              zIndex: 9998,
             }}
           />
 
@@ -101,15 +104,15 @@ export function CartSidebar() {
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
             className="flex flex-col w-full shadow-2xl bg-background sm:w-[450px] md:w-[500px] lg:w-[550px] xl:w-[600px]"
-            style={{ 
-              position: 'fixed',
+            style={{
+              position: "fixed",
               top: 0,
               right: 0,
               bottom: 0,
-              height: '100vh',
-              maxHeight: '100vh',
+              height: "100vh",
+              maxHeight: "100vh",
               zIndex: 10000,
-              overflowY: 'auto'
+              overflowY: "auto",
             }}
           >
             {/* Premium Header with enhanced design - Fixed height */}

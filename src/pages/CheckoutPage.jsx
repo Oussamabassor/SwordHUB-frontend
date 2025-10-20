@@ -142,7 +142,7 @@ export function CheckoutPage() {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="container flex items-center justify-center px-4 py-20 mx-auto pt-32">
+        <div className="container flex items-center justify-center px-4 mx-auto" style={{ paddingTop: '140px', paddingBottom: '80px', minHeight: '100vh' }}>
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}

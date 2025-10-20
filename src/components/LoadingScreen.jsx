@@ -10,17 +10,17 @@ export function LoadingScreen() {
       transition={{ duration: 0.2 }}
       className="flex items-center justify-center bg-background/90 backdrop-blur-md"
       style={{
-        position: 'fixed',
+        position: "fixed",
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        width: '100vw',
-        height: '100vh',
+        width: "100vw",
+        height: "100vh",
         zIndex: 99999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <div className="flex flex-col items-center gap-4">

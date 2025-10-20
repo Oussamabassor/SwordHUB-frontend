@@ -304,7 +304,7 @@ export function ProductDetailPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
             className="space-y-3 sm:space-y-4 lg:sticky lg:top-24 lg:self-start"
-            style={{ maxHeight: 'calc(100vh - 7rem)' }}
+            style={{ maxHeight: "calc(100vh - 7rem)" }}
           >
             {/* Main Image Viewer - Optimized sizes for better viewport fit */}
             <div className="relative overflow-hidden border rounded-2xl border-primary/10 bg-surface/50 aspect-square md:aspect-[4/3] lg:aspect-[3/2]">

@@ -177,9 +177,7 @@ export const ProductCard = memo(({ product }) => {
             <Star
               key={i}
               className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${
-                i < 4
-                  ? "fill-yellow-400 text-yellow-400"
-                  : "text-gray-400"
+                i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-400"
               }`}
             />
           ))}

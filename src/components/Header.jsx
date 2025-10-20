@@ -19,24 +19,24 @@ export function Header() {
     <header
       id="app-header"
       className="fixed top-0 left-0 right-0 w-full transition-all duration-500"
-      style={{ 
-        position: 'fixed',
+      style={{
+        position: "fixed",
         top: 0,
         left: 0,
         right: 0,
-        width: '100%',
+        width: "100%",
         zIndex: 9999,
-        background: isScrolled 
-          ? 'linear-gradient(135deg, rgba(30, 30, 30, 0.95) 0%, rgba(18, 18, 18, 0.9) 50%, rgba(30, 30, 30, 0.95) 100%)' 
-          : 'linear-gradient(135deg, rgba(18, 18, 18, 0.98) 0%, rgba(30, 30, 30, 0.85) 50%, rgba(18, 18, 18, 0.7) 100%)',
-        backdropFilter: 'blur(20px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-        boxShadow: isScrolled 
-          ? '0 8px 32px rgba(0, 255, 157, 0.08), 0 2px 8px rgba(0, 0, 0, 0.4)' 
-          : '0 4px 16px rgba(0, 0, 0, 0.2)',
-        borderBottom: isScrolled 
-          ? '1px solid rgba(0, 255, 157, 0.15)' 
-          : '1px solid rgba(255, 255, 255, 0.05)',
+        background: isScrolled
+          ? "linear-gradient(135deg, rgba(30, 30, 30, 0.95) 0%, rgba(18, 18, 18, 0.9) 50%, rgba(30, 30, 30, 0.95) 100%)"
+          : "linear-gradient(135deg, rgba(18, 18, 18, 0.98) 0%, rgba(30, 30, 30, 0.85) 50%, rgba(18, 18, 18, 0.7) 100%)",
+        backdropFilter: "blur(20px) saturate(180%)",
+        WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        boxShadow: isScrolled
+          ? "0 8px 32px rgba(0, 255, 157, 0.08), 0 2px 8px rgba(0, 0, 0, 0.4)"
+          : "0 4px 16px rgba(0, 0, 0, 0.2)",
+        borderBottom: isScrolled
+          ? "1px solid rgba(0, 255, 157, 0.15)"
+          : "1px solid rgba(255, 255, 255, 0.05)",
       }}
     >
       <div className="container px-4 mx-auto sm:px-6 lg:px-8">
