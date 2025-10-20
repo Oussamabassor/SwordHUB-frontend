@@ -40,6 +40,7 @@ export function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [addingToCart, setAddingToCart] = useState(false);
   const [suggestedProducts, setSuggestedProducts] = useState([]);
+  const [isGallerySticky, setIsGallerySticky] = useState(true);
 
   // Get available sizes from product data
   const availableSizes =
@@ -64,6 +65,30 @@ export function ProductDetailPage() {
   useEffect(() => {
     fetchProduct();
   }, [id]);
+
+  // Intersection Observer to stop sticky gallery when suggestions section comes into view
+  useEffect(() => {
+    const suggestedSection = document.getElementById('suggested-products');
+    
+    if (!suggestedSection) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // When suggestions section is in view, disable sticky
+        setIsGallerySticky(!entry.isIntersecting);
+      },
+      {
+        rootMargin: '-100px 0px 0px 0px', // Trigger slightly before reaching section
+        threshold: 0
+      }
+    );
+
+    observer.observe(suggestedSection);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [suggestedProducts]); // Re-run when suggestions load
 
   const fetchProduct = async () => {
     try {
@@ -273,15 +298,16 @@ export function ProductDetailPage() {
         </motion.button>
 
         <div className="grid gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12">
-          {/* Product Images Gallery Section */}
+          {/* Product Images Gallery Section - Sticky on large screens until suggestions */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="space-y-3 sm:space-y-4"
+            className={`space-y-3 sm:space-y-4 ${isGallerySticky ? 'lg:sticky lg:top-24 lg:self-start' : ''}`}
+            style={{ maxHeight: isGallerySticky ? 'calc(100vh - 7rem)' : 'auto' }}
           >
-            {/* Main Image Viewer */}
-            <div className="relative overflow-hidden border aspect-square rounded-2xl border-primary/10 bg-surface/50">
+            {/* Main Image Viewer - Optimized sizes for better viewport fit */}
+            <div className="relative overflow-hidden border rounded-2xl border-primary/10 bg-surface/50 aspect-square md:aspect-[4/3] lg:aspect-[3/2]">
               {/* OUT OF STOCK Badge Overlay */}
               {product.stock === 0 && (
                 <div className="absolute inset-0 z-30 flex items-center justify-center overflow-hidden pointer-events-none">
@@ -359,15 +385,15 @@ export function ProductDetailPage() {
                       <ChevronLeft className="w-5 h-5 text-light" />
                     </button>
 
-                    {/* Thumbnails - Horizontal Scroll WITHOUT visible scrollbar */}
-                    <div className="flex gap-2 px-10 overflow-x-auto scrollbar-hide">
+                    {/* Thumbnails - Horizontal Scroll WITHOUT visible scrollbar - Larger sizes */}
+                    <div className="flex gap-2 px-10 overflow-x-auto md:gap-3 scrollbar-hide">
                       {allImages.map((img, index) => (
                         <motion.button
                           key={index}
                           onClick={() => setSelectedImage(index)}
                           whileHover={{ scale: 1.05, y: -2 }}
                           whileTap={{ scale: 0.95 }}
-                          className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                          className={`relative flex-shrink-0 w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-lg overflow-hidden border-2 transition-all ${
                             selectedImage === index
                               ? "border-primary ring-2 ring-primary/30 shadow-lg shadow-primary/20"
                               : "border-primary/20 hover:border-primary/50"
@@ -402,9 +428,9 @@ export function ProductDetailPage() {
                   </div>
                 </div>
 
-                {/* Mobile: Grid Layout - 5 images per row, scrollable */}
+                {/* Mobile: Grid Layout - 5 images per row, 2 rows max (10 images), no scrolling */}
                 <div className="sm:hidden">
-                  <div className="grid grid-cols-5 gap-2 pb-2 overflow-y-auto max-h-32 scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-surface/20">
+                  <div className="grid grid-cols-5 gap-2 pb-2 auto-rows-auto">
                     {allImages.map((img, index) => (
                       <button
                         key={index}
@@ -718,6 +744,7 @@ export function ProductDetailPage() {
         {/* Suggested Products Section - Modern & Amazing Design */}
         {suggestedProducts && suggestedProducts.length > 0 && (
           <motion.section
+            id="suggested-products"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}

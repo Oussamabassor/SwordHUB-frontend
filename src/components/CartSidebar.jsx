@@ -20,28 +20,47 @@ export function CartSidebar() {
   // Lock body scroll when cart is open
   useEffect(() => {
     if (isCartOpen) {
-      // Save current scroll position
+      // Save current scroll position BEFORE applying styles
       const scrollY = window.scrollY;
+      
+      // Store scroll position as a data attribute for reliable retrieval
+      document.body.setAttribute('data-scroll-position', scrollY.toString());
+      
+      // Apply body scroll lock
       document.body.style.position = "fixed";
       document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
       document.body.style.width = "100%";
       document.body.style.overflowY = "scroll"; // Keep scrollbar space to prevent layout shift
     } else {
-      // Restore scroll position
-      const scrollY = document.body.style.top;
+      // Restore scroll position from data attribute
+      const scrollY = document.body.getAttribute('data-scroll-position') || '0';
+      
+      // Remove body scroll lock styles
       document.body.style.position = "";
       document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
       document.body.style.width = "";
       document.body.style.overflowY = "";
-      window.scrollTo(0, parseInt(scrollY || "0") * -1);
+      
+      // Restore the scroll position
+      window.scrollTo(0, parseInt(scrollY));
+      
+      // Clean up data attribute
+      document.body.removeAttribute('data-scroll-position');
     }
 
     // Cleanup on unmount
     return () => {
       document.body.style.position = "";
       document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
       document.body.style.width = "";
       document.body.style.overflowY = "";
+      document.body.removeAttribute('data-scroll-position');
     };
   }, [isCartOpen]);
 
@@ -70,7 +89,7 @@ export function CartSidebar() {
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
             className="fixed inset-y-0 right-0 z-[110] flex flex-col w-full h-full shadow-2xl bg-background sm:w-[450px] md:w-[500px] lg:w-[550px] xl:w-[600px]"
-            style={{ maxHeight: '100vh', maxHeight: '100dvh' }}
+            style={{ maxHeight: "100vh", maxHeight: "100dvh" }}
           >
             {/* Premium Header with enhanced design - Fixed height */}
             <div className="relative flex-shrink-0 overflow-hidden border-b bg-gradient-to-r from-surface/95 via-surface/90 to-surface/95 backdrop-blur-xl border-primary/20">
