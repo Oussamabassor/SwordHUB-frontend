@@ -343,7 +343,17 @@ export const OrderDetailsModal = ({
                         Order Items ({order.items.length})
                       </h3>
                       <div className="space-y-3">
-                        {order.items.map((item, index) => (
+                        {order.items.map((item, index) => {
+                          // Debug log to see what we're getting
+                          console.log(`Order item ${index}:`, {
+                            name: item.name,
+                            image: item.image,
+                            images: item.images,
+                            hasImage: !!item.image,
+                            hasImages: !!(item.images && item.images.length > 0)
+                          });
+                          
+                          return (
                           <motion.div
                             key={item.id || index}
                             initial={{ opacity: 0, x: -20 }}
@@ -354,30 +364,40 @@ export const OrderDetailsModal = ({
                             <div className="flex-shrink-0 w-16 h-16 overflow-hidden border-2 rounded-lg border-primary/20">
                               <img
                                 src={(() => {
-                                  // Handle multiple images array or single image
-                                  const imageSource =
-                                    item.images &&
-                                    Array.isArray(item.images) &&
-                                    item.images.length > 0
-                                      ? item.images[0] // First image from array
-                                      : item.image; // Fallback to single image
+                                  // Backend stores first image from product.images array in item.image field
+                                  // So we check item.image first (which comes from backend)
+                                  let imageSource = item.image;
+                                  
+                                  // Fallback: check if images array exists (shouldn't happen but just in case)
+                                  if (!imageSource && item.images && Array.isArray(item.images) && item.images.length > 0) {
+                                    imageSource = item.images[0];
+                                  }
+                                  
+                                  // Fallback: check for productImage field
+                                  if (!imageSource && item.productImage) {
+                                    imageSource = item.productImage;
+                                  }
 
-                                  if (!imageSource)
+                                  if (!imageSource) {
+                                    console.warn(`No image found for item: ${item.name}`);
                                     return "/placeholder-product.jpg";
+                                  }
 
-                                  // If it's already a full URL, use it
-                                  if (imageSource.startsWith("http"))
+                                  // If it's already a full URL (Cloudinary), use it directly
+                                  if (imageSource.startsWith("http")) {
+                                    console.log(`Using full URL for ${item.name}:`, imageSource);
                                     return imageSource;
+                                  }
 
-                                  // Otherwise, construct the URL
-                                  return `${
-                                    import.meta.env.VITE_API_URL ||
-                                    "http://localhost:5000"
-                                  }${imageSource}`;
+                                  // Otherwise, construct the URL with API base
+                                  const constructedUrl = `${import.meta.env.VITE_API_URL || "http://localhost:5000"}${imageSource}`;
+                                  console.log(`Constructed URL for ${item.name}:`, constructedUrl);
+                                  return constructedUrl;
                                 })()}
-                                alt={item.name}
+                                alt={item.name || 'Product'}
                                 className="object-cover w-full h-full"
                                 onError={(e) => {
+                                  console.error(`Failed to load image for: ${item.name}`, e.target.src);
                                   e.target.src = "/placeholder-product.jpg";
                                 }}
                               />
@@ -406,7 +426,8 @@ export const OrderDetailsModal = ({
                               </p>
                             </div>
                           </motion.div>
-                        ))}
+                        );
+                        })}
                       </div>
 
                       {/* Total */}
