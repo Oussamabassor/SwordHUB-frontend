@@ -348,26 +348,33 @@ export const OrderDetailsModal = ({
                           console.log(`Rendering order item ${index}:`, {
                             name: item.name,
                             image: item.image,
-                            fullItem: item
+                            fullItem: item,
                           });
-                          
+
                           // Get image URL - same logic as ProductsManagement
                           let imageUrl = "/images/placeholders/swordshirt.jpg";
-                          
+
                           if (item.image) {
                             imageUrl = item.image;
-                          } else if (item.images && Array.isArray(item.images) && item.images.length > 0) {
+                          } else if (
+                            item.images &&
+                            Array.isArray(item.images) &&
+                            item.images.length > 0
+                          ) {
                             imageUrl = item.images[0];
                           } else if (item.productImage) {
                             imageUrl = item.productImage;
                           }
-                          
+
                           // Clean up the URL path if needed
                           if (imageUrl && imageUrl.includes("/./")) {
                             imageUrl = imageUrl.replace("/./", "/");
                           }
-                          
-                          console.log(`Final image URL for ${item.name}:`, imageUrl);
+
+                          console.log(
+                            `Final image URL for ${item.name}:`,
+                            imageUrl
+                          );
 
                           return (
                             <motion.div
@@ -388,7 +395,8 @@ export const OrderDetailsModal = ({
                                       `Attempted URL: ${e.target.src}`
                                     );
                                     e.target.onerror = null; // Prevent infinite loop
-                                    e.target.src = "/images/placeholders/swordshirt.jpg";
+                                    e.target.src =
+                                      "/images/placeholders/swordshirt.jpg";
                                   }}
                                 />
                               </div>

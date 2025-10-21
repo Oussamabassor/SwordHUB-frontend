@@ -3,7 +3,7 @@ import { AdminSidebar, AdminHeader } from "../../components/admin/AdminLayout";
 import { DataTable } from "../../components/admin/DataTable";
 import { OrderDetailsModal } from "../../components/admin/OrderDetailsModal";
 import { ConfirmationModal } from "../../components/admin/ConfirmationModal";
-import { ordersApi } from "../../services/apiService";
+import { ordersApi, productsApi } from "../../services/apiService";
 import { Eye, Filter } from "lucide-react";
 import { useToast } from "../../components/ToastProvider";
 
@@ -57,38 +57,65 @@ export const OrdersManagement = () => {
     }
   };
 
-  const handleView = (order) => {
+  const handleView = async (order) => {
     console.log("Opening order details for:", order);
     console.log("Order items from backend:", order.items);
-    
-    // Log each item to see what image data we have
-    if (order.items && Array.isArray(order.items)) {
-      order.items.forEach((item, idx) => {
-        console.log(`Item ${idx}:`, {
-          name: item.productName || item.name,
-          image: item.image,
-          productImage: item.productImage,
-          images: item.images
-        });
-      });
-    }
-    
-    setSelectedOrderId(order.id || order._id);
-    setSelectedOrderData({
-      id: order.id || order._id,
-      orderNumber: `#${(order.id || order._id).slice(-8).toUpperCase()}`,
-      customerName: order.customerName || "Unknown",
-      customerPhone: order.customerPhone || "N/A",
-      customerAddress: order.customerAddress || "N/A",
-      status: order.status || "pending",
-      totalAmount: order.total || order.totalAmount || 0,
-      createdAt: order.createdAt || new Date().toISOString(),
-      items: (order.items || []).map(item => ({
-        ...item,
-        name: item.productName || item.name, // Ensure name is set
-        // Make sure image field is properly set
-        image: item.image || (item.images && item.images[0]) || item.productImage
-      })),
+
+    try {
+      // Fetch fresh product data for each item to get current images
+      const itemsWithImages = await Promise.all(
+        (order.items || []).map(async (item) => {
+          try {
+            // Fetch the product to get current image data
+            const productResponse = await productsApi.getById(item.productId);
+            const product = productResponse.data;
+            
+            console.log(`Fetched fresh product data for ${item.productName}:`, {
+              productId: item.productId,
+              hasImages: !!(product.images && product.images.length > 0),
+              images: product.images,
+              image: product.image
+            });
+
+            // Get the image from fresh product data
+            let productImage = null;
+            if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+              productImage = product.images[0];
+            } else if (product.image) {
+              productImage = product.image;
+            }
+
+            return {
+              ...item,
+              name: item.productName || item.name,
+              image: productImage || item.image, // Use fresh image, fallback to stored image
+              images: product.images || item.images, // Include full images array
+            };
+          } catch (error) {
+            console.error(`Error fetching product ${item.productId}:`, error);
+            // If fetch fails, use stored data
+            return {
+              ...item,
+              name: item.productName || item.name,
+              image: item.image || (item.images && item.images[0]) || item.productImage,
+            };
+          }
+        })
+      );
+
+      console.log("Items with fresh images:", itemsWithImages);
+
+      setSelectedOrderId(order.id || order._id);
+      setSelectedOrderData({
+        id: order.id || order._id,
+        orderNumber: `#${(order.id || order._id).slice(-8).toUpperCase()}`,
+        customerName: order.customerName || "Unknown",
+        customerPhone: order.customerPhone || "N/A",
+        customerAddress: order.customerAddress || "N/A",
+        status: order.status || "pending",
+        totalAmount: order.total || order.totalAmount || 0,
+        createdAt: order.createdAt || new Date().toISOString(),
+        items: itemsWithImages,
       timeline: [
         { status: "placed", date: order.createdAt, completed: true },
         {
@@ -120,6 +147,10 @@ export const OrdersManagement = () => {
       ],
     });
     setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error loading order details:", error);
+      showToast("Error loading order details", "error", 3000);
+    }
   };
 
   const handleDelete = (order) => {
@@ -305,6 +336,5 @@ export const OrdersManagement = () => {
     </div>
   );
 };
-
 
 export default OrdersManagement;
