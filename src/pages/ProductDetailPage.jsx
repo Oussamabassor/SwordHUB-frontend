@@ -848,8 +848,8 @@ export function ProductDetailPage() {
                       {suggestedProduct.category}
                     </span>
 
-                    {/* Product Name - Slightly Smaller than Home Page */}
-                    <h3 className="text-sm font-bold leading-tight tracking-wide uppercase transition-colors duration-300 sm:text-base lg:text-lg xl:text-xl line-clamp-2 text-light group-hover:text-primary">
+                    {/* Product Name - Smaller for Better Consistency */}
+                    <h3 className="text-xs font-bold leading-tight tracking-wide uppercase transition-colors duration-300 sm:text-sm lg:text-base xl:text-lg line-clamp-2 text-light group-hover:text-primary">
                       {suggestedProduct.name}
                     </h3>
 
