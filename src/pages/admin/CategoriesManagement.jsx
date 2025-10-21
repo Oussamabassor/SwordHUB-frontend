@@ -167,11 +167,11 @@ export const CategoriesManagement = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="fixed inset-0 overflow-hidden bg-gray-50 dark:bg-gray-900">
       <AdminSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       <AdminHeader setSidebarOpen={setSidebarOpen} />
 
-      <main className="lg:pl-64 pt-16">
+      <main className="fixed top-16 bottom-0 left-0 right-0 overflow-y-auto lg:left-64">
         <div className="p-6 max-w-7xl mx-auto">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
