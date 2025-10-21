@@ -775,8 +775,8 @@ export function ProductDetailPage() {
               ></motion.div>
             </div>
 
-            {/* Products Grid - Larger Responsive Cards */}
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:gap-5 lg:grid-cols-6 lg:gap-6">
+            {/* Products Grid - Match Home Page Layout */}
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {suggestedProducts.map((suggestedProduct, index) => (
                 <motion.div
                   key={suggestedProduct.id}
@@ -841,15 +841,15 @@ export function ProductDetailPage() {
                     )}
                   </div>
 
-                  {/* Product Info - Match Home Page Style (Slightly Smaller) */}
+                  {/* Product Info - Match Home Page Style EXACTLY */}
                   <div className="relative flex flex-col p-2 space-y-0 sm:p-2.5 lg:p-3">
                     {/* Category Badge - Like Home Page */}
                     <span className="inline-block px-1.5 py-0.5 mb-1 text-[9px] sm:text-[10px] font-semibold uppercase rounded bg-primary/10 text-primary tracking-wide border border-primary/20 w-fit">
                       {suggestedProduct.category}
                     </span>
 
-                    {/* Product Name - Smaller for Better Consistency */}
-                    <h3 className="text-xs font-bold leading-tight tracking-wide uppercase transition-colors duration-300 sm:text-sm lg:text-base xl:text-lg line-clamp-2 text-light group-hover:text-primary">
+                    {/* Product Name - EXACT MATCH with Home Page */}
+                    <h3 className="text-base font-bold leading-tight tracking-wide uppercase transition-colors duration-300 sm:text-lg lg:text-xl xl:text-2xl line-clamp-2 text-light group-hover:text-primary">
                       {suggestedProduct.name}
                     </h3>
 
@@ -870,12 +870,12 @@ export function ProductDetailPage() {
                       </span>
                     </div>
 
-                    {/* Price - Slightly Smaller than Home Page */}
+                    {/* Price - EXACT MATCH with Home Page */}
                     <div className="flex items-baseline gap-1 mt-1">
-                      <span className="text-base font-bold sm:text-lg lg:text-xl xl:text-2xl text-primary">
+                      <span className="text-lg font-bold sm:text-xl lg:text-2xl xl:text-3xl text-primary">
                         {suggestedProduct.price}
                       </span>
-                      <span className="text-xs sm:text-sm font-semibold text-primary">
+                      <span className="text-sm font-semibold sm:text-base text-primary">
                         DH
                       </span>
                       {suggestedProduct.originalPrice && (
