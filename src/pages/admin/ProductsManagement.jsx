@@ -151,11 +151,11 @@ export const ProductsManagement = () => {
   ];
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div className="flex flex-col h-screen overflow-hidden bg-gray-50 dark:bg-gray-900">
       <AdminSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       <AdminHeader setSidebarOpen={setSidebarOpen} />
 
-      <main className="fixed top-16 bottom-0 left-0 right-0 overflow-y-auto lg:left-64">
+      <main className="flex-1 overflow-y-auto pt-16 lg:pl-64">
         <div className="p-6 mx-auto max-w-7xl">
           {/* Header */}
           <div className="flex flex-col mb-6 sm:flex-row sm:items-center sm:justify-between">
