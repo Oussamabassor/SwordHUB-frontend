@@ -841,15 +841,15 @@ export function ProductDetailPage() {
                     )}
                   </div>
 
-                  {/* Product Info - Improved Layout with Better Distribution */}
-                  <div className="relative p-3.5 space-y-2.5 lg:p-5 lg:space-y-3 bg-gradient-to-b from-surface/50 to-surface/30">
-                    {/* Product Name - Larger, More Prominent */}
-                    <h3 className="text-base font-extrabold leading-tight tracking-wide text-left uppercase transition-all duration-300 sm:text-lg lg:text-xl xl:text-2xl line-clamp-2 text-light group-hover:text-primary group-hover:tracking-wider min-h-[3rem] sm:min-h-[3.5rem] lg:min-h-[4rem] drop-shadow-sm">
+                  {/* Product Info - Compact with NO Whitespace */}
+                  <div className="relative p-3 space-y-0 lg:p-4 bg-gradient-to-b from-surface/50 to-surface/30">
+                    {/* Product Name - Larger, More Prominent, No Extra Space */}
+                    <h3 className="text-base font-extrabold leading-tight tracking-wide text-left uppercase transition-all duration-300 sm:text-lg lg:text-xl xl:text-2xl line-clamp-2 text-light group-hover:text-primary group-hover:tracking-wider drop-shadow-sm mb-1.5">
                       {suggestedProduct.name}
                     </h3>
 
-                    {/* Rating - Better Spacing */}
-                    <div className="flex items-center gap-1.5 lg:gap-2 py-0.5">
+                    {/* Rating - Compact */}
+                    <div className="flex items-center gap-1.5 lg:gap-2 mb-1.5">
                       <div className="flex items-center gap-0.5 lg:gap-1">
                         {[...Array(5)].map((_, i) => (
                           <Star
@@ -867,8 +867,8 @@ export function ProductDetailPage() {
                       </span>
                     </div>
 
-                    {/* Price - Larger & More Prominent */}
-                    <div className="flex flex-col gap-1.5 pt-1.5 lg:pt-2">
+                    {/* Price - Larger & More Prominent, No Extra Space */}
+                    <div className="flex flex-col gap-1">
                       <div className="flex items-baseline gap-2 lg:gap-2.5">
                         <motion.span
                           whileHover={{ scale: 1.05 }}
