@@ -59,6 +59,20 @@ export const OrdersManagement = () => {
 
   const handleView = (order) => {
     console.log("Opening order details for:", order);
+    console.log("Order items from backend:", order.items);
+    
+    // Log each item to see what image data we have
+    if (order.items && Array.isArray(order.items)) {
+      order.items.forEach((item, idx) => {
+        console.log(`Item ${idx}:`, {
+          name: item.productName || item.name,
+          image: item.image,
+          productImage: item.productImage,
+          images: item.images
+        });
+      });
+    }
+    
     setSelectedOrderId(order.id || order._id);
     setSelectedOrderData({
       id: order.id || order._id,
@@ -69,7 +83,12 @@ export const OrdersManagement = () => {
       status: order.status || "pending",
       totalAmount: order.total || order.totalAmount || 0,
       createdAt: order.createdAt || new Date().toISOString(),
-      items: order.items || [],
+      items: (order.items || []).map(item => ({
+        ...item,
+        name: item.productName || item.name, // Ensure name is set
+        // Make sure image field is properly set
+        image: item.image || (item.images && item.images[0]) || item.productImage
+      })),
       timeline: [
         { status: "placed", date: order.createdAt, completed: true },
         {

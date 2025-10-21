@@ -344,89 +344,79 @@ export const OrderDetailsModal = ({
                       </h3>
                       <div className="space-y-3">
                         {order.items.map((item, index) => {
-                          // Debug log to see what we're getting
-                          console.log(`Order item ${index}:`, {
+                          // Debug: Log what we're rendering
+                          console.log(`Rendering order item ${index}:`, {
                             name: item.name,
                             image: item.image,
-                            images: item.images,
-                            hasImage: !!item.image,
-                            hasImages: !!(item.images && item.images.length > 0)
+                            fullItem: item
                           });
                           
+                          // Get image URL - same logic as ProductsManagement
+                          let imageUrl = "/images/placeholders/swordshirt.jpg";
+                          
+                          if (item.image) {
+                            imageUrl = item.image;
+                          } else if (item.images && Array.isArray(item.images) && item.images.length > 0) {
+                            imageUrl = item.images[0];
+                          } else if (item.productImage) {
+                            imageUrl = item.productImage;
+                          }
+                          
+                          // Clean up the URL path if needed
+                          if (imageUrl && imageUrl.includes("/./")) {
+                            imageUrl = imageUrl.replace("/./", "/");
+                          }
+                          
+                          console.log(`Final image URL for ${item.name}:`, imageUrl);
+
                           return (
-                          <motion.div
-                            key={item.id || index}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.4 + index * 0.1 }}
-                            className="flex items-center gap-4 p-4 transition-colors bg-white rounded-lg dark:bg-gray-800 hover:shadow-md"
-                          >
-                            <div className="flex-shrink-0 w-16 h-16 overflow-hidden border-2 rounded-lg border-primary/20">
-                              <img
-                                src={(() => {
-                                  // Backend stores first image from product.images array in item.image field
-                                  // So we check item.image first (which comes from backend)
-                                  let imageSource = item.image;
-                                  
-                                  // Fallback: check if images array exists (shouldn't happen but just in case)
-                                  if (!imageSource && item.images && Array.isArray(item.images) && item.images.length > 0) {
-                                    imageSource = item.images[0];
-                                  }
-                                  
-                                  // Fallback: check for productImage field
-                                  if (!imageSource && item.productImage) {
-                                    imageSource = item.productImage;
-                                  }
-
-                                  if (!imageSource) {
-                                    console.warn(`No image found for item: ${item.name}`);
-                                    return "/placeholder-product.jpg";
-                                  }
-
-                                  // If it's already a full URL (Cloudinary), use it directly
-                                  if (imageSource.startsWith("http")) {
-                                    console.log(`Using full URL for ${item.name}:`, imageSource);
-                                    return imageSource;
-                                  }
-
-                                  // Otherwise, construct the URL with API base
-                                  const constructedUrl = `${import.meta.env.VITE_API_URL || "http://localhost:5000"}${imageSource}`;
-                                  console.log(`Constructed URL for ${item.name}:`, constructedUrl);
-                                  return constructedUrl;
-                                })()}
-                                alt={item.name || 'Product'}
-                                className="object-cover w-full h-full"
-                                onError={(e) => {
-                                  console.error(`Failed to load image for: ${item.name}`, e.target.src);
-                                  e.target.src = "/placeholder-product.jpg";
-                                }}
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-semibold text-gray-900 dark:text-white">
-                                {item.name}
-                              </p>
-                              <p className="text-sm text-gray-600 dark:text-gray-400">
-                                {item.size ? (
-                                  <>
-                                    <span className="font-medium">Size:</span>{" "}
-                                    {item.size} •{" "}
-                                  </>
-                                ) : null}
-                                <span className="font-medium">Qty:</span>{" "}
-                                {item.quantity}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-bold text-primary">
-                                {(item.price * item.quantity).toFixed(2)} DH
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                {item.price.toFixed(2)} DH each
-                              </p>
-                            </div>
-                          </motion.div>
-                        );
+                            <motion.div
+                              key={item.id || index}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.4 + index * 0.1 }}
+                              className="flex items-center gap-4 p-4 transition-colors bg-white rounded-lg dark:bg-gray-800 hover:shadow-md"
+                            >
+                              <div className="flex-shrink-0 w-16 h-16 overflow-hidden border-2 rounded-lg border-primary/20">
+                                <img
+                                  src={imageUrl}
+                                  alt={item.name || "Product"}
+                                  className="object-cover w-full h-full"
+                                  onError={(e) => {
+                                    console.error(
+                                      `Failed to load image for: ${item.name}`,
+                                      `Attempted URL: ${e.target.src}`
+                                    );
+                                    e.target.onerror = null; // Prevent infinite loop
+                                    e.target.src = "/images/placeholders/swordshirt.jpg";
+                                  }}
+                                />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-semibold text-gray-900 dark:text-white">
+                                  {item.name}
+                                </p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  {item.size ? (
+                                    <>
+                                      <span className="font-medium">Size:</span>{" "}
+                                      {item.size} •{" "}
+                                    </>
+                                  ) : null}
+                                  <span className="font-medium">Qty:</span>{" "}
+                                  {item.quantity}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-bold text-primary">
+                                  {(item.price * item.quantity).toFixed(2)} DH
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  {item.price.toFixed(2)} DH each
+                                </p>
+                              </div>
+                            </motion.div>
+                          );
                         })}
                       </div>
 
