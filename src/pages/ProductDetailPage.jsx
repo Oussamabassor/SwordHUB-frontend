@@ -841,65 +841,66 @@ export function ProductDetailPage() {
                     )}
                   </div>
 
-                  {/* Product Info - Compact with NO Whitespace */}
-                  <div className="relative p-3 space-y-0 lg:p-4 bg-gradient-to-b from-surface/50 to-surface/30">
-                    {/* Product Name - Larger, More Prominent, No Extra Space */}
-                    <h3 className="text-base font-extrabold leading-tight tracking-wide text-left uppercase transition-all duration-300 sm:text-lg lg:text-xl xl:text-2xl line-clamp-2 text-light group-hover:text-primary group-hover:tracking-wider drop-shadow-sm mb-1.5">
+                  {/* Product Info - Match Home Page Style (Slightly Smaller) */}
+                  <div className="relative flex flex-col p-2 space-y-0 sm:p-2.5 lg:p-3">
+                    {/* Category Badge - Like Home Page */}
+                    <span className="inline-block px-1.5 py-0.5 mb-1 text-[9px] sm:text-[10px] font-semibold uppercase rounded bg-primary/10 text-primary tracking-wide border border-primary/20 w-fit">
+                      {suggestedProduct.category}
+                    </span>
+
+                    {/* Product Name - Slightly Smaller than Home Page */}
+                    <h3 className="text-sm font-bold leading-tight tracking-wide uppercase transition-colors duration-300 sm:text-base lg:text-lg xl:text-xl line-clamp-2 text-light group-hover:text-primary">
                       {suggestedProduct.name}
                     </h3>
 
-                    {/* Rating - Compact */}
-                    <div className="flex items-center gap-1.5 lg:gap-2 mb-1.5">
-                      <div className="flex items-center gap-0.5 lg:gap-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 transition-all ${
-                              i < 4
-                                ? "fill-yellow-400 text-yellow-400"
-                                : "text-gray-300 dark:text-gray-600"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-xs font-semibold sm:text-sm lg:text-base text-light/70">
+                    {/* Rating Stars - Match Home Page */}
+                    <div className="flex items-center gap-0.5 mt-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${
+                            i < 4
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-gray-400"
+                          }`}
+                        />
+                      ))}
+                      <span className="ml-1 text-[9px] sm:text-[10px] font-medium text-light/60">
                         4.0
                       </span>
                     </div>
 
-                    {/* Price - Larger & More Prominent, No Extra Space */}
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-baseline gap-2 lg:gap-2.5">
-                        <motion.span
-                          whileHover={{ scale: 1.05 }}
-                          className="text-xl font-bold sm:text-2xl lg:text-3xl xl:text-4xl text-primary"
-                        >
-                          {suggestedProduct.price}
-                        </motion.span>
-                        <span className="text-sm font-semibold sm:text-base lg:text-lg text-primary">
-                          DH
-                        </span>
-                      </div>
-
-                      {/* Original price and savings */}
+                    {/* Price - Slightly Smaller than Home Page */}
+                    <div className="flex items-baseline gap-1 mt-1">
+                      <span className="text-base font-bold sm:text-lg lg:text-xl xl:text-2xl text-primary">
+                        {suggestedProduct.price}
+                      </span>
+                      <span className="text-xs sm:text-sm font-semibold text-primary">
+                        DH
+                      </span>
                       {suggestedProduct.originalPrice && (
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs line-through lg:text-sm text-light/40">
-                            {suggestedProduct.originalPrice} DH
-                          </span>
-                          <span className="text-xs font-medium text-green-500 lg:text-sm">
-                            -
-                            {Math.round(
-                              ((suggestedProduct.originalPrice -
-                                suggestedProduct.price) /
-                                suggestedProduct.originalPrice) *
-                                100
-                            )}
-                            %
-                          </span>
-                        </div>
+                        <span className="text-[9px] sm:text-[10px] line-through text-light/30">
+                          {suggestedProduct.originalPrice} DH
+                        </span>
                       )}
                     </div>
+
+                    {/* View Details Button - Like Home Page (Mobile Only) */}
+                    <motion.button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/products/${suggestedProduct.id}`, {
+                          state: { from: "product-detail" },
+                        });
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex items-center justify-center w-full gap-1.5 px-2.5 py-1.5 mt-2 text-[10px] sm:text-xs font-semibold transition-all duration-300 rounded-lg lg:hidden bg-primary text-background hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30"
+                    >
+                      <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                      <span>View Details</span>
+                    </motion.button>
                   </div>
                 </motion.div>
               ))}
