@@ -224,5 +224,4 @@ export const ProductsManagement = () => {
   );
 };
 
-
 export default ProductsManagement;

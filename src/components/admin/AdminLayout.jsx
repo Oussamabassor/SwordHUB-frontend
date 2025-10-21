@@ -47,13 +47,13 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{
-          position: 'fixed',
+          position: "fixed",
           top: 0,
           left: 0,
-          height: '100vh',
-          width: '256px',
+          height: "100vh",
+          width: "256px",
           zIndex: 50,
-          overflowY: 'auto'
+          overflowY: "auto",
         }}
       >
         <div className="flex flex-col h-full">
@@ -134,15 +134,15 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
 
 export const AdminHeader = ({ setSidebarOpen }) => {
   return (
-    <header 
+    <header
       className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 lg:pl-64"
       style={{
-        position: 'fixed',
+        position: "fixed",
         top: 0,
         left: 0,
         right: 0,
         zIndex: 40,
-        height: '64px'
+        height: "64px",
       }}
     >
       <div className="flex items-center justify-between h-full px-4">

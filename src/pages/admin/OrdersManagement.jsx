@@ -69,17 +69,21 @@ export const OrdersManagement = () => {
             // Fetch the product to get current image data
             const productResponse = await productsApi.getById(item.productId);
             const product = productResponse.data;
-            
+
             console.log(`Fetched fresh product data for ${item.productName}:`, {
               productId: item.productId,
               hasImages: !!(product.images && product.images.length > 0),
               images: product.images,
-              image: product.image
+              image: product.image,
             });
 
             // Get the image from fresh product data
             let productImage = null;
-            if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+            if (
+              product.images &&
+              Array.isArray(product.images) &&
+              product.images.length > 0
+            ) {
               productImage = product.images[0];
             } else if (product.image) {
               productImage = product.image;
@@ -97,7 +101,10 @@ export const OrdersManagement = () => {
             return {
               ...item,
               name: item.productName || item.name,
-              image: item.image || (item.images && item.images[0]) || item.productImage,
+              image:
+                item.image ||
+                (item.images && item.images[0]) ||
+                item.productImage,
             };
           }
         })
@@ -116,37 +123,38 @@ export const OrdersManagement = () => {
         totalAmount: order.total || order.totalAmount || 0,
         createdAt: order.createdAt || new Date().toISOString(),
         items: itemsWithImages,
-      timeline: [
-        { status: "placed", date: order.createdAt, completed: true },
-        {
-          status: "processing",
-          date:
-            order.status === "processing" ||
-            order.status === "shipped" ||
-            order.status === "delivered"
-              ? order.createdAt
-              : null,
-          completed:
-            order.status === "processing" ||
-            order.status === "shipped" ||
-            order.status === "delivered",
-        },
-        {
-          status: "shipped",
-          date:
-            order.status === "shipped" || order.status === "delivered"
-              ? order.createdAt
-              : null,
-          completed: order.status === "shipped" || order.status === "delivered",
-        },
-        {
-          status: "delivered",
-          date: order.status === "delivered" ? order.createdAt : null,
-          completed: order.status === "delivered",
-        },
-      ],
-    });
-    setIsModalOpen(true);
+        timeline: [
+          { status: "placed", date: order.createdAt, completed: true },
+          {
+            status: "processing",
+            date:
+              order.status === "processing" ||
+              order.status === "shipped" ||
+              order.status === "delivered"
+                ? order.createdAt
+                : null,
+            completed:
+              order.status === "processing" ||
+              order.status === "shipped" ||
+              order.status === "delivered",
+          },
+          {
+            status: "shipped",
+            date:
+              order.status === "shipped" || order.status === "delivered"
+                ? order.createdAt
+                : null,
+            completed:
+              order.status === "shipped" || order.status === "delivered",
+          },
+          {
+            status: "delivered",
+            date: order.status === "delivered" ? order.createdAt : null,
+            completed: order.status === "delivered",
+          },
+        ],
+      });
+      setIsModalOpen(true);
     } catch (error) {
       console.error("Error loading order details:", error);
       showToast("Error loading order details", "error", 3000);

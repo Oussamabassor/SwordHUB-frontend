@@ -841,21 +841,20 @@ export function ProductDetailPage() {
                     )}
                   </div>
 
-                  {/* Product Info - Larger Layout */}
-                  <div className="relative p-3 space-y-2 lg:p-4 lg:space-y-3 bg-gradient-to-b from-surface/50 to-surface/30">
-                    {/* Product Name - Professional & Modern */}
-                    <h3 className="text-sm font-extrabold leading-tight tracking-wide text-left uppercase transition-all duration-300 sm:text-base lg:text-lg xl:text-xl line-clamp-2 text-light group-hover:text-primary group-hover:tracking-wider min-h-[2.5rem] sm:min-h-[3rem] lg:min-h-[3.5rem] drop-shadow-sm">
+                  {/* Product Info - Improved Layout with Better Distribution */}
+                  <div className="relative p-3.5 space-y-2.5 lg:p-5 lg:space-y-3 bg-gradient-to-b from-surface/50 to-surface/30">
+                    {/* Product Name - Larger, More Prominent */}
+                    <h3 className="text-base font-extrabold leading-tight tracking-wide text-left uppercase transition-all duration-300 sm:text-lg lg:text-xl xl:text-2xl line-clamp-2 text-light group-hover:text-primary group-hover:tracking-wider min-h-[3rem] sm:min-h-[3.5rem] lg:min-h-[4rem] drop-shadow-sm">
                       {suggestedProduct.name}
                     </h3>
 
-                    {/* Rating */}
-                    <div className="flex items-center gap-1 lg:gap-1.5">
+                    {/* Rating - Better Spacing */}
+                    <div className="flex items-center gap-1.5 lg:gap-2 py-0.5">
                       <div className="flex items-center gap-0.5 lg:gap-1">
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            size={12}
-                            className={`lg:w-4 lg:h-4 transition-all ${
+                            className={`w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 transition-all ${
                               i < 4
                                 ? "fill-yellow-400 text-yellow-400"
                                 : "text-gray-300 dark:text-gray-600"
@@ -863,21 +862,21 @@ export function ProductDetailPage() {
                           />
                         ))}
                       </div>
-                      <span className="text-xs font-semibold lg:text-sm text-light/70">
+                      <span className="text-xs font-semibold sm:text-sm lg:text-base text-light/70">
                         4.0
                       </span>
                     </div>
 
-                    {/* Price */}
-                    <div className="flex flex-col gap-1 pt-1 lg:pt-2">
-                      <div className="flex items-baseline gap-1.5 lg:gap-2">
+                    {/* Price - Larger & More Prominent */}
+                    <div className="flex flex-col gap-1.5 pt-1.5 lg:pt-2">
+                      <div className="flex items-baseline gap-2 lg:gap-2.5">
                         <motion.span
                           whileHover={{ scale: 1.05 }}
-                          className="text-lg font-bold sm:text-xl lg:text-2xl text-primary"
+                          className="text-xl font-bold sm:text-2xl lg:text-3xl xl:text-4xl text-primary"
                         >
                           {suggestedProduct.price}
                         </motion.span>
-                        <span className="text-xs font-semibold lg:text-sm text-primary">
+                        <span className="text-sm font-semibold sm:text-base lg:text-lg text-primary">
                           DH
                         </span>
                       </div>
