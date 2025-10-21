@@ -41,11 +41,20 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar - Fixed with higher z-index */}
       <aside
         className={`fixed top-0 left-0 z-50 h-screen w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          height: '100vh',
+          width: '256px',
+          zIndex: 50,
+          overflowY: 'auto'
+        }}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
@@ -125,7 +134,17 @@ export const AdminSidebar = ({ isOpen, setIsOpen }) => {
 
 export const AdminHeader = ({ setSidebarOpen }) => {
   return (
-    <header className="fixed top-0 left-0 right-0 z-30 h-16 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 lg:pl-64">
+    <header 
+      className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 lg:pl-64"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 40,
+        height: '64px'
+      }}
+    >
       <div className="flex items-center justify-between h-full px-4">
         <button
           onClick={() => setSidebarOpen(true)}
