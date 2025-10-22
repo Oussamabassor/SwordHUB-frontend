@@ -344,37 +344,14 @@ export const OrderDetailsModal = ({
                       </h3>
                       <div className="space-y-3">
                         {order.items.map((item, index) => {
-                          // Debug: Log what we're rendering
+                          // Use the image that was already processed in OrdersManagement.handleView
+                          // This ensures we always show the correct image from the order
+                          const imageUrl = item.image || "/images/placeholders/swordshirt.jpg";
+
                           console.log(`Rendering order item ${index}:`, {
                             name: item.name,
-                            image: item.image,
-                            fullItem: item,
+                            imageUrl: imageUrl,
                           });
-
-                          // Get image URL - same logic as ProductsManagement
-                          let imageUrl = "/images/placeholders/swordshirt.jpg";
-
-                          if (item.image) {
-                            imageUrl = item.image;
-                          } else if (
-                            item.images &&
-                            Array.isArray(item.images) &&
-                            item.images.length > 0
-                          ) {
-                            imageUrl = item.images[0];
-                          } else if (item.productImage) {
-                            imageUrl = item.productImage;
-                          }
-
-                          // Clean up the URL path if needed
-                          if (imageUrl && imageUrl.includes("/./")) {
-                            imageUrl = imageUrl.replace("/./", "/");
-                          }
-
-                          console.log(
-                            `Final image URL for ${item.name}:`,
-                            imageUrl
-                          );
 
                           return (
                             <motion.div

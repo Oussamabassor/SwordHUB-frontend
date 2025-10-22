@@ -62,55 +62,57 @@ export const OrdersManagement = () => {
     console.log("Order items from backend:", order.items);
 
     try {
-      // Fetch fresh product data for each item to get current images
+      // Process each item - PRIORITIZE stored image from order
       const itemsWithImages = await Promise.all(
         (order.items || []).map(async (item) => {
-          try {
-            // Fetch the product to get current image data
-            const productResponse = await productsApi.getById(item.productId);
-            const product = productResponse.data;
+          console.log(`Processing item:`, {
+            productName: item.productName || item.name,
+            storedImage: item.image,
+            productId: item.productId,
+          });
 
-            console.log(`Fetched fresh product data for ${item.productName}:`, {
-              productId: item.productId,
-              hasImages: !!(product.images && product.images.length > 0),
-              images: product.images,
-              image: product.image,
-            });
+          // FIRST: Use the stored image from the order (this is what was saved when order was created)
+          let finalImage = item.image;
 
-            // Get the image from fresh product data
-            let productImage = null;
-            if (
-              product.images &&
-              Array.isArray(product.images) &&
-              product.images.length > 0
-            ) {
-              productImage = product.images[0];
-            } else if (product.image) {
-              productImage = product.image;
+          // If no stored image, try to fetch fresh product data
+          if (!finalImage) {
+            try {
+              const productResponse = await productsApi.getById(item.productId);
+              const product = productResponse.data;
+
+              console.log(`Fetched fresh product data for ${item.productName}:`, {
+                productId: item.productId,
+                hasImages: !!(product.images && product.images.length > 0),
+                images: product.images,
+                image: product.image,
+              });
+
+              // Get the image from fresh product data
+              if (
+                product.images &&
+                Array.isArray(product.images) &&
+                product.images.length > 0
+              ) {
+                finalImage = product.images[0];
+              } else if (product.image) {
+                finalImage = product.image;
+              }
+            } catch (error) {
+              console.error(`Error fetching product ${item.productId}:`, error);
             }
-
-            return {
-              ...item,
-              name: item.productName || item.name,
-              image: productImage || item.image, // Use fresh image, fallback to stored image
-              images: product.images || item.images, // Include full images array
-            };
-          } catch (error) {
-            console.error(`Error fetching product ${item.productId}:`, error);
-            // If fetch fails, use stored data
-            return {
-              ...item,
-              name: item.productName || item.name,
-              image:
-                item.image ||
-                (item.images && item.images[0]) ||
-                item.productImage,
-            };
           }
+
+          console.log(`Final image for ${item.productName}:`, finalImage);
+
+          return {
+            ...item,
+            name: item.productName || item.name,
+            image: finalImage || "/images/placeholders/swordshirt.jpg", // Use stored or fetched image, with final fallback
+          };
         })
       );
 
-      console.log("Items with fresh images:", itemsWithImages);
+      console.log("Items with images:", itemsWithImages);
 
       setSelectedOrderId(order.id || order._id);
       setSelectedOrderData({
